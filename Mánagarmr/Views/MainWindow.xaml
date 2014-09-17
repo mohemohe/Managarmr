@@ -1,0 +1,156 @@
+﻿<Controls:MetroWindow x:Class="Mánagarmr.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
+        xmlns:v="clr-namespace:Mánagarmr.Views"
+        xmlns:vm="clr-namespace:Mánagarmr.ViewModels"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        Title="Mánagarmr" Height="600" Width="960" IconBitmapScalingMode="HighQuality" GlowBrush="{Binding WindowColor}" WindowTransitionsEnabled="False" SaveWindowPosition="True" Icon="/Mánagarmr;component/Resources/icon.ico" FontFamily="Meiryo">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Views/MainWindowDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <i:Interaction.Triggers>
+
+        <!--Viewに特別な要件が存在しない限りは、トリガーやアクションの自作にこだわらず積極的にコードビハインドを使いましょう -->
+        <!--Viewのコードビハインドは、基本的にView内で完結するロジックとViewModelからのイベントの受信(専用リスナを使用する)に限るとトラブルが少なくなります -->
+        <!--Livet1.1からはコードビハインドでViewModelのイベントを受信するためのWeakEventLisnterサポートが追加されています -->
+
+        <!--WindowのContentRenderedイベントのタイミングでViewModelのInitializeメソッドが呼ばれます-->
+        <i:EventTrigger EventName="ContentRendered">
+            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="Initialize"/>
+        </i:EventTrigger>
+
+        <!--Windowが閉じたタイミングでViewModelのDisposeメソッドが呼ばれます-->
+        <i:EventTrigger EventName="Closed">
+            <l:DataContextDisposeAction/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="Dispose"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="ActivatedWindow"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Deactivated">
+            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="DeactivatedWindow"/>
+        </i:EventTrigger>
+        <!--WindowのCloseキャンセル処理に対応する場合は、WindowCloseCancelBehaviorの使用を検討してください-->
+
+    </i:Interaction.Triggers>
+
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <Button Command="{Binding ConfigWindowOpenCommand, Mode=OneWay}">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_twitter_bird}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <TextBlock Margin="4 0 0 0"
+                   VerticalAlignment="Center"
+                   Text="tweet" />
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding ConfigWindowOpenCommand, Mode=OneWay}">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_settings}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <TextBlock Margin="4 0 0 0"
+                   VerticalAlignment="Center"
+                   Text="settings" />
+                </StackPanel>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
+
+    <Grid>
+        <Grid Margin="0,0,0,100">
+            <ListBox HorizontalAlignment="Left" Margin="10,10,0,0" Width="280" FontSize="14">
+                <ListBoxItem>Random</ListBoxItem>
+                <ListBoxItem>Recently added</ListBoxItem>
+                <Separator/>
+                <ListBoxItem>huga</ListBoxItem>
+                <ListBoxItem>moge</ListBoxItem>
+                <ListBoxItem>foo</ListBoxItem>
+                <ListBoxItem>bar</ListBoxItem>
+            </ListBox>
+            <TabControl Margin="295,10,10,0">
+                <TabItem Header="Library">
+                    <ScrollViewer>
+                        <Grid Background="#FFFFFFFF"/>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem Header="Playlist">
+                    <ScrollViewer>
+                        <Grid Background="#FFFFFFFF"/>
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
+            <Grid HorizontalAlignment="Right" Width="320" Height="48" VerticalAlignment="Top">
+                <TextBox Controls:TextboxHelper.ClearTextButton="True" Height="34" Margin="10,10,0,0" TextWrapping="Wrap" Text="" Width="255" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                <Button Name="SearchButton" Command="{Binding FastForwardCommand, Mode=OneWay}" HorizontalAlignment="Right" Margin="0,6,10,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" BorderThickness="2">
+                    <Rectangle Name="SearchButtonRectangle" Width="30" Height="30" Fill="{Binding WindowColor}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Visual="{StaticResource appbar_magnify}" Stretch="Uniform" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Button>
+            </Grid>
+        </Grid>
+        <Grid Name="BottomBar" Height="64" VerticalAlignment="Bottom" Background="{Binding WindowColor}">
+            <Border Name="CoverArea" Margin="10,-26,0,10" Height="80" VerticalAlignment="Bottom" BorderBrush="{Binding WindowColor}" HorizontalAlignment="Left" Width="80" BorderThickness="4" Background="{Binding WindowColor}">
+                <Image Source="{Binding CoverArt, Mode=OneWay}" RenderOptions.BitmapScalingMode="HighQuality" />
+            </Border>
+            <Label Content="{Binding Title}" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Top" Foreground="White" FontSize="24"/>
+            <Label Content="{Binding AlbumETC}" HorizontalAlignment="Left" Margin="100,36,0,0" VerticalAlignment="Top" Foreground="White"/>
+            <Border Margin="100,-20,10,72" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1" IsEnabled="False">
+                <Slider Name="ProgressSlider" Style="{DynamicResource FlatSlider}" VerticalAlignment="Top" Height="12" Background="{x:Null}" Foreground="{Binding WindowColor}" Width="Auto" BorderBrush="White" Margin="0,0,-13,0" IsEnabled="{Binding ProgressBarIsEnabled}" Maximum="{Binding ProgressBarMaxValue}" Value="{Binding ProgressBarCurrentValue}"/>
+            </Border>
+            <Border Margin="100,-20,10,72" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1" IsEnabled="False"/>
+            <Button Name="PlayPauseButton" Command="{Binding PlayPauseCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,296,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
+                <Rectangle Width="{Binding PlayPauseIconSize}" Height="{Binding PlayPauseIconSize}" Fill="White" Margin="{Binding PlayPauseIconMargin}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{Binding PlayPauseIcon}" Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+            <Button Name="StopButton" Command="{Binding StopCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,249,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
+                <Rectangle Width="20" Height="20" Fill="White">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{StaticResource appbar_control_stop}" Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+            <Button Name="RewindButton" Command="{Binding RewindCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,202,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
+                <Rectangle Width="24" Height="24" Fill="White">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{StaticResource appbar_control_rewind}" Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+            <Button Name="FastForwardButton" Command="{Binding FastForwardCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,155,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
+                <Rectangle Width="24" Height="24" Fill="White">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{StaticResource appbar_control_fastforward}" Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+            <Slider Name="VolumeSlider" Style="{DynamicResource FlatSlider}" Value="{Binding Volume, Mode=TwoWay}" Margin="0,0,10,18" Width="128" Foreground="White" Maximum="1" SmallChange="0.01" TickFrequency="0.1" LargeChange="0.1" Height="12" VerticalAlignment="Bottom" HorizontalAlignment="Right" BorderBrush="Black"/>
+            <Label Content="{Binding VolumeString}" Margin="0,0,10,30" Padding="0" Foreground="White" HorizontalAlignment="Right" Height="15" VerticalAlignment="Bottom"/>
+        </Grid>
+    </Grid>
+</Controls:MetroWindow>

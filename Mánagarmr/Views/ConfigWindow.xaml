@@ -1,0 +1,208 @@
+﻿<Window x:Class="Mánagarmr.Views.ConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
+        xmlns:v="clr-namespace:Mánagarmr.Views"
+        xmlns:vm="clr-namespace:Mánagarmr.ViewModels"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        Title="設定" Height="450" Width="800" Icon="/Mánagarmr;component/Resources/icon.ico" FontFamily="Meiryo">
+
+    <Window.DataContext>
+        <vm:ConfigWindowViewModel/>
+    </Window.DataContext>
+
+    <i:Interaction.Triggers>
+
+        <!--Viewに特別な要件が存在しない限りは、トリガーやアクションの自作にこだわらず積極的にコードビハインドを使いましょう -->
+        <!--Viewのコードビハインドは、基本的にView内で完結するロジックとViewModelからのイベントの受信(専用リスナを使用する)に限るとトラブルが少なくなります -->
+        <!--Livet1.1からはコードビハインドでViewModelのイベントを受信するためのWeakEventLisnterサポートが追加されています -->
+
+        <!--WindowのContentRenderedイベントのタイミングでViewModelのInitializeメソッドが呼ばれます-->
+        <i:EventTrigger EventName="ContentRendered">
+            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="Initialize"/>
+        </i:EventTrigger>
+
+        <!--Windowが閉じたタイミングでViewModelのDisposeメソッドが呼ばれます-->
+        <i:EventTrigger EventName="Closed">
+            <l:DataContextDisposeAction/>
+        </i:EventTrigger>
+
+        <l:InteractionMessageTrigger MessageKey="Close" Messenger="{Binding Messenger}" InvokeActionsOnlyWhileAttatchedObjectLoaded="True">
+            <l:WindowInteractionMessageAction />
+        </l:InteractionMessageTrigger>
+
+        <!--WindowのCloseキャンセル処理に対応する場合は、WindowCloseCancelBehaviorの使用を検討してください-->
+
+    </i:Interaction.Triggers>
+
+    <Grid>
+        <ListBox HorizontalAlignment="Left" Margin="10,10,0,45" Width="200" SelectedIndex="{Binding SelectedIndex}">
+            <ListBoxItem Content="全般" IsSelected="True"/>
+            <ListBoxItem Content="サーバー"/>
+            <ListBoxItem Content="オーディオデバイス"/>
+            <ListBoxItem Content="Twitter"/>
+            <!--<ListBoxItem Content="Language"/>-->
+            <ListBoxItem Content="Mánagarmr について"/>
+        </ListBox>
+        <TabControl Name="TabControl" Margin="224,10,10,36" TabStripPlacement="Bottom" SelectedIndex="{Binding SelectedIndex}" Padding="0">
+            <!-- 全般 -->
+            <TabItem Header="" Height="0" IsSelected="True">
+                <ScrollViewer>
+                    <Grid>
+                        <GroupBox Header="アップデート" Margin="0,0,10,0" VerticalAlignment="Top">
+                            <Grid>
+                                <CheckBox Content="起動時に Mánagarmr のアップデートを確認する" IsChecked="{Binding AllowUpdateCheck}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <CheckBox Content="アップデートがある場合、自動的にアップデートする" IsChecked="{Binding AllowAutoUpdate}" IsEnabled="{Binding AllowUpdateCheck}" HorizontalAlignment="Left" Margin="28,23,0,0" VerticalAlignment="Top"/>
+
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- サーバー -->
+            <TabItem Header="" Height="0">
+                <ScrollViewer>
+                    <Grid>
+                        <GroupBox Header="サーバー" Margin="0,0,10,0" VerticalAlignment="Top">
+                            <Grid>
+                                <TextBox Height="23" TextWrapping="Wrap" Text="{Binding PrimaryServerAddress}" Controls:TextboxHelper.Watermark="Primary server (eg. LAN)" VerticalAlignment="Top"/>
+                                <TextBox Height="23" Margin="0,31,0,0" TextWrapping="Wrap" Text="{Binding SecondaryServerAddress}" Controls:TextboxHelper.Watermark="Secondary server" VerticalAlignment="Top"/>
+                                <CheckBox Content="SSL証明書のエラーを無視する" IsChecked="{Binding IgnoreSSLcertificateError}" IsEnabled="{Binding IgnoreSSLcertificateErrorIsEnabled}" HorizontalAlignment="Left" Margin="0,62,0,0" VerticalAlignment="Top"/>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="アカウント"  Margin="0,126,10,0" VerticalAlignment="Top">
+                            <Grid>
+                                <TextBox Height="23" TextWrapping="Wrap" Text="{Binding SubsonicID}" Controls:TextboxHelper.Watermark="ID" VerticalAlignment="Top"/>
+                                <PasswordBox Height="23" Margin="0,31,0,0" Password="" Controls:TextboxHelper.Watermark="Password" VerticalAlignment="Top">
+                                    <i:Interaction.Behaviors>
+                                        <l:PasswordBoxBindingSupportBehavior Password="{Binding SubsonicPassword}" />
+                                    </i:Interaction.Behaviors>
+                                </PasswordBox>
+                            </Grid>
+                        </GroupBox>
+                        <Button Content="接続テスト" Command="{Binding ConnectionTestCommand, Mode=OneWay}" Margin="0,250,10,0" FontWeight="Normal" FontFamily="Meiryo" FontSize="12" Height="32" VerticalAlignment="Top"/>
+                        <Label Content="テスト結果:" Margin="0,282,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                        <Label Content="{Binding SubsonicConnectionTest}" Margin="75,282,10,0" VerticalAlignment="Top" />
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- オーディオデバイス -->
+            <TabItem Header="" Height="0">
+                <ScrollViewer>
+                    <Grid>
+                        <Label Content="※ 次回の再生から有効になります" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="#FF424242"/>
+                        <GroupBox Header="メソッド" Margin="0,0,10,0" VerticalAlignment="Top">
+                            <Grid>
+                                <ComboBox VerticalAlignment="Top" SelectedIndex="{Binding AudioMethodId}">
+                                    <ComboBoxItem>
+                                        WaveOut
+                                    </ComboBoxItem>
+                                </ComboBox>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="デバイス" Margin="0,72,10,0" VerticalAlignment="Top">
+                            <Grid>
+                                <ComboBox VerticalAlignment="Top" SelectedIndex="{Binding AudioDeviceId}">
+                                    <ComboBoxItem>
+                                        Default
+                                    </ComboBoxItem>
+                                </ComboBox>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="バッファ" Margin="0,144,10,0" VerticalAlignment="Top">
+                            <Grid>
+                                <Slider Value="{Binding BufferSliderValue}" VerticalAlignment="Top" Height="25" Minimum="1" Maximum="2000" SmallChange="1" TickFrequency="100"/>
+                                <Label Content="{Binding BufferSliderValueString}" Margin="0,25,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right"/>
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Twitter -->
+            <TabItem Header="" Height="0" IsSelected="True">
+                <ScrollViewer>
+                    <Grid>
+                        <GroupBox Header="テンプレート" Margin="0,0,10,0" Height="130" VerticalAlignment="Top">
+                            <Grid>
+                                <TextBox Height="23" Margin="0,10,0,0" TextWrapping="Wrap" Text="{Binding TweetTemplate}" VerticalAlignment="Top" Width="508"/>
+                                <Label Content="%title%: 曲タイトル　　%artist%: アーティスト名　　%album%: アルバムタイトル"  VerticalAlignment="Top" Margin="0,36,22,0"/>
+                                <Label Content="※ 投稿前のダイアログで一時的に編集できます"  VerticalAlignment="Top" Margin="4,71,18,0" Padding="0"/>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="アカウント" Margin="0,135,10,0" VerticalAlignment="Top">
+                            <Grid>
+                                <Button Content="① 認証ページをブラウザで開く" Command="{Binding OpenAuthUrlCommand, Mode=OneWay}" Margin="10,10,10,0" VerticalAlignment="Top" Height="40" FontSize="12" FontWeight="Normal"/>
+                                <TextBox Controls:TextboxHelper.Watermark="PIN" Height="23" Margin="10,55,10,0" TextWrapping="Wrap" Text="{Binding TwitterAuthPIN}" VerticalAlignment="Top"/>
+                                <Button Content="② PINを入力して認証を完了する" Command="{Binding GetAccessTokenCommand, Mode=OneWay}" Margin="10,86,10,0" VerticalAlignment="Top" Height="40" FontWeight="Normal" FontSize="12"/>
+                                <Label Content="認証状況 : " HorizontalAlignment="Left" Margin="10,131,0,0" VerticalAlignment="Top" Padding="5,5,0,5"/>
+                                <Label Content="{Binding TwitterAuthProgress}" Margin="76,131,10,0" VerticalAlignment="Top" Padding="0,5,5,5"/>
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+            <!--<TabItem Header="Language" Height="0">
+                <ScrollViewer>
+                    <Grid>
+                        <Label Content="Language :" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                        <ComboBox x:Name="LanguageComboBox" Margin="91,14,10,0" VerticalAlignment="Top" ItemsSource="{Binding Language}" DisplayMemberPath="Language" SelectedValuePath="Locale" SelectedValue="{Binding Locale}" SelectedIndex="0" />
+                        <Label Content="※ Some options applied after restart." HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Foreground="#FF424242"/>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>-->
+
+            <!-- Mánagarmr について -->
+            <TabItem Header="" Height="0">
+                <ScrollViewer>
+                    <Grid>
+                        <Image HorizontalAlignment="Left" Height="100" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" Source="/Resources/icon512.png" RenderOptions.BitmapScalingMode="HighQuality" />
+                        <Label Content="Mánagarmr" HorizontalAlignment="Left" Margin="125,10,0,0" VerticalAlignment="Top" FontSize="48" Background="White" Foreground="Gray" Padding="0"/>
+                        <Label Content="{Binding Version}" HorizontalAlignment="Left" Margin="125,82,0,0" VerticalAlignment="Top"/>
+                        <Label Content="(C) 2014 mohemohe. This Application is licensed under" HorizontalAlignment="Left" Margin="10,115,0,0" VerticalAlignment="Top"/>
+                        <Label Margin="345,115,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0,5">
+                            <Hyperlink NavigateUri="http://opensource.org/licenses/MIT" RequestNavigate="Hyperlink_Navigate">The MIT License</Hyperlink>
+                        </Label>
+                        <Label Content="site:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,140,0,0"/>
+                        <Label Margin="46,140,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0,5">
+                            <Hyperlink NavigateUri="http://ghippos.net/" RequestNavigate="Hyperlink_Navigate">http://ghippos.net/</Hyperlink>
+                        </Label>
+                        <Label Content="." HorizontalAlignment="Left" Margin="441,115,0,0" VerticalAlignment="Top"/>
+                        <Label Content="Built with:" HorizontalAlignment="Left" Margin="10,185,0,0" VerticalAlignment="Top"/>
+                        <Label Margin="80,185,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0,5">
+                            <Hyperlink NavigateUri="https://github.com/ugaya40/Livet" RequestNavigate="Hyperlink_Navigate">Livet</Hyperlink>
+                        </Label>
+                        <Label Content="," HorizontalAlignment="Left" Margin="108,185,0,0" VerticalAlignment="Top" Padding="0,5,5,5"/>
+                        <Label Margin="117,185,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0,5">
+                            <Hyperlink NavigateUri="http://mahapps.com/" RequestNavigate="Hyperlink_Navigate">MahApps.Metro</Hyperlink>
+                        </Label>
+                        <Label Content="," HorizontalAlignment="Left" Margin="208,185,0,0" VerticalAlignment="Top" Padding="0,5,5,5"/>
+                        <Label Margin="217,185,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0,5">
+                            <Hyperlink NavigateUri="http://modernuiicons.com/" RequestNavigate="Hyperlink_Navigate">Modern UI Icons</Hyperlink>
+                        </Label>
+                        <Label Content="," HorizontalAlignment="Left" Margin="314,185,0,0" VerticalAlignment="Top" Padding="0,5,5,5"/>
+                        <Label Margin="323,185,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0,5">
+                            <Hyperlink NavigateUri="http://naudio.codeplex.com/" RequestNavigate="Hyperlink_Navigate">NAudio</Hyperlink>
+                        </Label>
+                        <Label Content="," HorizontalAlignment="Left" Margin="365,185,0,0" VerticalAlignment="Top" Padding="0,5,5,5"/>
+                        <Label Margin="374,185,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0,5">
+                            <Hyperlink NavigateUri="https://github.com/mohemohe/Rhinemaidens.Lorelei" RequestNavigate="Hyperlink_Navigate">Lorelei</Hyperlink>
+                        </Label>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="dummy" Height="0">
+                <Grid />
+            </TabItem>
+        </TabControl>
+        <Rectangle Fill="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" Height="45" VerticalAlignment="Bottom"/>
+        <Button Content="OK" Command="{Binding OKCommand, Mode=OneWay}" Margin="0,0,190,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75"/>
+        <Button Content="Cancel" Command="{Binding CancelCommand, Mode=OneWay}" Margin="0,0,100,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75"/>
+        <Button Content="Apply" Command="{Binding ApplyCommand, Mode=OneWay}" Margin="0,0,10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75"/>
+    </Grid>
+</Window>
