@@ -20,6 +20,10 @@ using Mánagarmr.Models.SubsonicAPI;
 using System.Threading.Tasks;
 using Mánagarmr.Models.SubsonicAPI.InfoPack;
 using System.Windows.Media.Imaging;
+using System.Windows.Interop;
+using System.Windows;
+using System.IO;
+using System.Threading;
 
 namespace Mánagarmr.ViewModels
 {
@@ -121,13 +125,19 @@ namespace Mánagarmr.ViewModels
             {
                 sw.Reset();
                 currentState = State.Stopped;
-                PlayPauseIcon = (Canvas)App.Current.Resources["appbar_control_play"];
-                PlayPauseIconMargin = "4,0,0,0";
-                PlayPauseIconSize = 24;
+                SetPlayIcon();
             }
             if (e.PropertyName == "ReadyToCoverArt")
             {
                 CoverArt = _CoverArt;
+            }
+            if (e.PropertyName == "GetSongInfo")
+            {
+                SetSongInfo();
+            }
+            if (e.PropertyName == "GetCoverArt")
+            {
+                SetCoverArt();
             }
         }
 
@@ -423,64 +433,22 @@ namespace Mánagarmr.ViewModels
             }
         }
 
-        public void Play()
+        public async void Play()
         {
             //TODO: AudioID
             string id = "2684";
 
             model.Play(id, Volume); //DEBUG
-            PlayPauseIcon = (Canvas)App.Current.Resources["appbar_control_pause"];
-            PlayPauseIconMargin = "0,0,0,0";
-            PlayPauseIconSize = 20;
+            SetPauseIcon();
 
             if (currentState != State.Paused)
             {
-                StreamInfoPack sip = null;
-                try
+                model.GetSongInfo(id);
+                await Task.Run(() => 
                 {
-                    var info = model.GetSongInfo(id);
-                    sip = info;
-                }
-                catch { }
-                if (sip != null || sip.status != "ok")
-                {
-                    return;
-                }
-
-                ProgressBarMaxValue = Convert.ToUInt64(sip.duration) * 1000;
-
-                Title = sip.title;
-
-                string artist;
-                string album;
-                if (sip.artist.Length > 30)
-                {
-                    artist = sip.artist.Substring(0, 30);
-                }
-                else
-                {
-                    artist = sip.artist;
-                }
-                if (sip.album.Length > 30)
-                {
-                    album = sip.album.Substring(0, 30);
-                }
-                else
-                {
-                    album = sip.album;
-                }
-                AlbumETC = artist + " / " + album;
-
-                BitmapSource coverArt = null;
-                try
-                {
-                    coverArt = model.GetCoverArt(id);
-                }
-                catch 
-                {
-                    coverArt = null;
-                }
-                CoverArt = coverArt;
+                    Thread.Sleep(1000);
+                    model.GetCoverArt(id);
+                });
             }
             currentState = State.Playing;
         }
@@ -489,10 +457,78 @@ namespace Mánagarmr.ViewModels
         {
             sw.Stop();
             model.Pause();
+            SetPlayIcon();
             currentState = State.Paused;
+        }
+
+        public void SetPlayIcon()
+        {
             PlayPauseIcon = (Canvas)App.Current.Resources["appbar_control_play"];
             PlayPauseIconMargin = "4,0,0,0";
             PlayPauseIconSize = 24;
+        }
+
+        public void SetPauseIcon()
+        {
+            PlayPauseIcon = (Canvas)App.Current.Resources["appbar_control_pause"];
+            PlayPauseIconMargin = "0,0,0,0";
+            PlayPauseIconSize = 20;
+        }
+
+        public void SetSongInfo()
+        {
+            var sip = APIhelper.sip;
+            if (sip != null && sip.status != "ok")
+            {
+                return;
+            }
+
+            ProgressBarMaxValue = Convert.ToUInt64(sip.duration) * 1000;
+
+            Title = sip.title;
+
+            string artist;
+            string album;
+            if (sip.artist.Length > 25)
+            {
+                artist = sip.artist.Substring(0, 25) + "...";
+            }
+            else
+            {
+                artist = sip.artist;
+            }
+            if (sip.album.Length > 25)
+            {
+                album = sip.album.Substring(0, 25) + "...";
+            }
+            else
+            {
+                album = sip.album;
+            }
+            AlbumETC = artist + " / " + album;
+        }
+
+        public void SetCoverArt()
+        {
+            var coverArt = ConvertBitmap(APIhelper.ms);
+            coverArt.Freeze();
+            CoverArt = coverArt;
+        }
+
+        private BitmapSource ConvertBitmap(MemoryStream ms)
+        {
+            var bitmap = new Bitmap(ms);
+            BitmapSource bs = null;
+
+            try
+            {
+                var hBitmap = bitmap.GetHbitmap();
+
+                bs = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            }
+            catch { }
+
+            return bs;
         }
         #endregion
 

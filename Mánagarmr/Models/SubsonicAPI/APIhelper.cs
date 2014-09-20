@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Mánagarmr.Models.SubsonicAPI.InfoPack;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using System.Xml;
 
 namespace Mánagarmr.Models.SubsonicAPI
@@ -15,6 +18,9 @@ namespace Mánagarmr.Models.SubsonicAPI
         public static string apiVersion { get { return "1.8.0"; } }
         public static string appName { get { return "Managarmr"; } }
         public static string url { get; private set; }
+
+        public static StreamInfoPack sip { get; set; }
+        public static MemoryStream ms { get; set; }
 
         public static string BuildBasicAuthString(string userName, string password)
         {

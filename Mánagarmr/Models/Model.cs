@@ -9,6 +9,7 @@ using Livet.EventListeners;
 using System.ComponentModel;
 using Mánagarmr.Models.SubsonicAPI.InfoPack;
 using System.Windows.Media.Imaging;
+using System.Threading.Tasks;
 
 
 namespace Mánagarmr.Models
@@ -70,25 +71,22 @@ namespace Mánagarmr.Models
 
         public async void GetSongInfo(string id)
         {
-            var gs = new GetSong();
-            StreamInfoPack sip = null;
-            gs.GetSongInfo(id, out sip);
-
-            RaisePropertyChanged("ReadyToSongInfo");
+            await Task.Run(() => 
+            {
+                var gs = new GetSong();
+                APIhelper.sip = gs.GetSongInfo(id);
+                RaisePropertyChanged("GetSongInfo");
+            });
         }
 
-        public BitmapSource GetCoverArt(string id)
+        public async void GetCoverArt(string id)
         {
-            var gca = new GetCoverArt();
-            BitmapSource bs = null;
-            gca.GetCoverArtImage(id, out bs);
-
-            return bs;
-        }
-
-        internal void ReadyToCoverArt()
-        {
-            RaisePropertyChanged("ReadyToCoverArt");
+            await Task.Run(() =>
+            {
+                var gca = new GetCoverArt();
+                APIhelper.ms = gca.GetCoverArtImage(id);
+                RaisePropertyChanged("GetCoverArt");
+            });
         }
     }
 }

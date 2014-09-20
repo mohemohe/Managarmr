@@ -79,15 +79,27 @@
 
     <Grid>
         <Grid Margin="0,0,0,100">
-            <ListBox HorizontalAlignment="Left" Margin="10,10,0,0" Width="280" FontSize="14">
-                <ListBoxItem>Random</ListBoxItem>
-                <ListBoxItem>Recently added</ListBoxItem>
-                <Separator/>
-                <ListBoxItem>huga</ListBoxItem>
-                <ListBoxItem>moge</ListBoxItem>
-                <ListBoxItem>foo</ListBoxItem>
-                <ListBoxItem>bar</ListBoxItem>
-            </ListBox>
+            <StackPanel Width="280" HorizontalAlignment="Left" Margin="0,0,0,0">
+                <ListBox Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top">
+                    <ListBoxItem>Random</ListBoxItem>
+                    <ListBoxItem>Recently added</ListBoxItem>
+                    <Separator/>
+                </ListBox>
+                <ListBox Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top">
+                    <ListBoxItem>Creative Commons</ListBoxItem>
+                    <ListBoxItem>iTunes Music</ListBoxItem>
+                    <ListBoxItem>mora</ListBoxItem>
+                    <ListBoxItem>OST</ListBoxItem>
+                    <ListBoxItem>その他（分類不可能）</ListBoxItem>
+                    <ListBoxItem>アニソン・ゲーソン他</ListBoxItem>
+                    <ListBoxItem>ドラマCD</ListBoxItem>
+                    <ListBoxItem>ボカロ</ListBoxItem>
+                    <ListBoxItem>同人</ListBoxItem>
+                    <ListBoxItem>東方</ListBoxItem>
+                    <ListBoxItem>洋楽</ListBoxItem>
+                    <ListBoxItem>邦楽</ListBoxItem>
+                </ListBox>
+            </StackPanel>
             <TabControl Margin="295,10,10,0">
                 <TabItem Header="Library">
                     <ScrollViewer>
