@@ -88,5 +88,12 @@ namespace Mánagarmr.Models
                 RaisePropertyChanged("GetCoverArt");
             });
         }
+
+        public void Tweet(string title, string artist, string album)
+        {
+            var twitter = new Twitter();
+            twitter.ReInitialize("","");
+            twitter.Tweet(title, artist, album);
+        }
     }
 }

@@ -203,6 +203,40 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
+        #region Artist変更通知プロパティ
+        private string _Artist;
+
+        public string Artist
+        {
+            get
+            { return _Artist; }
+            set
+            { 
+                if (_Artist == value)
+                    return;
+                _Artist = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
+        #region AlbumTitle変更通知プロパティ
+        private string _AlbumTitle;
+
+        public string AlbumTitle
+        {
+            get
+            { return _AlbumTitle; }
+            set
+            { 
+                if (_AlbumTitle == value)
+                    return;
+                _AlbumTitle = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
         #region AlbumETC変更通知プロパティ
         private string _AlbumETC;
 
@@ -355,6 +389,27 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
+        #region TweetCommand
+        private ViewModelCommand _TweetCommand;
+
+        public ViewModelCommand TweetCommand
+        {
+            get
+            {
+                if (_TweetCommand == null)
+                {
+                    _TweetCommand = new ViewModelCommand(Tweet);
+                }
+                return _TweetCommand;
+            }
+        }
+
+        public void Tweet()
+        {
+            model.Tweet(Title, Artist, AlbumTitle);
+        }
+        #endregion
+
         #region PlayPauseIcon変更通知プロパティ
         private Canvas _PlayPauseIcon = (Canvas)App.Current.Resources["appbar_control_play"];
 
@@ -436,7 +491,7 @@ namespace Mánagarmr.ViewModels
         public async void Play()
         {
             //TODO: AudioID
-            string id = "2684";
+            string id = "10220";
 
             model.Play(id, Volume); //DEBUG
             SetPauseIcon();
@@ -485,7 +540,14 @@ namespace Mánagarmr.ViewModels
 
             ProgressBarMaxValue = Convert.ToUInt64(sip.duration) * 1000;
 
-            Title = sip.title;
+            if (sip.title.Length > 30)
+            {
+                Title = sip.title.Substring(0, 30) + "...";
+            }
+            else
+            {
+                Title = sip.title;
+            }
 
             string artist;
             string album;
@@ -505,6 +567,8 @@ namespace Mánagarmr.ViewModels
             {
                 album = sip.album;
             }
+            Artist = artist;
+            AlbumTitle = album;
             AlbumETC = artist + " / " + album;
         }
 

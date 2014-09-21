@@ -27,6 +27,10 @@ namespace Mánagarmr.Models
         public int AudioBuffer;
         public float Volume;
 
+        public string TweetTextFormat = "NowPlaying: %title% - %artist% / %album%";
+        public string AccessToken;
+        public string AccessTokenSecret;
+
         public bool AllowUpdateCheck = true;
         public bool AllowAutoUpdate = true;
 
@@ -56,6 +60,10 @@ namespace Mánagarmr.Models
             public static int _AudioDevice { get; set; }
             public static int _AudioBuffer { get; set; }
             public static float _Volume { get; set; }
+
+            public static string _TweetTextFormat { get; set; }
+            public static string _AccessToken { get; set; }
+            public static string _AccessTokenSecret { get; set; }
 
             public static bool? _AllowUpdateCheck { get; set; }
             public static bool? _AllowAutoUpdate { get; set; }
@@ -161,6 +169,41 @@ namespace Mánagarmr.Models
             set { _Settings._Volume = value; }
         }
 
+        public static string TweetTextFormat
+        {
+            get { return _Settings._TweetTextFormat; }
+            set { _Settings._TweetTextFormat = value; }
+        }
+
+        public static string AccessToken
+        {
+            get { return _Settings._AccessToken; }
+            set { _Settings._AccessToken = value; }
+        }
+
+        public static string AccessTokenSecret
+        {
+            get
+            {
+                var mn = Environment.MachineName;
+                var un = Environment.UserName;
+                var udn = Environment.UserDomainName;
+
+                var seed = Crypt.CreateSeed(mn + un + udn);
+
+                return Crypt.Decrypt(_Settings._AccessTokenSecret, seed);
+            }
+            set
+            {
+                var mn = Environment.MachineName;
+                var un = Environment.UserName;
+                var udn = Environment.UserDomainName;
+
+                var seed = Crypt.CreateSeed(mn + un + udn);
+                _Settings._AccessTokenSecret = Crypt.Encrypt(value, seed);
+            }
+        }
+
         public static bool AllowUpdateCheck
         {
             get
@@ -261,6 +304,10 @@ namespace Mánagarmr.Models
             _Settings._AudioBuffer = xmls.AudioBuffer;
             _Settings._Volume = xmls.Volume;
 
+            _Settings._TweetTextFormat = xmls.TweetTextFormat;
+            _Settings._AccessToken = xmls.AccessToken;
+            _Settings._AccessTokenSecret = xmls.AccessTokenSecret;
+
             _Settings._AllowUpdateCheck = xmls.AllowUpdateCheck;
             _Settings._AllowAutoUpdate = xmls.AllowAutoUpdate;
 
@@ -286,6 +333,10 @@ namespace Mánagarmr.Models
             xmls.AudioDevice = _Settings._AudioDevice;
             xmls.AudioBuffer = _Settings._AudioBuffer;
             xmls.Volume = _Settings._Volume;
+
+            xmls.TweetTextFormat = _Settings._TweetTextFormat;
+            xmls.AccessToken = _Settings._AccessToken;
+            xmls.AccessTokenSecret = _Settings._AccessTokenSecret;
 
             xmls.AllowUpdateCheck = Settings.AllowUpdateCheck;
             xmls.AllowAutoUpdate = Settings.AllowAutoUpdate;

@@ -305,7 +305,7 @@ namespace Mánagarmr.ViewModels
         #endregion
 
         #region TweetTemplate変更通知プロパティ
-        private string _TweetTemplate = "NowPlaying: %title% - %artist% / %album%";
+        private string _TweetTemplate;
 
         public string TweetTemplate
         {
@@ -414,6 +414,9 @@ namespace Mánagarmr.ViewModels
             IgnoreSSLcertificateErrorIsEnabled = !Settings.IgnoreSSLcertificateError;
             SubsonicID = Settings.UserName;
             SubsonicPassword = Settings.Password;
+
+            TweetTemplate = Settings.TweetTextFormat;
+
             AudioMethodId = Settings.AudioMethod;
             AudioDeviceId = Settings.AudioDevice;
             BufferSliderValue = Settings.AudioBuffer;
@@ -431,6 +434,8 @@ namespace Mánagarmr.ViewModels
             Settings.IgnoreSSLcertificateError = IgnoreSSLcertificateError;
             Settings.UserName = SubsonicID;
             Settings.Password = SubsonicPassword;
+
+            Settings.TweetTextFormat = TweetTemplate;
 
             Settings.AudioMethod = AudioMethodId;
             Settings.AudioDevice = AudioDeviceId;
