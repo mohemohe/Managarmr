@@ -45,7 +45,9 @@
             <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="DeactivatedWindow"/>
         </i:EventTrigger>
         <!--WindowのCloseキャンセル処理に対応する場合は、WindowCloseCancelBehaviorの使用を検討してください-->
-
+        <l:InteractionMessageTrigger Messenger="{Binding Messenger}" MessageKey="Information">
+            <l:InformationDialogInteractionMessageAction/>
+        </l:InteractionMessageTrigger>
     </i:Interaction.Triggers>
 
     <Controls:MetroWindow.RightWindowCommands>
@@ -80,35 +82,26 @@
     <Grid>
         <Grid Margin="0,0,0,100">
             <StackPanel Width="280" HorizontalAlignment="Left" Margin="0,0,0,0">
-                <ListBox Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top">
+                <ListBox Name="UpperListBox" Margin="10" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="UpperListBox_PreviewMouseDown">
                     <ListBoxItem>Random</ListBoxItem>
                     <ListBoxItem>Recently added</ListBoxItem>
-                    <Separator/>
                 </ListBox>
-                <ListBox Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top">
-                    <ListBoxItem>Creative Commons</ListBoxItem>
-                    <ListBoxItem>iTunes Music</ListBoxItem>
-                    <ListBoxItem>mora</ListBoxItem>
-                    <ListBoxItem>OST</ListBoxItem>
-                    <ListBoxItem>その他（分類不可能）</ListBoxItem>
-                    <ListBoxItem>アニソン・ゲーソン他</ListBoxItem>
-                    <ListBoxItem>ドラマCD</ListBoxItem>
-                    <ListBoxItem>ボカロ</ListBoxItem>
-                    <ListBoxItem>同人</ListBoxItem>
-                    <ListBoxItem>東方</ListBoxItem>
-                    <ListBoxItem>洋楽</ListBoxItem>
-                    <ListBoxItem>邦楽</ListBoxItem>
-                </ListBox>
+                <Separator Margin="10,2"/>
+                <ListBox Name="BottomListBox" ItemsSource="{Binding MusicFolderList}" SelectedIndex="{Binding MusicFolderListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="BottomListBox_PreviewMouseDown"/>
             </StackPanel>
             <TabControl Margin="295,10,10,0">
                 <TabItem Header="Library">
                     <ScrollViewer>
-                        <Grid Background="#FFFFFFFF"/>
+                        <Grid Background="#FFFFFFFF">
+                            <ListBox ItemsSource="{Binding LibraryList}" SelectedIndex="{Binding LibraryListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top"/>
+                        </Grid>
                     </ScrollViewer>
                 </TabItem>
                 <TabItem Header="Playlist">
                     <ScrollViewer>
-                        <Grid Background="#FFFFFFFF"/>
+                        <Grid Background="#FFFFFFFF">
+                            <Label Content="Not yet :(" FontSize="72" Foreground="Gainsboro" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
                     </ScrollViewer>
                 </TabItem>
             </TabControl>

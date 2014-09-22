@@ -21,6 +21,8 @@ namespace Mánagarmr.Models.SubsonicAPI
 
         public static StreamInfoPack sip { get; set; }
         public static MemoryStream ms { get; set; }
+        public static Dictionary<int, FolderListInfoPack> flipd { get; set; }
+        public static Dictionary<int, LibraryListInfoPack> llipd { get; set; }
 
         public static string BuildBasicAuthString(string userName, string password)
         {
@@ -30,7 +32,7 @@ namespace Mánagarmr.Models.SubsonicAPI
             return "Basic " + base64;
         }
 
-        public static async void BuildBaseUrl()
+        public static void BuildBaseUrl()
         {
             var p = new Ping();
             bool result = false;
@@ -43,7 +45,7 @@ namespace Mánagarmr.Models.SubsonicAPI
                 {
                     testUrl = testUrl + "/";
                 }
-                await Task.Run(() => p.CheckServer(testUrl, Settings.IgnoreSSLcertificateError, Settings.UserName, Settings.Password, out result));
+                p.CheckServer(testUrl, Settings.IgnoreSSLcertificateError, Settings.UserName, Settings.Password, out result);
                 if (result == true)
                 {
                     Debug.WriteLine("ready to connect primary server");
@@ -60,7 +62,7 @@ namespace Mánagarmr.Models.SubsonicAPI
                 {
                     testUrl = testUrl + "/";
                 }
-                await Task.Run(() => p.CheckServer(testUrl, Settings.IgnoreSSLcertificateError, Settings.UserName, Settings.Password, out result));
+                p.CheckServer(testUrl, Settings.IgnoreSSLcertificateError, Settings.UserName, Settings.Password, out result);
                 if (result == true)
                 {
                     Debug.WriteLine("ready to connect secondery server");

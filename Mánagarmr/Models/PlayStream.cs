@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Mánagarmr.Models
 {
-    public partial class SubsonicStream : NotificationObject
+    public partial class PlayStream : NotificationObject
     {
         enum StreamingPlaybackState
         {
@@ -22,12 +22,11 @@ namespace Mánagarmr.Models
             Paused
         }
 
-        public SubsonicStream()
+        public PlayStream()
         {
-            //volumeSlider1.VolumeChanged += OnVolumeSliderChanged;
-            timer1 = new System.Timers.Timer();
-            timer1.Interval = 100;
-            timer1.Elapsed += (sender, e) => timer1_Tick(sender, e);
+            timer = new System.Timers.Timer();
+            timer.Interval = 250;
+            timer.Elapsed += (sender, e) => timer_Tick(sender, e);
         }
 
         public void SetUrl(string url)
@@ -52,22 +51,8 @@ namespace Mánagarmr.Models
         private volatile bool fullyDownloaded;
         private HttpWebRequest webRequest;
         private VolumeWaveProvider16 volumeProvider;
-        private System.Timers.Timer timer1;
+        private System.Timers.Timer timer;
         private float volume = 1;
-
-        delegate void ShowErrorDelegate(string message);
-
-        private void ShowError(string message)
-        {
-            //if (InvokeRequired)
-            //{
-            //    BeginInvoke(new ShowErrorDelegate(ShowError), message);
-            //}
-            //else
-            //{
-            //    MessageBox.Show(message);
-            //}
-        }
 
         private void StreamMp3(object state)
         {
@@ -91,15 +76,11 @@ namespace Mánagarmr.Models
             {
                 resp = (HttpWebResponse)webRequest.GetResponse();
             }
-            catch (WebException e)
+            catch (WebException)
             {
-                if (e.Status != WebExceptionStatus.RequestCanceled)
-                {
-                    ShowError(e.Message);
-                }
                 return;
             }
-            var buffer = new byte[16384 * 4]; // needs to be big enough to hold a decompressed frame
+            var buffer = new byte[16384 * 15]; // needs to be big enough to hold a decompressed frame
 
             IMp3FrameDecompressor decompressor = null;
             try
@@ -114,7 +95,7 @@ namespace Mánagarmr.Models
                             Debug.WriteLine("Buffer getting full, taking a break");
                             Thread.Sleep(500);
                         }
-                        else
+                        else if (!fullyDownloaded)
                         {
                             Mp3Frame frame;
                             try
@@ -123,12 +104,14 @@ namespace Mánagarmr.Models
                             }
                             catch (EndOfStreamException)
                             {
+                                Debug.WriteLine("fullyDownloaded!");
                                 fullyDownloaded = true;
                                 // reached the end of the MP3 file / stream
                                 break;
                             }
                             catch (WebException)
                             {
+                                Debug.WriteLine("WebException!");
                                 // probably we have aborted download from the GUI thread
                                 break;
                             }
@@ -139,8 +122,7 @@ namespace Mánagarmr.Models
                                 // until we have a frame
                                 decompressor = CreateFrameDecompressor(frame);
                                 bufferedWaveProvider = new BufferedWaveProvider(decompressor.OutputFormat);
-                                bufferedWaveProvider.BufferDuration = TimeSpan.FromSeconds(5); // allow us to get well ahead of ourselves
-                                //this.bufferedWaveProvider.BufferedDuration = 250;
+                                bufferedWaveProvider.BufferDuration = TimeSpan.FromSeconds(1 * 15); // allow us to get well ahead of ourselves
                             }
                             try
                             {
@@ -150,6 +132,9 @@ namespace Mánagarmr.Models
                             }
                             catch (ArgumentNullException)
                             {
+                                Debug.WriteLine("fullyDownloaded!");
+                                fullyDownloaded = true;
+                                // reached the end of the MP3 file / stream
                                 break;
                             }
                         }
@@ -167,7 +152,7 @@ namespace Mánagarmr.Models
                 {
                     decompressor.Dispose();
                 }
-                StopPlayback();
+                //StopPlayback();
             }
         }
 
@@ -195,7 +180,7 @@ namespace Mánagarmr.Models
                 playbackState = StreamingPlaybackState.Buffering;
                 bufferedWaveProvider = null;
                 ThreadPool.QueueUserWorkItem(StreamMp3, url);
-                timer1.Enabled = true;
+                timer.Enabled = true;
             }
             else if (playbackState == StreamingPlaybackState.Paused)
             {
@@ -219,24 +204,17 @@ namespace Mánagarmr.Models
                     waveOut.Dispose();
                     waveOut = null;
                 }
-                timer1.Enabled = false;
+                timer.Enabled = false;
                 // n.b. streaming thread may not yet have exited
                 Thread.Sleep(500);
-                ShowBufferState(0);
 
                 RaisePropertyChanged("Stopped");
             }
         }
 
-        private void ShowBufferState(double totalSeconds)
+        private void timer_Tick(object sender, EventArgs e)
         {
-            //labelBuffered.Text = String.Format("{0:0.0}s", totalSeconds);
-            //progressBarBuffer.Value = (int)(totalSeconds * 1000);
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            timer1.Enabled = false;
+            timer.Enabled = false;
             if (playbackState != StreamingPlaybackState.Stopped)
             {
                 if (waveOut == null && bufferedWaveProvider != null)
@@ -245,25 +223,33 @@ namespace Mánagarmr.Models
                     {
                         Debug.WriteLine("Creating WaveOut Device");
                         waveOut = CreateWaveOut();
-                        waveOut.PlaybackStopped += OnPlaybackStopped;
                         volumeProvider = new VolumeWaveProvider16(bufferedWaveProvider);
                         volumeProvider.Volume = volume;
-                        waveOut.Init(volumeProvider);
+                        try
+                        {
+                            waveOut.Init(volumeProvider);
+                        }
+                        catch (NotSupportedException)
+                        {
+                            StopPlayback();
+                            RaisePropertyChanged("WASAPI_NonSupport");
+                        }
                         //progressBarBuffer.Maximum = (int)bufferedWaveProvider.BufferDuration.TotalMilliseconds;
                     }
                 }
                 else if (waveOut != null && bufferedWaveProvider != null)
                 {
                     var bufferedSeconds = bufferedWaveProvider.BufferedDuration.TotalSeconds;
-                    ShowBufferState(bufferedSeconds);
                     // make it stutter less if we buffer up a decent amount before playing
                     if (bufferedSeconds < 0.5 && playbackState == StreamingPlaybackState.Playing && !fullyDownloaded)
                     {
                         Pause();
+                        RaisePropertyChanged("Paused");
                     }
                     else if (bufferedSeconds > 4 && playbackState == StreamingPlaybackState.Buffering)
                     {
                         Play();
+                        RaisePropertyChanged("Playing");
                     }
                     else if (fullyDownloaded && bufferedSeconds == 0)
                     {
@@ -273,7 +259,7 @@ namespace Mánagarmr.Models
                 }
 
             }
-            timer1.Enabled = true;
+            timer.Enabled = true;
         }
 
         private void Play()
@@ -294,7 +280,22 @@ namespace Mánagarmr.Models
 
         private IWavePlayer CreateWaveOut()
         {
-            return new WaveOut();
+            switch (Settings.AudioMethod)
+            {
+                case 1:
+                    Debug.WriteLine("Select DirectSound");
+                    return new NAudio.Wave.DirectSoundOut(Settings.AudioBuffer);
+                case 2:
+                    Debug.WriteLine("Select WASAPI : Shared");
+                    return new NAudio.Wave.WasapiOut(NAudio.CoreAudioApi.AudioClientShareMode.Shared, true, Settings.AudioBuffer);
+                case 3:
+                    Debug.WriteLine("Select WASAPI : Exclusive");
+                    return new NAudio.Wave.WasapiOut(NAudio.CoreAudioApi.AudioClientShareMode.Exclusive, true, Settings.AudioBuffer);
+                default:
+                    Debug.WriteLine("Select WaveOut");
+                    return new WaveOut();
+            }
+            
         }
 
         private void MP3StreamingPanel_Disposing(object sender, EventArgs e)
@@ -315,14 +316,6 @@ namespace Mánagarmr.Models
         private void buttonStop_Click(object sender, EventArgs e)
         {
             StopPlayback();
-        }
-
-        private void OnPlaybackStopped(object sender, StoppedEventArgs e)
-        {
-            if (e.Exception != null)
-            {
-
-            }
         }
     }
 }

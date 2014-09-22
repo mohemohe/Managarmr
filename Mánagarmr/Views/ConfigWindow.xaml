@@ -101,6 +101,15 @@
                                     <ComboBoxItem>
                                         WaveOut
                                     </ComboBoxItem>
+                                    <ComboBoxItem>
+                                        DirectSound
+                                    </ComboBoxItem>
+                                    <ComboBoxItem>
+                                        WASAPI : Shared (experimental)
+                                    </ComboBoxItem>
+                                    <ComboBoxItem>
+                                        WASAPI : Exclusive (experimental)
+                                    </ComboBoxItem>
                                 </ComboBox>
                             </Grid>
                         </GroupBox>

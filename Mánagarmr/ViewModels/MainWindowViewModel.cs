@@ -92,7 +92,7 @@ namespace Mánagarmr.ViewModels
             this.CompositeDisposable.Add(listener);
 
             timer = new System.Timers.Timer();
-            timer.Interval = 50;
+            timer.Interval = 100;
             timer.Elapsed += (sender, e) => Timer_Tick();
             timer.Start();
 
@@ -101,7 +101,11 @@ namespace Mánagarmr.ViewModels
             Volume = Settings.Volume;
             VolumeString = Convert.ToInt32(Volume * 100).ToString() + " %";
 
-            await Task.Run(() => APIhelper.BuildBaseUrl());
+            await Task.Run(() => 
+            { 
+                APIhelper.BuildBaseUrl();
+                model.GetIndex();
+            });
         }
 
         public new void Dispose()
@@ -118,28 +122,45 @@ namespace Mánagarmr.ViewModels
         private void UpdateHandler(object sender, PropertyChangedEventArgs e)
         {
             var worker = sender as Model;
-            if (e.PropertyName == "Playing")
+            switch (e.PropertyName)
             {
-                sw.Start();
-                currentState = State.Playing;
-            }
-            if (e.PropertyName == "Stopped")
-            {
-                sw.Reset();
-                currentState = State.Stopped;
-                SetPlayIcon();
-            }
-            if (e.PropertyName == "ReadyToCoverArt")
-            {
-                CoverArt = _CoverArt;
-            }
-            if (e.PropertyName == "GetSongInfo")
-            {
-                SetSongInfo();
-            }
-            if (e.PropertyName == "GetCoverArt")
-            {
-                SetCoverArt();
+                case "Playing":
+                    sw.Start();
+                    currentState = State.Playing;
+                    SetPauseIcon();
+                    break;
+
+                case "Paused":
+                    sw.Stop();
+                    currentState = State.Paused;
+                    SetPlayIcon();
+                    break;
+
+                case "Stopped":
+                    sw.Reset();
+                    currentState = State.Stopped;
+                    SetPlayIcon();
+                    break;
+
+                case "GetSongInfo":
+                    SetSongInfo();
+                    break;
+
+                case "GetCoverArt":
+                    SetCoverArt();
+                    break;
+
+                case "GetIndex":
+                    SetMusicFolder();
+                    break;
+
+                case "GetLibraryList":
+                    SetLibraryList();
+                    break;
+
+                case "WASAPI_NonSupport":
+                    Messenger.Raise(new InformationMessage("デバイスが対応していません", "WASAPI error", "Information"));
+                    break;
             }
         }
 
@@ -185,6 +206,182 @@ namespace Mánagarmr.ViewModels
         public void DeactivatedWindow()
         {
             WindowColor = "#FF808080";
+        }
+        #endregion
+
+        #region MusicFolderList変更通知プロパティ
+        private List<string> _MusicFolderList;
+
+        public List<string> MusicFolderList
+        {
+            get
+            { return _MusicFolderList; }
+            set
+            {
+                if (_MusicFolderList == value)
+                    return;
+                _MusicFolderList = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
+        #region MusicFolderListId変更通知プロパティ
+        private string _MusicFolderListId;
+
+        public string MusicFolderListId
+        {
+            get
+            { return _MusicFolderListId; }
+            set
+            { 
+                if (_MusicFolderListId == value)
+                    return;
+                _MusicFolderListId = value;
+                model.GetLibraryList(value);
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
+        #region MusicFolderListIndex変更通知プロパティ
+        private int _MusicFolderListIndex = -1;
+
+        public int MusicFolderListIndex
+        {
+            get
+            { return _MusicFolderListIndex; }
+            set
+            {
+                _MusicFolderListIndex = value;
+                var listId = GetMusicFolderListId(value);
+                if (listId == null)
+                    return;
+                MusicFolderListId = listId;
+                RaisePropertyChanged();
+            }
+        }
+
+        private string GetMusicFolderListId(int index)
+        {
+            if (index > 0)
+            {
+                var flip = new List<FolderListInfoPack>(APIhelper.flipd.Values);
+                return flip[index].id;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+        #endregion
+
+        #region LibraryList変更通知プロパティ
+        private List<string> _LibraryList;
+
+        public List<string> LibraryList
+        {
+            get
+            { return _LibraryList; }
+            set
+            { 
+                if (_LibraryList == value)
+                    return;
+                _LibraryList = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
+        #region LibraryListId変更通知プロパティ
+        private string _LibraryListId;
+
+        public string LibraryListId
+        {
+            get
+            { return _LibraryListId; }
+            set
+            { 
+                if (_LibraryListId == value)
+                    return;
+                _LibraryListId = value;
+
+                var listId = LibraryListIndex;
+                if (IsDir(listId))
+                {
+                    model.GetLibraryList(value);
+                }
+                else
+                {
+                    PlayId = value;
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool IsDir(int index)
+        {
+            if (index > 0)
+            {
+                var flip = new List<LibraryListInfoPack>(APIhelper.llipd.Values);
+                return flip[index].isDir;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+        #endregion
+
+        #region LibraryListIndex変更通知プロパティ
+        private int _LibraryListIndex = -1;
+
+        public int LibraryListIndex
+        {
+            get
+            { return _LibraryListIndex; }
+            set
+            { 
+                _LibraryListIndex = value;
+                var listId = GetLibraryListId(value);
+                if (listId == null)
+                    return;
+                LibraryListId = listId;
+                RaisePropertyChanged();
+            }
+        }
+
+        private string GetLibraryListId(int index)
+        {
+            if (index > 0)
+            {
+                var flip = new List<LibraryListInfoPack>(APIhelper.llipd.Values);
+                return flip[index].id;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+        #endregion
+
+        #region PlayId変更通知プロパティ
+        private string _PlayId;
+
+        public string PlayId
+        {
+            get
+            { return _PlayId; }
+            set
+            { 
+                if (_PlayId == value)
+                    return;
+                _PlayId = value;
+                RaisePropertyChanged();
+            }
         }
         #endregion
 
@@ -294,7 +491,7 @@ namespace Mánagarmr.ViewModels
         #endregion
 
         #region ProgressBarMaxValue変更通知プロパティ
-        private ulong _ProgressBarMaxValue = 100;
+        private ulong _ProgressBarMaxValue = 12 * 60 * 1000;
 
         public ulong ProgressBarMaxValue
         {
@@ -329,6 +526,10 @@ namespace Mánagarmr.ViewModels
         private void ChangeProgressBarCurrentValue(double value)
         {
             ProgressBarCurrentValue = value;
+            if (value > ProgressBarMaxValue)
+            {
+                Stop();
+            }
         }
 
         #endregion
@@ -341,14 +542,19 @@ namespace Mánagarmr.ViewModels
             get
             { return _Volume; }
             set
-            { 
+            {
                 if (_Volume == value)
                     return;
                 _Volume = value;
-                model.ChangeVolume(value);
+                model.ChangeVolume(AudioStep(value));
                 VolumeString = Convert.ToInt32(value * 100).ToString() + " %";
                 RaisePropertyChanged();
             }
+        }
+
+        private float AudioStep(float baseVolume)
+        {
+            return (float)(1 - Math.Cos(baseVolume * Math.PI / 2));
         }
         #endregion
 
@@ -493,18 +699,21 @@ namespace Mánagarmr.ViewModels
         public async void Play()
         {
             //TODO: AudioID
-            string id = "10220";
+            if (PlayId == null)
+            {
+                return;
+            }
 
-            model.Play(id, Volume); //DEBUG
+            model.Play(PlayId, AudioStep(Volume)); //DEBUG
             SetPauseIcon();
 
             if (currentState != State.Paused)
             {
-                model.GetSongInfo(id);
+                model.GetSongInfo(PlayId);
                 await Task.Run(() => 
                 {
                     Thread.Sleep(1000);
-                    model.GetCoverArt(id);
+                    model.GetCoverArt(PlayId);
                 });
             }
             currentState = State.Playing;
@@ -579,6 +788,30 @@ namespace Mánagarmr.ViewModels
             var coverArt = ConvertBitmap(APIhelper.ms);
             coverArt.Freeze();
             CoverArt = coverArt;
+        }
+
+        public void SetMusicFolder()
+        {
+            MusicFolderList = new List<string>();
+
+            var flip = new List<FolderListInfoPack>(APIhelper.flipd.Values);
+
+            for (int i = 0; i < flip.Count; i++)
+            {
+                MusicFolderList.Add(flip[i].name);
+            }
+        }
+
+        public void SetLibraryList()
+        {
+            LibraryList = new List<string>();
+
+            var llipd = new List<LibraryListInfoPack>(APIhelper.llipd.Values);
+
+            for (int i = 0; i < llipd.Count; i++)
+            {
+                LibraryList.Add(llipd[i].title);
+            }
         }
 
         private BitmapSource ConvertBitmap(MemoryStream ms)

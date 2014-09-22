@@ -20,20 +20,20 @@ namespace Mánagarmr.Models
          * NotificationObjectはプロパティ変更通知の仕組みを実装したオブジェクトです。
          */
 
-        SubsonicStream ss;
+        Stream s;
         PropertyChangedEventListener listener;
 
         public Model()
         {
-            ss = new SubsonicStream();
+            s = new Stream();
 
-            listener = new PropertyChangedEventListener(ss);
+            listener = new PropertyChangedEventListener(s);
             listener.RegisterHandler((sender, e) => UpdateHandlerProxy(sender, e));
         }
 
         public void Dispose()
         {
-            ss = null;
+            s.Dispose();
             listener.Dispose();
         }
 
@@ -44,29 +44,23 @@ namespace Mánagarmr.Models
         }
 
         public void Play(string id, float volume)
-        {
-            byte[] data = Encoding.UTF8.GetBytes("midas6422");
-            string hexText = BitConverter.ToString(data);
-            string pass = hexText.Replace("-", "");
-            var url = "http://172.16.0.2:4040/rest/stream.view?u=admin&p=enc:" + pass + "&v=1.1.0&c=Managarmr&id=" + id;
-            ss.SetUrl(url);
-            ss.ChangeVolume(volume);
-            ss.PlayButton();
+        {            
+            s.Play(id, volume);
         }
 
         public void Pause()
         {
-            ss.PausePlayback();
+            s.Pause();
         }
 
         public void Stop()
         {
-            ss.StopPlayback();
+            s.Stop();
         }
 
         public void ChangeVolume(float volume)
         {
-            ss.ChangeVolume(volume);
+            s.ChangeVolume(volume);
         }
 
         public async void GetSongInfo(string id)
@@ -86,6 +80,26 @@ namespace Mánagarmr.Models
                 var gca = new GetCoverArt();
                 APIhelper.ms = gca.GetCoverArtImage(id);
                 RaisePropertyChanged("GetCoverArt");
+            });
+        }
+
+        public async void GetIndex()
+        {
+            await Task.Run(() =>
+            {
+                var gi = new GetIndexes();
+                APIhelper.flipd = gi.GetIndex();
+                RaisePropertyChanged("GetIndex");
+            });
+        }
+
+        public async void GetLibraryList(string id)
+        {
+            await Task.Run(() =>
+            {
+                var gmd = new GetMusicDirectory();
+                APIhelper.llipd = gmd.GetMusicDir(id);
+                RaisePropertyChanged("GetLibraryList");
             });
         }
 

@@ -28,32 +28,19 @@ namespace Mánagarmr.Views
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private string activeColor = "#FF41B1E1";
-        private string nonActiveColor = "#FF808080";
-
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void MetroWindow_Activated(object sender, EventArgs e)
+        private void UpperListBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var bc = new BrushConverter();
-            BottomBar.Background = (Brush)bc.ConvertFrom(activeColor);
-            CoverArea.Background = (Brush)bc.ConvertFrom(activeColor);
-            CoverArea.BorderBrush = (Brush)bc.ConvertFrom(activeColor);
-            SearchButtonRectangle.Fill = (Brush)bc.ConvertFrom(activeColor);
-            ProgressSlider.Foreground = (Brush)bc.ConvertFrom(activeColor);
+            BottomListBox.SelectedIndex = -1;
         }
 
-        private void MetroWindow_Deactivated(object sender, EventArgs e)
+        private void BottomListBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var bc = new BrushConverter();
-            BottomBar.Background = (Brush)bc.ConvertFrom(nonActiveColor);
-            CoverArea.Background = (Brush)bc.ConvertFrom(nonActiveColor);
-            CoverArea.BorderBrush = (Brush)bc.ConvertFrom(nonActiveColor);
-            SearchButtonRectangle.Fill = (Brush)bc.ConvertFrom(nonActiveColor);
-            ProgressSlider.Foreground = (Brush)bc.ConvertFrom(nonActiveColor);
+            UpperListBox.SelectedIndex = -1;
         }
     }
 }

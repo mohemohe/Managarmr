@@ -39,27 +39,27 @@ namespace Mánagarmr.Models
 
             if (tweetBody.Contains("%title%"))
             {
-                tweetBody.Replace("%title%", title);
+                tweetBody = tweetBody.Replace("%title%", title);
             }
             else
             {
-                tweetBody.Replace("%title%", "");
+                tweetBody = tweetBody.Replace("%title%", "");
             }
             if (tweetBody.Contains("%artist%"))
             {
-                tweetBody.Replace("%artist%", artist);
+                tweetBody = tweetBody.Replace("%artist%", artist);
             }
             else
             {
-                tweetBody.Replace("%artist%", "");
+                tweetBody = tweetBody.Replace("%artist%", "");
             }
             if (tweetBody.Contains("%album%"))
             {
-                tweetBody.Replace("%album%", album);
+                tweetBody = tweetBody.Replace("%album%", album);
             }
             else
             {
-                tweetBody.Replace("%album%", "");
+                tweetBody = tweetBody.Replace("%album%", "");
             }
             
             return tweetBody;

@@ -635,6 +635,8 @@ namespace Mánagarmr.ViewModels
                 twitter.GetAccessToken(TwitterAuthPIN, out twitterAccessToken, out twitterAccessTokenSecret);
                 TwitterAccessToken = twitterAccessToken;
                 TwitterAccessTokenSecret = twitterAccessTokenSecret;
+
+                TwitterAuthProgress = TwitterAuthProgressMessage[2];
             }
         }
         #endregion

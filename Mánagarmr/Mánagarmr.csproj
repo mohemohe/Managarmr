@@ -99,12 +99,15 @@
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\SubsonicAPI\APIhelper.cs" />
     <Compile Include="Models\SubsonicAPI\GetCoverArt.cs" />
-    <Compile Include="Models\SubsonicAPI\GetMusicFolders.cs" />
+    <Compile Include="Models\SubsonicAPI\GetIndexes.cs" />
+    <Compile Include="Models\SubsonicAPI\GetMusicDirectory.cs" />
     <Compile Include="Models\SubsonicAPI\GetSong.cs" />
+    <Compile Include="Models\SubsonicAPI\InfoPack\FolderListInfoPack.cs" />
+    <Compile Include="Models\SubsonicAPI\InfoPack\LibraryListInfoPack.cs" />
     <Compile Include="Models\SubsonicAPI\InfoPack\StreamInfoPack.cs" />
     <Compile Include="Models\SubsonicAPI\Ping.cs" />
     <Compile Include="Models\SubsonicAPI\Stream.cs" />
-    <Compile Include="Models\SubsonicStream.cs" />
+    <Compile Include="Models\PlayStream.cs" />
     <Compile Include="Models\Twitter.cs" />
     <Compile Include="ViewModels\ConfigWindowViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
