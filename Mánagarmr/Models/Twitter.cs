@@ -15,18 +15,14 @@ namespace Mánagarmr.Models
 
         public Twitter()
         {
-            if (String.IsNullOrEmpty(Settings.AccessToken) == false && String.IsNullOrEmpty(Settings.AccessTokenSecret) == false)
-            {
-                lorelei.Initialize(consumerKey, consumerSecret, Settings.AccessToken, Settings.AccessTokenSecret);
-            }
+            lorelei.Initialize(consumerKey, consumerSecret);
         }
-
-        public void ReInitialize()
+        public Twitter(string accessToken, string accessTokenSecret)
         {
-            lorelei.Initialize(Settings.AccessToken, Settings.AccessTokenSecret);
+            lorelei.Initialize(consumerKey, consumerSecret, accessToken, accessTokenSecret);
         }
 
-        public void ReInitialize(string accessToken, string accessTokenSecret)
+        public void Initialize(string accessToken, string accessTokenSecret)
         {
             lorelei.Initialize(consumerKey, consumerSecret, accessToken, accessTokenSecret);
         }
@@ -39,9 +35,46 @@ namespace Mánagarmr.Models
 
         private string GenerateTweetBody(string title, string artist, string album)
         {
-            return Settings.TweetTextFormat.Replace("%title%", title)
-                                           .Replace("%artist%", artist)
-                                           .Replace("%album%", album);
+            var tweetBody = Settings.TweetTextFormat;
+
+            if (tweetBody.Contains("%title%"))
+            {
+                tweetBody.Replace("%title%", title);
+            }
+            else
+            {
+                tweetBody.Replace("%title%", "");
+            }
+            if (tweetBody.Contains("%artist%"))
+            {
+                tweetBody.Replace("%artist%", artist);
+            }
+            else
+            {
+                tweetBody.Replace("%artist%", "");
+            }
+            if (tweetBody.Contains("%album%"))
+            {
+                tweetBody.Replace("%album%", album);
+            }
+            else
+            {
+                tweetBody.Replace("%album%", "");
+            }
+            
+            return tweetBody;
+        }
+
+        public string GetOAuthUrl()
+        {
+            string url = null;
+            lorelei.GetOAuthUrl(out url);
+            return url;
+        }
+
+        public void GetAccessToken(string pin, out string accessToken, out string accessTokenSecret)
+        {
+            lorelei.GetAccessToken(pin, out accessToken, out accessTokenSecret);
         }
     }
 }

@@ -304,7 +304,10 @@ namespace Mánagarmr.Models
             _Settings._AudioBuffer = xmls.AudioBuffer;
             _Settings._Volume = xmls.Volume;
 
-            _Settings._TweetTextFormat = xmls.TweetTextFormat;
+            if (xmls.TweetTextFormat != null)
+            {
+                _Settings._TweetTextFormat = xmls.TweetTextFormat;
+            }
             _Settings._AccessToken = xmls.AccessToken;
             _Settings._AccessTokenSecret = xmls.AccessTokenSecret;
 

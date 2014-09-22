@@ -15,6 +15,7 @@ using Mánagarmr.Models;
 using System.Reflection;
 using Mánagarmr.Models.SubsonicAPI;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Mánagarmr.ViewModels
 {
@@ -338,6 +339,57 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
+        #region TwitterAccessToken変更通知プロパティ
+        private string _TwitterAccessToken;
+
+        public string TwitterAccessToken
+        {
+            get
+            { return _TwitterAccessToken; }
+            set
+            { 
+                if (_TwitterAccessToken == value)
+                    return;
+                _TwitterAccessToken = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
+        #region TwitterAccessTokenSecret変更通知プロパティ
+        private string _TwitterAccessTokenSecret;
+
+        public string TwitterAccessTokenSecret
+        {
+            get
+            { return _TwitterAccessTokenSecret; }
+            set
+            { 
+                if (_TwitterAccessTokenSecret == value)
+                    return;
+                _TwitterAccessTokenSecret = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
+        #region TwitterIsAuthed変更通知プロパティ
+        private bool _TwitterIsAuthed = false;
+
+        public bool TwitterIsAuthed
+        {
+            get
+            { return _TwitterIsAuthed; }
+            set
+            { 
+                if (_TwitterIsAuthed == value)
+                    return;
+                _TwitterIsAuthed = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
         #region TwitterAuthProgress変更通知プロパティ
         private string _TwitterAuthProgress;
 
@@ -353,6 +405,10 @@ namespace Mánagarmr.ViewModels
                 RaisePropertyChanged();
             }
         }
+
+        private string[] TwitterAuthProgressMessage = { "認証されていません。 ①のボタンをクリックして認証してください。",
+                                                        "Mánagarmr へのアクセスを許可して、PINを入力してください。",
+                                                        "認証されています。"};
         #endregion
 
         #region Language変更通知プロパティ
@@ -389,6 +445,8 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
+        Twitter twitter = new Twitter();
+
         public void Initialize()
         {
             Version = "Version " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -399,6 +457,16 @@ namespace Mánagarmr.ViewModels
             //};
 
             ReadSettings();
+
+            if (String.IsNullOrEmpty(TwitterAccessToken) == false && String.IsNullOrEmpty(TwitterAccessTokenSecret) == false)
+            {
+                TwitterIsAuthed = true;
+                TwitterAuthProgress = TwitterAuthProgressMessage[2];
+            }
+            else
+            {
+                TwitterAuthProgress = TwitterAuthProgressMessage[0];
+            }
 
             BufferSliderValueString = BufferSliderValue + "ms";
         }
@@ -415,6 +483,8 @@ namespace Mánagarmr.ViewModels
             SubsonicID = Settings.UserName;
             SubsonicPassword = Settings.Password;
 
+            TwitterAccessToken = Settings.AccessToken;
+            TwitterAccessTokenSecret = Settings.AccessTokenSecret;
             TweetTemplate = Settings.TweetTextFormat;
 
             AudioMethodId = Settings.AudioMethod;
@@ -435,6 +505,8 @@ namespace Mánagarmr.ViewModels
             Settings.UserName = SubsonicID;
             Settings.Password = SubsonicPassword;
 
+            Settings.AccessToken = TwitterAccessToken;
+            Settings.AccessTokenSecret = TwitterAccessTokenSecret;
             Settings.TweetTextFormat = TweetTemplate;
 
             Settings.AudioMethod = AudioMethodId;
@@ -510,6 +582,60 @@ namespace Mánagarmr.ViewModels
 
             SubsonicConnectionTest = "Primary server: " + PrimaryServerStatus + "\n" +
                                      "Secondary server: " + SecondaryServerStatus;
+        }
+        #endregion
+
+        #region OpenAuthUrlCommand
+        private ViewModelCommand _OpenAuthUrlCommand;
+
+        public ViewModelCommand OpenAuthUrlCommand
+        {
+            get
+            {
+                if (_OpenAuthUrlCommand == null)
+                {
+                    _OpenAuthUrlCommand = new ViewModelCommand(OpenAuthUrl);
+                }
+                return _OpenAuthUrlCommand;
+            }
+        }
+
+        public void OpenAuthUrl()
+        {
+            var url = twitter.GetOAuthUrl();
+            if (String.IsNullOrEmpty(url) == false)
+            {
+                Process.Start(url);
+                TwitterAuthProgress = TwitterAuthProgressMessage[1];
+            }
+        }
+        #endregion
+
+        #region GetAccessTokenCommand
+        private ViewModelCommand _GetAccessTokenCommand;
+
+        public ViewModelCommand GetAccessTokenCommand
+        {
+            get
+            {
+                if (_GetAccessTokenCommand == null)
+                {
+                    _GetAccessTokenCommand = new ViewModelCommand(GetAccessToken);
+                }
+                return _GetAccessTokenCommand;
+            }
+        }
+
+        public void GetAccessToken()
+        {
+            if (String.IsNullOrEmpty(TwitterAuthPIN) == false)
+            {
+                string twitterAccessToken;
+                string twitterAccessTokenSecret;
+                twitter.GetAccessToken(TwitterAuthPIN, out twitterAccessToken, out twitterAccessTokenSecret);
+                TwitterAccessToken = twitterAccessToken;
+                TwitterAccessTokenSecret = twitterAccessTokenSecret;
+            }
         }
         #endregion
 

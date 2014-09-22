@@ -131,7 +131,6 @@
                             <Grid>
                                 <TextBox Height="23" Margin="0,10,0,0" TextWrapping="Wrap" Text="{Binding TweetTemplate}" VerticalAlignment="Top" Width="508"/>
                                 <Label Content="%title%: 曲タイトル　　%artist%: アーティスト名　　%album%: アルバムタイトル"  VerticalAlignment="Top" Margin="0,36,22,0"/>
-                                <Label Content="※ 投稿前のダイアログで一時的に編集できます"  VerticalAlignment="Top" Margin="4,71,18,0" Padding="0"/>
                             </Grid>
                         </GroupBox>
                         <GroupBox Header="アカウント" Margin="0,135,10,0" VerticalAlignment="Top">

@@ -89,11 +89,17 @@ namespace Mánagarmr.Models
             });
         }
 
-        public void Tweet(string title, string artist, string album)
+        public async void Tweet(string title, string artist, string album)
         {
-            var twitter = new Twitter();
-            twitter.ReInitialize("","");
-            twitter.Tweet(title, artist, album);
+            await Task.Run(() =>
+            {
+                if (String.IsNullOrEmpty(Settings.AccessToken) == false && String.IsNullOrEmpty(Settings.AccessTokenSecret) == false)
+                {
+                    var twitter = new Twitter();
+                    twitter.Initialize(Settings.AccessToken, Settings.AccessTokenSecret);
+                    twitter.Tweet(title, artist, album);
+                }
+            });
         }
     }
 }

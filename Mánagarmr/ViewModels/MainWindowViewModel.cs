@@ -74,6 +74,7 @@ namespace Mánagarmr.ViewModels
         Model model;
         Stopwatch sw;
         System.Timers.Timer timer;
+        Twitter twitter;
         State currentState;
 
         public async void Initialize()
@@ -84,6 +85,7 @@ namespace Mánagarmr.ViewModels
             }
             model = new Model(); //DEBUG
             sw = new Stopwatch();
+            twitter = new Twitter();
 
             var listener = new PropertyChangedEventListener(model);
             listener.RegisterHandler((sender, e) => UpdateHandler(sender, e));
@@ -187,7 +189,7 @@ namespace Mánagarmr.ViewModels
         #endregion
 
         #region Title変更通知プロパティ
-        private string _Title;
+        private string _Title = "";
 
         public string Title
         {
@@ -204,7 +206,7 @@ namespace Mánagarmr.ViewModels
         #endregion
 
         #region Artist変更通知プロパティ
-        private string _Artist;
+        private string _Artist = "";
 
         public string Artist
         {
@@ -221,7 +223,7 @@ namespace Mánagarmr.ViewModels
         #endregion
 
         #region AlbumTitle変更通知プロパティ
-        private string _AlbumTitle;
+        private string _AlbumTitle = "";
 
         public string AlbumTitle
         {
