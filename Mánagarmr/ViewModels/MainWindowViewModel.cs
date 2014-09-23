@@ -264,7 +264,7 @@ namespace Mánagarmr.ViewModels
 
         private string GetMusicFolderListId(int index)
         {
-            if (index > 0)
+            if (index >= 0)
             {
                 var flip = new List<FolderListInfoPack>(APIhelper.flipd.Values);
                 return flip[index].id;
@@ -322,7 +322,7 @@ namespace Mánagarmr.ViewModels
 
         private bool IsDir(int index)
         {
-            if (index > 0)
+            if (index >= 0)
             {
                 var flip = new List<LibraryListInfoPack>(APIhelper.llipd.Values);
                 return flip[index].isDir;
@@ -355,7 +355,7 @@ namespace Mánagarmr.ViewModels
 
         private string GetLibraryListId(int index)
         {
-            if (index > 0)
+            if (index >= 0)
             {
                 var flip = new List<LibraryListInfoPack>(APIhelper.llipd.Values);
                 return flip[index].id;
