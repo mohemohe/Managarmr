@@ -240,6 +240,23 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
+        #region SearchQuery変更通知プロパティ
+        private string _SearchQuery;
+
+        public string SearchQuery
+        {
+            get
+            { return _SearchQuery; }
+            set
+            { 
+                if (_SearchQuery == value)
+                    return;
+                _SearchQuery = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
         #region MusicFolderList変更通知プロパティ
         private List<string> _MusicFolderList;
 
@@ -707,6 +724,27 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
+        #region SearchCommand
+        private ViewModelCommand _SearchCommand;
+
+        public ViewModelCommand SearchCommand
+        {
+            get
+            {
+                if (_SearchCommand == null)
+                {
+                    _SearchCommand = new ViewModelCommand(Search);
+                }
+                return _SearchCommand;
+            }
+        }
+
+        public void Search()
+        {
+            model.Search(SearchQuery);
+        }
+        #endregion
+
         #region PlayPauseCommand
         private ViewModelCommand _PlayPauseCommand;
 
@@ -848,7 +886,14 @@ namespace Mánagarmr.ViewModels
 
             for (int i = 0; i < llipd.Count; i++)
             {
-                LibraryList.Add(llipd[i].title);
+                if (!String.IsNullOrEmpty(llipd[i].track))
+                {
+                    LibraryList.Add(llipd[i].track + ". " + llipd[i].title);
+                }
+                else
+                {
+                    LibraryList.Add(llipd[i].title);
+                }
             }
         }
 

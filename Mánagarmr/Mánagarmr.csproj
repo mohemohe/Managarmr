@@ -107,6 +107,7 @@
     <Compile Include="Models\SubsonicAPI\InfoPack\LibraryListInfoPack.cs" />
     <Compile Include="Models\SubsonicAPI\InfoPack\StreamInfoPack.cs" />
     <Compile Include="Models\SubsonicAPI\Ping.cs" />
+    <Compile Include="Models\SubsonicAPI\Search2.cs" />
     <Compile Include="Models\SubsonicAPI\Stream.cs" />
     <Compile Include="Models\PlayStream.cs" />
     <Compile Include="Models\Twitter.cs" />

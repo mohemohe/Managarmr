@@ -123,6 +123,16 @@ namespace Mánagarmr.Models
             });
         }
 
+        public async void Search(string query)
+        {
+            await Task.Run(() =>
+            {
+                var s2 = new Search2();
+                APIhelper.llipd = s2.Search(query);
+                RaisePropertyChanged("GetLibraryList");
+            });
+        }
+
         public async void Tweet(string title, string artist, string album)
         {
             await Task.Run(() =>
