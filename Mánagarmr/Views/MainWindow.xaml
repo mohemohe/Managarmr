@@ -87,13 +87,25 @@
                     <ListBoxItem>Recently added</ListBoxItem>
                 </ListBox>
                 <Separator Margin="10,2"/>
-                <ListBox Name="BottomListBox" ItemsSource="{Binding MusicFolderList}" SelectedIndex="{Binding MusicFolderListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="BottomListBox_PreviewMouseDown"/>
+                <ListBox Name="BottomListBox" ItemsSource="{Binding MusicFolderList}" SelectedIndex="{Binding MusicFolderListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="BottomListBox_PreviewMouseDown">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="ChangeLibraryList"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListBox>
             </StackPanel>
             <TabControl Margin="295,10,10,0">
                 <TabItem Header="Library">
                     <ScrollViewer>
                         <Grid Background="#FFFFFFFF">
-                            <ListBox ItemsSource="{Binding LibraryList}" SelectedIndex="{Binding LibraryListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top"/>
+                            <ListBox ItemsSource="{Binding LibraryList}" SelectedIndex="{Binding LibraryListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                                        <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="MoveLibraryList"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </ListBox>
                         </Grid>
                     </ScrollViewer>
                 </TabItem>

@@ -181,6 +181,25 @@ namespace Mánagarmr.ViewModels
             Stopped
         }
 
+        public void ChangeLibraryList()
+        {
+            model.GetLibraryList(GetMusicFolderListId(MusicFolderListIndex));
+            LibraryListIndex = -1;
+        }
+
+        public void MoveLibraryList()
+        {
+            var id = GetLibraryListId(LibraryListIndex);
+            if (IsDir(LibraryListIndex))
+            {
+                model.GetLibraryList(id);
+                LibraryListIndex = -1;
+            }
+            else
+            {
+                PlayId = id;
+            }
+        }
 
         #region WindowColor変更通知プロパティ
         private string _WindowColor = "#FF41B1E1";
@@ -235,10 +254,7 @@ namespace Mánagarmr.ViewModels
             { return _MusicFolderListId; }
             set
             { 
-                if (_MusicFolderListId == value)
-                    return;
                 _MusicFolderListId = value;
-                model.GetLibraryList(value);
                 RaisePropertyChanged();
             }
         }
@@ -254,10 +270,6 @@ namespace Mánagarmr.ViewModels
             set
             {
                 _MusicFolderListIndex = value;
-                var listId = GetMusicFolderListId(value);
-                if (listId == null)
-                    return;
-                MusicFolderListId = listId;
                 RaisePropertyChanged();
             }
         }
@@ -286,8 +298,6 @@ namespace Mánagarmr.ViewModels
             { return _LibraryList; }
             set
             { 
-                if (_LibraryList == value)
-                    return;
                 _LibraryList = value;
                 RaisePropertyChanged();
             }
@@ -303,19 +313,7 @@ namespace Mánagarmr.ViewModels
             { return _LibraryListId; }
             set
             { 
-                if (_LibraryListId == value)
-                    return;
                 _LibraryListId = value;
-
-                var listId = LibraryListIndex;
-                if (IsDir(listId))
-                {
-                    model.GetLibraryList(value);
-                }
-                else
-                {
-                    PlayId = value;
-                }
                 RaisePropertyChanged();
             }
         }
@@ -345,10 +343,6 @@ namespace Mánagarmr.ViewModels
             set
             { 
                 _LibraryListIndex = value;
-                var listId = GetLibraryListId(value);
-                if (listId == null)
-                    return;
-                LibraryListId = listId;
                 RaisePropertyChanged();
             }
         }
