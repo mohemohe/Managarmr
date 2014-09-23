@@ -7,7 +7,7 @@
         xmlns:v="clr-namespace:Mánagarmr.Views"
         xmlns:vm="clr-namespace:Mánagarmr.ViewModels"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="Mánagarmr" Height="600" Width="960" IconBitmapScalingMode="HighQuality" GlowBrush="{Binding WindowColor}" WindowTransitionsEnabled="False" SaveWindowPosition="True" Icon="/Mánagarmr;component/Resources/icon.ico" FontFamily="Meiryo">
+        Title="Mánagarmr" Height="620" Width="960" MinHeight="620" MinWidth="960" IconBitmapScalingMode="HighQuality" GlowBrush="{Binding WindowColor}" WindowTransitionsEnabled="False" SaveWindowPosition="True" Icon="/Mánagarmr;component/Resources/icon.ico" FontFamily="Meiryo">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -83,8 +83,20 @@
         <Grid Margin="0,0,0,100">
             <StackPanel Width="280" HorizontalAlignment="Left" Margin="0,0,0,0">
                 <ListBox Name="UpperListBox" Margin="10" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="UpperListBox_PreviewMouseDown">
-                    <ListBoxItem>Random</ListBoxItem>
-                    <ListBoxItem>Recently added</ListBoxItem>
+                    <ListBoxItem Content="Random">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                                <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="GetRandomAlbumList"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBoxItem>
+                    <ListBoxItem Content="Recently added">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                                <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="GetNewestAlbumList"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBoxItem>
                 </ListBox>
                 <Separator Margin="10,2"/>
                 <ListBox Name="BottomListBox" ItemsSource="{Binding MusicFolderList}" SelectedIndex="{Binding MusicFolderListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="BottomListBox_PreviewMouseDown">

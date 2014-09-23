@@ -183,8 +183,8 @@ namespace Mánagarmr.ViewModels
 
         public void ChangeLibraryList()
         {
-            model.GetLibraryList(GetMusicFolderListId(MusicFolderListIndex));
             LibraryListIndex = -1;
+            model.GetLibraryList(GetMusicFolderListId(MusicFolderListIndex));
         }
 
         public void MoveLibraryList()
@@ -192,13 +192,25 @@ namespace Mánagarmr.ViewModels
             var id = GetLibraryListId(LibraryListIndex);
             if (IsDir(LibraryListIndex))
             {
-                model.GetLibraryList(id);
                 LibraryListIndex = -1;
+                model.GetLibraryList(id);
             }
             else
             {
                 PlayId = id;
             }
+        }
+
+        public void GetRandomAlbumList()
+        {
+            LibraryListIndex = -1;
+            model.GetRundomAlbumList();
+        }
+
+        public void GetNewestAlbumList()
+        {
+            LibraryListIndex = -1;
+            model.GetNewestAlbumList();
         }
 
         #region WindowColor変更通知プロパティ
@@ -359,6 +371,38 @@ namespace Mánagarmr.ViewModels
                 return null;
             }
 
+        }
+        #endregion
+
+        #region PlayList変更通知プロパティ
+        private Dictionary<int, LibraryListInfoPack> _PlayList;
+
+        public Dictionary<int, LibraryListInfoPack> PlayList
+        {
+            get
+            { return _PlayList; }
+            set
+            { 
+                if (_PlayList == value)
+                    return;
+                _PlayList = value;
+                RaisePropertyChanged();
+            }
+        }
+        private void AddPlayList(string id, string title)
+        {
+            var llip = new LibraryListInfoPack(id, title);
+            PlayList.Add(PlayList.Count + 1, llip);
+        }
+
+        private string GetPlayListId(int id)
+        {
+            return PlayList[id].id;
+        }
+
+        private string GetPlayListTitle(int id)
+        {
+            return PlayList[id].title;
         }
         #endregion
 
@@ -706,7 +750,7 @@ namespace Mánagarmr.ViewModels
                 model.GetSongInfo(PlayId);
                 await Task.Run(() => 
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(500);
                     model.GetCoverArt(PlayId);
                 });
             }

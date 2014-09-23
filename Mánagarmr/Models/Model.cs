@@ -103,6 +103,26 @@ namespace Mánagarmr.Models
             });
         }
 
+        public async void GetRundomAlbumList()
+        {
+            await Task.Run(() =>
+            {
+                var gal = new GetAlbumList();
+                APIhelper.llipd = gal.GetRandomAlbumList();
+                RaisePropertyChanged("GetLibraryList");
+            });
+        }
+
+        public async void GetNewestAlbumList()
+        {
+            await Task.Run(() =>
+            {
+                var gal = new GetAlbumList();
+                APIhelper.llipd = gal.GetNewestAlbumList();
+                RaisePropertyChanged("GetLibraryList");
+            });
+        }
+
         public async void Tweet(string title, string artist, string album)
         {
             await Task.Run(() =>
