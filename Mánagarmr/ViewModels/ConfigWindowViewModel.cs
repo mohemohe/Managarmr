@@ -235,6 +235,42 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
+        #region NetworkBufferSlider変更通知プロパティ
+        private int _NetworkBufferSliderValue = 10;
+
+        public int NetworkBufferSliderValue
+        {
+            get
+            { return _NetworkBufferSliderValue; }
+            set
+            {
+                if (_NetworkBufferSliderValue == value)
+                    return;
+                _NetworkBufferSliderValue = value;
+                RaisePropertyChanged();
+
+                NetworkBufferSliderValueString = value + "sec";
+            }
+        }
+        #endregion
+
+        #region NetworkBufferSliderValueString変更通知プロパティ
+        private string _NetworkBufferSliderValueString;
+
+        public string NetworkBufferSliderValueString
+        {
+            get
+            { return _NetworkBufferSliderValueString; }
+            set
+            { 
+                if (_NetworkBufferSliderValueString == value)
+                    return;
+                _NetworkBufferSliderValueString = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
         #region AudioMethodId変更通知プロパティ
         private int _AudioMethodId = 0;
 
@@ -269,37 +305,37 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
-        #region BufferSliderValue変更通知プロパティ
-        private int _BufferSliderValue = 250;
+        #region AudioBufferSliderValue変更通知プロパティ
+        private int _AudioBufferSliderValue = 250;
 
-        public int BufferSliderValue
+        public int AudioBufferSliderValue
         {
             get
-            { return _BufferSliderValue; }
+            { return _AudioBufferSliderValue; }
             set
             {
-                if (_BufferSliderValue == value)
+                if (_AudioBufferSliderValue == value)
                     return;
-                _BufferSliderValue = value;
+                _AudioBufferSliderValue = value;
                 RaisePropertyChanged();
 
-                BufferSliderValueString = value + "ms";
+                AudioBufferSliderValueString = value + "ms";
             }
         }
         #endregion
 
-        #region BufferSliderValueString変更通知プロパティ
-        private string _BufferSliderValueString;
+        #region AudioBufferSliderValueString変更通知プロパティ
+        private string _AudioBufferSliderValueString;
 
-        public string BufferSliderValueString
+        public string AudioBufferSliderValueString
         {
             get
-            { return _BufferSliderValueString; }
+            { return _AudioBufferSliderValueString; }
             set
             {
-                if (_BufferSliderValueString == value)
+                if (_AudioBufferSliderValueString == value)
                     return;
-                _BufferSliderValueString = value;
+                _AudioBufferSliderValueString = value;
                 RaisePropertyChanged();
             }
         }
@@ -468,7 +504,8 @@ namespace Mánagarmr.ViewModels
                 TwitterAuthProgress = TwitterAuthProgressMessage[0];
             }
 
-            BufferSliderValueString = BufferSliderValue + "ms";
+            NetworkBufferSliderValueString = NetworkBufferSliderValue + "sec";
+            AudioBufferSliderValueString = AudioBufferSliderValue + "ms";
         }
 
         private void ReadSettings()
@@ -483,13 +520,15 @@ namespace Mánagarmr.ViewModels
             SubsonicID = Settings.UserName;
             SubsonicPassword = Settings.Password;
 
+            NetworkBufferSliderValue = Settings.NetworkBuffer;
+
             TwitterAccessToken = Settings.AccessToken;
             TwitterAccessTokenSecret = Settings.AccessTokenSecret;
             TweetTemplate = Settings.TweetTextFormat;
 
             AudioMethodId = Settings.AudioMethod;
             AudioDeviceId = Settings.AudioDevice;
-            BufferSliderValue = Settings.AudioBuffer;
+            AudioBufferSliderValue = Settings.AudioBuffer;
 
             //Locale = Settings.Language;
         }
@@ -505,17 +544,18 @@ namespace Mánagarmr.ViewModels
             Settings.UserName = SubsonicID;
             Settings.Password = SubsonicPassword;
 
+            Settings.NetworkBuffer = NetworkBufferSliderValue;
+
             Settings.AccessToken = TwitterAccessToken;
             Settings.AccessTokenSecret = TwitterAccessTokenSecret;
             Settings.TweetTextFormat = TweetTemplate;
 
             Settings.AudioMethod = AudioMethodId;
             Settings.AudioDevice = AudioDeviceId;
-            Settings.AudioBuffer = BufferSliderValue;
+            Settings.AudioBuffer = AudioBufferSliderValue;
 
             //Settings.Language = Locale;
         }
-
 
         #region ConnectionTestCommand
         private ViewModelCommand _ConnectionTestCommand;

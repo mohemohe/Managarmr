@@ -80,7 +80,7 @@ namespace Mánagarmr.Models
             {
                 return;
             }
-            var buffer = new byte[16384 * 15]; // needs to be big enough to hold a decompressed frame
+            var buffer = new byte[16384 * Settings.NetworkBuffer]; // needs to be big enough to hold a decompressed frame
 
             IMp3FrameDecompressor decompressor = null;
             try
@@ -122,7 +122,7 @@ namespace Mánagarmr.Models
                                 // until we have a frame
                                 decompressor = CreateFrameDecompressor(frame);
                                 bufferedWaveProvider = new BufferedWaveProvider(decompressor.OutputFormat);
-                                bufferedWaveProvider.BufferDuration = TimeSpan.FromSeconds(1 * 15); // allow us to get well ahead of ourselves
+                                bufferedWaveProvider.BufferDuration = TimeSpan.FromSeconds(Settings.NetworkBuffer); // allow us to get well ahead of ourselves
                             }
                             try
                             {

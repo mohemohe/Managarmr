@@ -22,9 +22,11 @@ namespace Mánagarmr.Models
         public string UserName;
         public string Password;
 
+        public int NetworkBuffer = 10;
+
         public int AudioMethod;
         public int AudioDevice;
-        public int AudioBuffer;
+        public int AudioBuffer = 250;
         public float Volume;
 
         public string TweetTextFormat = "NowPlaying: %title% - %artist% / %album%";
@@ -55,6 +57,8 @@ namespace Mánagarmr.Models
             public static bool _IgnoreSSLcertificateError { get; set; }
             public static string _UserName { get; set; }
             public static string _Password { get; set; }
+
+            public static int _NetworkBuffer { get; set; }
 
             public static int _AudioMethod { get; set; }
             public static int _AudioDevice { get; set; }
@@ -143,6 +147,12 @@ namespace Mánagarmr.Models
                 var seed = Crypt.CreateSeed(mn + un + udn);
                 _Settings._Password = Crypt.Encrypt(value, seed);
             }
+        }
+
+        public static int NetworkBuffer
+        {
+            get { return _Settings._NetworkBuffer; }
+            set { _Settings._NetworkBuffer = value; }
         }
 
         public static int AudioMethod
@@ -272,6 +282,7 @@ namespace Mánagarmr.Models
                 Settings.Password = "";
                 Settings.Hash = hash;
 
+                Settings.AudioBuffer = 10;
                 Settings.AudioBuffer = 250;
 
                 return false;
@@ -298,6 +309,11 @@ namespace Mánagarmr.Models
             _Settings._IgnoreSSLcertificateError = xmls.IgnoreSSLcertificateError;
             _Settings._UserName = xmls.UserName;
             _Settings._Password = xmls.Password;
+
+            if (xmls.NetworkBuffer != 0)
+            {
+                _Settings._NetworkBuffer = xmls.NetworkBuffer;
+            }
 
             _Settings._AudioMethod = xmls.AudioMethod;
             _Settings._AudioDevice = xmls.AudioDevice;

@@ -41,6 +41,7 @@
         <ListBox HorizontalAlignment="Left" Margin="10,10,0,45" Width="200" SelectedIndex="{Binding SelectedIndex}">
             <ListBoxItem Content="全般" IsSelected="True"/>
             <ListBoxItem Content="サーバー"/>
+            <ListBoxItem Content="ネットワーク"/>
             <ListBoxItem Content="オーディオデバイス"/>
             <ListBoxItem Content="Twitter"/>
             <!--<ListBoxItem Content="Language"/>-->
@@ -90,6 +91,21 @@
                 </ScrollViewer>
             </TabItem>
 
+            <!-- ネットワーク -->
+            <TabItem Header="" Height="0">
+                <ScrollViewer>
+                    <Grid>
+                        <Label Content="※ 次回の再生から有効になります" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="#FF424242"/>
+                        <GroupBox Header="ネットワーク バッファ" Margin="0,0,10,0" VerticalAlignment="Top">
+                            <Grid>
+                                <Slider Value="{Binding NetworkBufferSliderValue}" VerticalAlignment="Top" Height="25" Minimum="5" Maximum="30" SmallChange="1" TickFrequency="100"/>
+                                <Label Content="{Binding NetworkBufferSliderValueString}" Margin="0,25,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right"/>
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+            
             <!-- オーディオデバイス -->
             <TabItem Header="" Height="0">
                 <ScrollViewer>
@@ -122,10 +138,10 @@
                                 </ComboBox>
                             </Grid>
                         </GroupBox>
-                        <GroupBox Header="バッファ" Margin="0,144,10,0" VerticalAlignment="Top">
+                        <GroupBox Header="オーディオ バッファ" Margin="0,144,10,0" VerticalAlignment="Top">
                             <Grid>
-                                <Slider Value="{Binding BufferSliderValue}" VerticalAlignment="Top" Height="25" Minimum="1" Maximum="2000" SmallChange="1" TickFrequency="100"/>
-                                <Label Content="{Binding BufferSliderValueString}" Margin="0,25,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right"/>
+                                <Slider Value="{Binding AudioBufferSliderValue}" VerticalAlignment="Top" Height="25" Minimum="1" Maximum="2000" SmallChange="1" TickFrequency="100"/>
+                                <Label Content="{Binding AudioBufferSliderValueString}" Margin="0,25,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right"/>
                             </Grid>
                         </GroupBox>
                     </Grid>
