@@ -130,14 +130,7 @@
                 </TabItem>
             </TabControl>
             <Grid HorizontalAlignment="Right" Width="320" Height="48" VerticalAlignment="Top">
-                <TextBox Controls:TextboxHelper.ClearTextButton="True" Text="{Binding SearchQuery}" Height="34" Margin="10,10,0,0" TextWrapping="Wrap" Width="255" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                <Button Name="SearchButton" Command="{Binding SearchCommand, Mode=OneWay}" HorizontalAlignment="Right" Margin="0,6,10,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" BorderThickness="2">
-                    <Rectangle Name="SearchButtonRectangle" Width="30" Height="30" Fill="{Binding WindowColor}">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Visual="{StaticResource appbar_magnify}" Stretch="Uniform" />
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                </Button>
+                <TextBox Controls:TextboxHelper.ClearTextButton="True" Controls:TextboxHelper.Watermark="Search" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,0" TextWrapping="Wrap" FontSize="20" Height="34" VerticalAlignment="Top"/>
             </Grid>
         </Grid>
         <Grid Name="BottomBar" Height="64" VerticalAlignment="Bottom" Background="{Binding WindowColor}">

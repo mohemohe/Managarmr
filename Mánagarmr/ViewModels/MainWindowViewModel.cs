@@ -248,11 +248,20 @@ namespace Mánagarmr.ViewModels
             get
             { return _SearchQuery; }
             set
-            { 
+            {
                 if (_SearchQuery == value)
                     return;
                 _SearchQuery = value;
                 RaisePropertyChanged();
+
+                if(!String.IsNullOrEmpty(value))
+                {
+                    Search();
+                }
+                else
+                {
+                    LibraryList = new List<string>();
+                }
             }
         }
         #endregion
