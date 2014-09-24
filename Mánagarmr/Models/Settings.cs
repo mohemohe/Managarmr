@@ -23,6 +23,7 @@ namespace Mánagarmr.Models
         public string Password;
 
         public int NetworkBuffer = 10;
+        public int TargetBitrate = 128;
 
         public int AudioMethod;
         public int AudioDevice;
@@ -59,6 +60,7 @@ namespace Mánagarmr.Models
             public static string _Password { get; set; }
 
             public static int _NetworkBuffer { get; set; }
+            public static int _TargetBitrate { get; set; }
 
             public static int _AudioMethod { get; set; }
             public static int _AudioDevice { get; set; }
@@ -153,6 +155,12 @@ namespace Mánagarmr.Models
         {
             get { return _Settings._NetworkBuffer; }
             set { _Settings._NetworkBuffer = value; }
+        }
+
+        public static int TargetBitrate
+        {
+            get { return _Settings._TargetBitrate; }
+            set { _Settings._TargetBitrate = value; }
         }
 
         public static int AudioMethod
@@ -314,6 +322,10 @@ namespace Mánagarmr.Models
             {
                 _Settings._NetworkBuffer = xmls.NetworkBuffer;
             }
+            if (xmls.TargetBitrate != 0)
+            {
+                _Settings._TargetBitrate = xmls.TargetBitrate;
+            }
 
             _Settings._AudioMethod = xmls.AudioMethod;
             _Settings._AudioDevice = xmls.AudioDevice;
@@ -347,6 +359,9 @@ namespace Mánagarmr.Models
             xmls.IgnoreSSLcertificateError = _Settings._IgnoreSSLcertificateError;
             xmls.UserName = _Settings._UserName;
             xmls.Password = _Settings._Password;
+
+            xmls.NetworkBuffer = _Settings._NetworkBuffer;
+            xmls.TargetBitrate = _Settings._TargetBitrate;
 
             xmls.AudioMethod = _Settings._AudioMethod;
             xmls.AudioDevice = _Settings._AudioDevice;

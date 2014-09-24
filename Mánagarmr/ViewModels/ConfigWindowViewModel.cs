@@ -305,6 +305,57 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
+        #region TargetBitrate変更通知プロパティ
+        private int _TargetBitrate;
+
+        public int TargetBitrate
+        {
+            get
+            { return _TargetBitrate; }
+            set
+            { 
+                if (_TargetBitrate == value)
+                    return;
+                _TargetBitrate = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
+        #region TargetBitrateList変更通知プロパティ
+        private List<int> _TargetBitrateList;
+
+        public List<int> TargetBitrateList
+        {
+            get
+            { return _TargetBitrateList; }
+            set
+            { 
+                if (_TargetBitrateList == value)
+                    return;
+                _TargetBitrateList = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
+        #region TargetBitrateSelectedIndex変更通知プロパティ
+        private int _TargetBitrateSelectedIndex = 5;
+
+        public int TargetBitrateSelectedIndex
+        {
+            get
+            { return _TargetBitrateSelectedIndex; }
+            set
+            { 
+                if (_TargetBitrateSelectedIndex == value)
+                    return;
+                _TargetBitrateSelectedIndex = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
         #region AudioBufferSliderValue変更通知プロパティ
         private int _AudioBufferSliderValue = 250;
 
@@ -492,6 +543,8 @@ namespace Mánagarmr.ViewModels
             //    new LanguageViewModel() { Language = "こふ語 (kv-JP)", Locale = "ja" },
             //};
 
+            TargetBitrateList = new List<int>() { 32, 48, 64, 80, 96, 128, 160, 192, 224, 256, 320 };
+
             ReadSettings();
 
             if (String.IsNullOrEmpty(TwitterAccessToken) == false && String.IsNullOrEmpty(TwitterAccessTokenSecret) == false)
@@ -503,6 +556,8 @@ namespace Mánagarmr.ViewModels
             {
                 TwitterAuthProgress = TwitterAuthProgressMessage[0];
             }
+
+            TargetBitrateSelectedIndex = TargetBitrateList.IndexOf(TargetBitrate);
 
             NetworkBufferSliderValueString = NetworkBufferSliderValue + "sec";
             AudioBufferSliderValueString = AudioBufferSliderValue + "ms";
@@ -520,6 +575,7 @@ namespace Mánagarmr.ViewModels
             SubsonicID = Settings.UserName;
             SubsonicPassword = Settings.Password;
 
+            TargetBitrate = Settings.TargetBitrate;
             NetworkBufferSliderValue = Settings.NetworkBuffer;
 
             TwitterAccessToken = Settings.AccessToken;
@@ -544,6 +600,7 @@ namespace Mánagarmr.ViewModels
             Settings.UserName = SubsonicID;
             Settings.Password = SubsonicPassword;
 
+            Settings.TargetBitrate = TargetBitrate;
             Settings.NetworkBuffer = NetworkBufferSliderValue;
 
             Settings.AccessToken = TwitterAccessToken;

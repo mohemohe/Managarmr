@@ -46,7 +46,7 @@ namespace Mánagarmr.Models.SubsonicAPI
         public void Play(string songId, float volume)
         {
             var url = APIhelper.url + APIuri + "?v=" + APIhelper.apiVersion + "&c=" + APIhelper.appName +
-                      "&u=" + Settings.UserName + "&p=enc:" + GenerateHexEncodedPassword(Settings.Password) + "&id=" + songId;
+                      "&u=" + Settings.UserName + "&p=enc:" + GenerateHexEncodedPassword(Settings.Password) + "&format=mp3" + "&maxBitRate=" + Settings.TargetBitrate + "&id=" + songId;
 
             if (url != currentUrl)
             {

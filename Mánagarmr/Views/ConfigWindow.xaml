@@ -96,9 +96,15 @@
                 <ScrollViewer>
                     <Grid>
                         <Label Content="※ 次回の再生から有効になります" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="#FF424242"/>
-                        <GroupBox Header="ネットワーク バッファ" Margin="0,0,10,0" VerticalAlignment="Top">
+                        <GroupBox Header="ビットレート" Margin="0,0,10,0" VerticalAlignment="Top">
                             <Grid>
-                                <Slider Value="{Binding NetworkBufferSliderValue}" VerticalAlignment="Top" Height="25" Minimum="5" Maximum="30" SmallChange="1" TickFrequency="100"/>
+                                <ComboBox ItemsSource="{Binding TargetBitrateList}" SelectedIndex="{Binding TargetBitrateSelectedIndex}" SelectedValue="{Binding TargetBitrate}" Margin="0,0,42,0"/>
+                                <Label Content="kbps" VerticalAlignment="Top" HorizontalContentAlignment="Right" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="ネットワーク バッファ" Margin="0,81,10,0" VerticalAlignment="Top">
+                            <Grid>
+                                <Slider Value="{Binding NetworkBufferSliderValue}" VerticalAlignment="Top" Height="25" Minimum="5" Maximum="30" SmallChange="1" TickFrequency="5"/>
                                 <Label Content="{Binding NetworkBufferSliderValueString}" Margin="0,25,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right"/>
                             </Grid>
                         </GroupBox>
