@@ -137,7 +137,7 @@
             <Border Name="CoverArea" Margin="10,-26,0,10" Height="80" VerticalAlignment="Bottom" BorderBrush="{Binding WindowColor}" HorizontalAlignment="Left" Width="80" BorderThickness="4" Background="{Binding WindowColor}">
                 <Image Source="{Binding CoverArt, Mode=OneWay}" RenderOptions.BitmapScalingMode="HighQuality" />
             </Border>
-            <Label Content="{Binding Title}" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Top" Foreground="White" FontSize="24"/>
+            <TextBlock Text="{Binding Title}" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Top" Foreground="White" FontSize="24" FontWeight="Bold" Padding="5"/>
             <Label Content="{Binding AlbumETC}" HorizontalAlignment="Left" Margin="100,36,0,0" VerticalAlignment="Top" Foreground="White"/>
             <Border Margin="100,-20,10,72" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1" IsEnabled="False">
                 <Slider Name="ProgressSlider" Style="{DynamicResource FlatSlider}" VerticalAlignment="Top" Height="12" Background="{x:Null}" Foreground="{Binding WindowColor}" Width="Auto" BorderBrush="White" Margin="0,0,-13,0" IsEnabled="{Binding ProgressBarIsEnabled}" Maximum="{Binding ProgressBarMaxValue}" Value="{Binding ProgressBarCurrentValue}"/>
