@@ -28,7 +28,7 @@ namespace Mánagarmr.Models.SubsonicAPI
 
         public Dictionary<int, LibraryListInfoPack> Search(string query)
         {
-            var url = APIhelper.url + APIuri + "?v=" + APIhelper.apiVersion + "&c=" + APIhelper.appName + "&query=" + query;
+            var url = APIhelper.url + APIuri + "?v=" + APIhelper.apiVersion + "&c=" + APIhelper.appName + "&artistCount=" + Int32.MaxValue.ToString() + "&albumCount=" + Int32.MaxValue.ToString() + "&songCount=" + Int32.MaxValue.ToString() + "&query=" + query;
 
             try
             {
@@ -39,29 +39,32 @@ namespace Mánagarmr.Models.SubsonicAPI
             ParseXML(xmlBody);
 
             var llipd = new Dictionary<int, LibraryListInfoPack>();
+            int i = 0;
 
             if (xmlBody != null && albumId != null)
             {
-                for (int i = 0; i < albumId.Count; i++)
+                do
                 {
                     try
                     {
                         llipd.Add(i, new LibraryListInfoPack(albumId[i], albumTitle[i], albumTrack[i], albumArtist[i], albumIsDir[i]));
+                        i++;
                     }
                     catch { }
-                }
+                } while (i < albumId.Count);
             }
 
             if (xmlBody != null && songId != null)
             {
-                for (int i = 0; i < songId.Count; i++)
+                do
                 {
                     try
                     {
                         llipd.Add(i, new LibraryListInfoPack(songId[i], songTitle[i], songTrack[i], songArtist[i], songIsDir[i]));
+                        i++;
                     }
                     catch { }
-                }
+                } while (i < songId.Count);
             }
 
             return llipd;
