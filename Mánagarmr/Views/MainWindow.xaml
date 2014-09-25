@@ -134,7 +134,7 @@
             </Grid>
         </Grid>
         <Grid Name="BottomBar" Height="64" VerticalAlignment="Bottom" Background="{Binding WindowColor}">
-            <Border Name="CoverArea" Margin="10,-26,0,10" Height="80" VerticalAlignment="Bottom" BorderBrush="{Binding WindowColor}" HorizontalAlignment="Left" Width="80" BorderThickness="4" Background="{Binding WindowColor}">
+            <Border Name="CoverArea" Margin="10,-26,0,10" Height="80" VerticalAlignment="Bottom" BorderBrush="{Binding WindowColor}" BorderThickness="4" Background="{Binding WindowColor}" HorizontalAlignment="Left" Width="80">
                 <Image Source="{Binding CoverArt, Mode=OneWay}" RenderOptions.BitmapScalingMode="HighQuality" />
             </Border>
             <TextBlock Text="{Binding Title}" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Top" Foreground="White" FontSize="24" FontWeight="Bold" Padding="5"/>

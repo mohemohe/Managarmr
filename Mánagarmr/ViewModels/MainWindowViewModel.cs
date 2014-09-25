@@ -748,9 +748,21 @@ namespace Mánagarmr.ViewModels
             }
         }
 
-        public void Search()
+        private string SearchLock { get; set; }
+        public async void Search()
         {
-            model.Search(SearchQuery);
+            var guid = Guid.NewGuid().ToString();
+            SearchLock = guid;
+
+            await Task.Run(() =>
+            {
+                Thread.Sleep(500);
+
+                if (SearchLock == guid)
+                {
+                    model.Search(SearchQuery);
+                }
+            });
         }
         #endregion
 
