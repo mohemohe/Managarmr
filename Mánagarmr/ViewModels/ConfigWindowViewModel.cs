@@ -409,6 +409,23 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
+        #region TweetUrl変更通知プロパティ
+        private int _TweetUrl;
+
+        public int TweetUrl
+        {
+            get
+            { return _TweetUrl; }
+            set
+            { 
+                if (_TweetUrl == value)
+                    return;
+                _TweetUrl = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
         #region TwitterAuthPIN変更通知プロパティ
         private string _TwitterAuthPIN;
 
@@ -581,6 +598,7 @@ namespace Mánagarmr.ViewModels
             TwitterAccessToken = Settings.AccessToken;
             TwitterAccessTokenSecret = Settings.AccessTokenSecret;
             TweetTemplate = Settings.TweetTextFormat;
+            TweetUrl = Settings.TweetUrl;
 
             AudioMethodId = Settings.AudioMethod;
             AudioDeviceId = Settings.AudioDevice;
@@ -606,6 +624,7 @@ namespace Mánagarmr.ViewModels
             Settings.AccessToken = TwitterAccessToken;
             Settings.AccessTokenSecret = TwitterAccessTokenSecret;
             Settings.TweetTextFormat = TweetTemplate;
+            Settings.TweetUrl = TweetUrl;
 
             Settings.AudioMethod = AudioMethodId;
             Settings.AudioDevice = AudioDeviceId;

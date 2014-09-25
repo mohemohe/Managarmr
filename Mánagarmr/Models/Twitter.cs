@@ -13,6 +13,9 @@ namespace Mánagarmr.Models
         private string consumerKey { get { return "WY93gCVpkgAMdVAVuu5yDYB0g"; } }
         private string consumerSecret { get { return "Q1GYjZd9F78NdbpCStl9u0lbMcqJGmJjqXnZS9NQqddMyqwS5t"; } }
 
+        private string lastfmSearchUrl { get { return "http://www.last.fm/search?q="; } }
+        private string youtubeSearchUrl { get { return "https://www.youtube.com/results?search_query="; } }
+
         public Twitter()
         {
             lorelei.Initialize(consumerKey, consumerSecret);
@@ -61,7 +64,16 @@ namespace Mánagarmr.Models
             {
                 tweetBody = tweetBody.Replace("%album%", "");
             }
-            
+
+            if (Settings.TweetUrl == 1)
+            {
+                tweetBody += " " + lastfmSearchUrl + Uri.EscapeDataString(title) + "+" + Uri.EscapeDataString(artist);
+            }
+            else if (Settings.TweetUrl == 2)
+            {
+                tweetBody += " " + youtubeSearchUrl + Uri.EscapeDataString(title) + "+" + Uri.EscapeDataString(artist);
+            }
+
             return tweetBody;
         }
 

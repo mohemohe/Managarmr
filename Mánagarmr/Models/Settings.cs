@@ -31,6 +31,7 @@ namespace Mánagarmr.Models
         public float Volume;
 
         public string TweetTextFormat = "NowPlaying: %title% - %artist% / %album%";
+        public int TweetUrl = 0;
         public string AccessToken;
         public string AccessTokenSecret;
 
@@ -68,6 +69,7 @@ namespace Mánagarmr.Models
             public static float _Volume { get; set; }
 
             public static string _TweetTextFormat { get; set; }
+            public static int _TweetUrl { get; set; }
             public static string _AccessToken { get; set; }
             public static string _AccessTokenSecret { get; set; }
 
@@ -191,6 +193,12 @@ namespace Mánagarmr.Models
         {
             get { return _Settings._TweetTextFormat; }
             set { _Settings._TweetTextFormat = value; }
+        }
+
+        public static int TweetUrl
+        {
+            get { return _Settings._TweetUrl; }
+            set { _Settings._TweetUrl = value; }
         }
 
         public static string AccessToken
@@ -336,6 +344,7 @@ namespace Mánagarmr.Models
             {
                 _Settings._TweetTextFormat = xmls.TweetTextFormat;
             }
+            _Settings._TweetUrl = xmls.TweetUrl;
             _Settings._AccessToken = xmls.AccessToken;
             _Settings._AccessTokenSecret = xmls.AccessTokenSecret;
 
@@ -369,6 +378,7 @@ namespace Mánagarmr.Models
             xmls.Volume = _Settings._Volume;
 
             xmls.TweetTextFormat = _Settings._TweetTextFormat;
+            xmls.TweetUrl = _Settings._TweetUrl;
             xmls.AccessToken = _Settings._AccessToken;
             xmls.AccessTokenSecret = _Settings._AccessTokenSecret;
 
