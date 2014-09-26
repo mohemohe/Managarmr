@@ -260,7 +260,7 @@ namespace Mánagarmr.ViewModels
                 }
                 else
                 {
-                    LibraryList = new List<string>();
+                    LibraryList = new List<LibraryList>();
                 }
             }
         }
@@ -327,20 +327,20 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
-        #region LibraryList変更通知プロパティ
-        private List<string> _LibraryList;
+        //#region LibraryList変更通知プロパティ
+        //private List<string> _LibraryList;
 
-        public List<string> LibraryList
-        {
-            get
-            { return _LibraryList; }
-            set
-            { 
-                _LibraryList = value;
-                RaisePropertyChanged();
-            }
-        }
-        #endregion
+        //public List<string> LibraryList
+        //{
+        //    get
+        //    { return _LibraryList; }
+        //    set
+        //    {
+        //        _LibraryList = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
+        //#endregion
 
         #region LibraryListId変更通知プロパティ
         private string _LibraryListId;
@@ -350,7 +350,7 @@ namespace Mánagarmr.ViewModels
             get
             { return _LibraryListId; }
             set
-            { 
+            {
                 _LibraryListId = value;
                 RaisePropertyChanged();
             }
@@ -379,7 +379,7 @@ namespace Mánagarmr.ViewModels
             get
             { return _LibraryListIndex; }
             set
-            { 
+            {
                 _LibraryListIndex = value;
                 RaisePropertyChanged();
             }
@@ -397,6 +397,23 @@ namespace Mánagarmr.ViewModels
                 return null;
             }
 
+        }
+        #endregion
+
+        #region LibraryList変更通知プロパティ
+        private List<LibraryList> _LibraryList;
+
+        public List<LibraryList> LibraryList
+        {
+            get
+            { return _LibraryList; }
+            set
+            { 
+                if (_LibraryList == value)
+                    return;
+                _LibraryList = value;
+                RaisePropertyChanged();
+            }
         }
         #endregion
 
@@ -901,7 +918,7 @@ namespace Mánagarmr.ViewModels
 
         public void SetLibraryList()
         {
-            LibraryList = new List<string>();
+            LibraryList = new List<LibraryList>();
 
             var llipd = new List<LibraryListInfoPack>(APIhelper.llipd.Values);
 
@@ -909,11 +926,11 @@ namespace Mánagarmr.ViewModels
             {
                 if (!String.IsNullOrEmpty(llipd[i].track))
                 {
-                    LibraryList.Add(llipd[i].track + ". " + llipd[i].title);
+                    LibraryList.Add(new LibraryList { Track = String.Format("{0, 5}" , llipd[i].track + ". "), Title = llipd[i].title });
                 }
                 else
                 {
-                    LibraryList.Add(llipd[i].title);
+                    LibraryList.Add(new LibraryList { Title = llipd[i].title });
                 }
             }
         }

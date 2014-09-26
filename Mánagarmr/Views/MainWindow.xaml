@@ -112,6 +112,17 @@
                     <ScrollViewer>
                         <Grid Background="#FFFFFFFF">
                             <ListBox ItemsSource="{Binding LibraryList}" SelectedIndex="{Binding LibraryListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <ListBoxItem IsHitTestVisible="False">
+                                            <WrapPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Track}"/>
+                                                <TextBlock Text="{Binding Title}"/>
+                                            </WrapPanel>
+                                        </ListBoxItem>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="PreviewMouseDoubleClick">
                                         <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="MoveLibraryList"/>

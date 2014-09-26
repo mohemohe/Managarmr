@@ -112,7 +112,8 @@
     <Compile Include="Models\PlayStream.cs" />
     <Compile Include="Models\Twitter.cs" />
     <Compile Include="ViewModels\ConfigWindowViewModel.cs" />
-    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\MainWindow\LibraryList.cs" />
+    <Compile Include="ViewModels\MainWindow\MainWindowViewModel.cs" />
     <Compile Include="Views\ConfigWindow.xaml.cs">
       <DependentUpon>ConfigWindow.xaml</DependentUpon>
     </Compile>
