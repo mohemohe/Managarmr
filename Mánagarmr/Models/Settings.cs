@@ -22,21 +22,21 @@ namespace Mánagarmr.Models
         public string UserName;
         public string Password;
 
-        public int NetworkBuffer = 10;
-        public int TargetBitrate = 128;
+        public int NetworkBuffer;
+        public int TargetBitrate;
 
         public int AudioMethod;
         public int AudioDevice;
-        public int AudioBuffer = 250;
+        public int AudioBuffer;
         public float Volume;
 
-        public string TweetTextFormat = "NowPlaying: %title% - %artist% / %album%";
-        public int TweetUrl = 0;
+        public string TweetTextFormat;
+        public int TweetUrl;
         public string AccessToken;
         public string AccessTokenSecret;
 
-        public bool AllowUpdateCheck = true;
-        public bool AllowAutoUpdate = true;
+        public bool? AllowUpdateCheck;
+        public bool? AllowAutoUpdate;
 
         public string Language;
     }
@@ -278,29 +278,26 @@ namespace Mánagarmr.Models
             var rawHash = Crypt.CreateSeed(mn + un + udn);
             var hash = Crypt.CreateSeed(rawHash);
 
+            ReadSettings();
+
             if (File.Exists(filePath) == true)
             {
-                ReadSettings();
-
                 if (Settings.Hash.SequenceEqual(hash) == false)
                 {
                     Settings.UserName = "";
                     Settings.Password = "";
+                    Settings.AccessToken = "";
+                    Settings.AccessTokenSecret = "";
 
                     return false;
                 }
-
-                return true;
+                else
+                {
+                    return true;
+                }
             }
             else
             {
-                Settings.UserName = "";
-                Settings.Password = "";
-                Settings.Hash = hash;
-
-                Settings.AudioBuffer = 10;
-                Settings.AudioBuffer = 250;
-
                 return false;
             }
         }
@@ -312,38 +309,32 @@ namespace Mánagarmr.Models
         {
             var xmls = new XMLSettings();
             var xs = new XmlSerializer(typeof(XMLSettings));
-            using (var fs = new FileStream(filePath, FileMode.Open))
+            if (File.Exists(filePath) == true)
             {
-                xmls = (XMLSettings)xs.Deserialize(fs);
-                fs.Close();
+                using (var fs = new FileStream(filePath, FileMode.Open))
+                {
+                    xmls = (XMLSettings)xs.Deserialize(fs);
+                    fs.Close();
+                }
             }
 
-            _Settings._Hash = xmls.Hash;
+            _Settings._Hash = TryReadValue(xmls.Hash, null, null);
 
-            _Settings._PrimaryServerUrl = xmls.PrimaryServerUrl;
-            _Settings._SecondaryServerUrl = xmls.SecondaryServerUrl;
+            _Settings._PrimaryServerUrl = TryReadValue(xmls.PrimaryServerUrl, null, null);
+            _Settings._SecondaryServerUrl = TryReadValue(xmls.SecondaryServerUrl, null, null);
             _Settings._IgnoreSSLcertificateError = xmls.IgnoreSSLcertificateError;
-            _Settings._UserName = xmls.UserName;
-            _Settings._Password = xmls.Password;
+            _Settings._UserName = TryReadValue(xmls.UserName, null, null);
+            _Settings._Password = TryReadValue(xmls.Password, null, null);
 
-            if (xmls.NetworkBuffer != 0)
-            {
-                _Settings._NetworkBuffer = xmls.NetworkBuffer;
-            }
-            if (xmls.TargetBitrate != 0)
-            {
-                _Settings._TargetBitrate = xmls.TargetBitrate;
-            }
+            _Settings._NetworkBuffer = TryReadValue(xmls.NetworkBuffer, 0, 10);
+            _Settings._TargetBitrate = TryReadValue(xmls.TargetBitrate, 0, 128);
 
             _Settings._AudioMethod = xmls.AudioMethod;
             _Settings._AudioDevice = xmls.AudioDevice;
-            _Settings._AudioBuffer = xmls.AudioBuffer;
+            _Settings._AudioBuffer = TryReadValue(xmls.AudioBuffer, 0, 250);
             _Settings._Volume = xmls.Volume;
 
-            if (xmls.TweetTextFormat != null)
-            {
-                _Settings._TweetTextFormat = xmls.TweetTextFormat;
-            }
+            _Settings._TweetTextFormat = TryReadValue(xmls.TweetTextFormat, null, "NowPlaying: %title% - %artist% / %album%");
             _Settings._TweetUrl = xmls.TweetUrl;
             _Settings._AccessToken = xmls.AccessToken;
             _Settings._AccessTokenSecret = xmls.AccessTokenSecret;
@@ -352,6 +343,18 @@ namespace Mánagarmr.Models
             _Settings._AllowAutoUpdate = xmls.AllowAutoUpdate;
 
             _Settings._Language = xmls.Language;
+        }
+
+        private static dynamic TryReadValue(dynamic source, dynamic check, dynamic defaultValue)
+        {
+            if (source != check)
+            {
+                return source;
+            }
+            else
+            {
+                return defaultValue;
+            }
         }
 
         /// <summary>
