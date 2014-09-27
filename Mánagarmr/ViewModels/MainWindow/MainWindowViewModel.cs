@@ -254,11 +254,10 @@ namespace Mánagarmr.ViewModels.MainWindow
 
                 if (!String.IsNullOrEmpty(value))
                 {
+                    LibraryListHeaderTitle = "Search: " + value;
+                    LibraryListHeaderArtist = null;
+                    LibraryListHeaderImage = null;
                     Search();
-                }
-                else
-                {
-                    LibraryList = new List<LibraryList>();
                 }
             }
         }
@@ -883,7 +882,6 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public async void Play()
         {
-            //TODO: AudioID
             if (PlayId == null)
             {
                 return;

@@ -13,47 +13,48 @@ namespace Mánagarmr.Models
          * NotificationObjectはプロパティ変更通知の仕組みを実装したオブジェクトです。
          */
 
-        private readonly PropertyChangedEventListener listener;
-        private readonly Stream s;
+        private readonly PropertyChangedEventListener _listener;
+        private readonly Stream _s;
 
         public Model()
         {
-            s = new Stream();
+            _s = new Stream();
 
-            listener = new PropertyChangedEventListener(s);
-            listener.RegisterHandler(UpdateHandlerProxy);
+            _listener = new PropertyChangedEventListener(_s);
+            _listener.RegisterHandler(UpdateHandlerProxy);
         }
 
         public void Dispose()
         {
-            s.Dispose();
-            listener.Dispose();
+            _s.Dispose();
+            _listener.Dispose();
         }
 
         private void UpdateHandlerProxy(object sender, PropertyChangedEventArgs e)
         {
+// ReSharper disable once UnusedVariable
             var worker = sender as Model;
             RaisePropertyChanged(e.PropertyName);
         }
 
         public void Play(string id, float volume)
         {
-            s.Play(id, volume);
+            _s.Play(id, volume);
         }
 
         public void Pause()
         {
-            s.Pause();
+            _s.Pause();
         }
 
         public void Stop()
         {
-            s.Stop();
+            _s.Stop();
         }
 
         public void ChangeVolume(float volume)
         {
-            s.ChangeVolume(volume);
+            _s.ChangeVolume(volume);
         }
 
         public async void GetSongInfo(string id)
