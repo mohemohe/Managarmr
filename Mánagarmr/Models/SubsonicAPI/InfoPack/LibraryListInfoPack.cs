@@ -1,39 +1,65 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mánagarmr.Models.SubsonicAPI.InfoPack
 {
     public class LibraryListInfoPack
     {
-        public string title { get; set; }
-        public string id { get; set; }
-        public bool isDir { get; set; }
-        public string track { get; set; }
-        public string artist { get; set; }
-
         public LibraryListInfoPack(string id, string title)
         {
-            this.title = title;
-            this.id = id;
+            Title = title;
+            Id = id;
         }
 
         public LibraryListInfoPack(string id, string title, string isDir)
         {
-            this.title = title;
-            this.id = id;
-            this.isDir = Convert.ToBoolean(isDir);
+            Title = title;
+            Id = id;
+            IsDir = Convert.ToBoolean(isDir);
         }
-        
+
         public LibraryListInfoPack(string id, string title, string track, string artist, string isDir)
         {
-            this.title = title;
-            this.id = id;
-            this.track = track;
-            this.artist = artist;
-            this.isDir = Convert.ToBoolean(isDir);
+            Title = title;
+            Id = id;
+            Track = track;
+            Artist = artist;
+            IsDir = Convert.ToBoolean(isDir);
         }
+
+        public LibraryListInfoPack(string id, string title, string track, string artist, string albumId, string isDir)
+        {
+            Title = title;
+            Id = id;
+            Track = track;
+            Artist = artist;
+            AlbumId = albumId;
+            IsDir = Convert.ToBoolean(isDir);
+        }
+
+        public LibraryListInfoPack(string id, string title, string track, string artist, string albumId, string isDir,
+            string coverArtUrl)
+        {
+            Title = title;
+            Id = id;
+            Track = track;
+            Artist = artist;
+            AlbumId = albumId;
+            IsDir = Convert.ToBoolean(isDir);
+            CoverArtUrl = coverArtUrl;
+        }
+
+        public string Title { get; set; }
+
+        public string Id { get; set; }
+
+        public bool IsDir { get; set; }
+
+        public string Track { get; set; }
+
+        public string Artist { get; set; }
+
+        public string AlbumId { get; set; }
+
+        public string CoverArtUrl { get; set; }
     }
 }

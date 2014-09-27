@@ -7,6 +7,7 @@
         xmlns:v="clr-namespace:Mánagarmr.Views"
         xmlns:vm="clr-namespace:Mánagarmr.ViewModels"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:mainWindow="clr-namespace:Mánagarmr.ViewModels.MainWindow"
         Title="Mánagarmr" Height="620" Width="960" MinHeight="620" MinWidth="960" IconBitmapScalingMode="HighQuality" GlowBrush="{Binding WindowColor}" WindowTransitionsEnabled="False" SaveWindowPosition="True" Icon="/Mánagarmr;component/Resources/icon.ico" FontFamily="Meiryo">
     <Window.Resources>
         <ResourceDictionary>
@@ -17,7 +18,7 @@
     </Window.Resources>
 
     <Window.DataContext>
-        <vm:MainWindowViewModel/>
+        <mainWindow:MainWindowViewModel/>
     </Window.DataContext>
 
     <i:Interaction.Triggers>
@@ -36,7 +37,7 @@
             <l:DataContextDisposeAction/>
         </i:EventTrigger>
         <i:EventTrigger EventName="Closing">
-            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="Dispose"/>
+            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="Disposes"/>
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
             <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="ActivatedWindow"/>
@@ -99,7 +100,7 @@
                     </ListBoxItem>
                 </ListBox>
                 <Separator Margin="10,2"/>
-                <ListBox Name="BottomListBox" ItemsSource="{Binding MusicFolderList}" SelectedIndex="{Binding MusicFolderListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="BottomListBox_PreviewMouseDown">
+                <ListBox Name="BottomListBox" ItemsSource="{Binding MusicFolderList}" SelectedIndex="{Binding MusicFolderListIndex}" SelectedValue="{Binding MusicFolderListValue}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="BottomListBox_PreviewMouseDown">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="PreviewMouseDoubleClick">
                             <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="ChangeLibraryList"/>
@@ -109,28 +110,38 @@
             </StackPanel>
             <TabControl Margin="295,10,10,0">
                 <TabItem Header="Library">
-                    <ScrollViewer>
-                        <Grid Background="#FFFFFFFF">
-                            <ListBox ItemsSource="{Binding LibraryList}" SelectedIndex="{Binding LibraryListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <ListBoxItem IsHitTestVisible="False">
-                                            <WrapPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Track}"/>
-                                                <TextBlock Text="{Binding Title}"/>
-                                            </WrapPanel>
-                                        </ListBoxItem>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                                
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                                        <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="MoveLibraryList"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </ListBox>
+                    <Grid>
+                        <Grid Height="64" VerticalAlignment="Top">
+                            <Image Source="{Binding LibraryListHeaderImage, IsAsync=true}" RenderOptions.BitmapScalingMode="HighQuality" Height="64" HorizontalAlignment="Left" Width="64"/>
+                            <WrapPanel Orientation="Vertical" Height="64" VerticalAlignment="Top" Margin="69,0,0,0">
+                                <TextBlock Text="{Binding LibraryListHeaderTitle}" FontSize="24" Margin="0,5,0,0"/>
+                                <TextBlock Text="{Binding LibraryListHeaderArtist}" Foreground="Gray" FontSize="14"/>
+                            </WrapPanel>
                         </Grid>
-                    </ScrollViewer>
+                        <ScrollViewer Margin="0,69,0,0">
+                            <Grid Background="#FFFFFFFF">
+                                <ListBox ItemsSource="{Binding LibraryList}" SelectedIndex="{Binding LibraryListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <ListBoxItem IsHitTestVisible="False">
+                                                <WrapPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Track}"/>
+                                                    <TextBlock Text="{Binding Title}"/>
+                                                    <TextBlock Text="{Binding Artist}" Foreground="Gray"/>
+                                                </WrapPanel>
+                                            </ListBoxItem>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                                            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="MoveLibraryList"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </ListBox>
+                            </Grid>
+                        </ScrollViewer>
+                    </Grid>
                 </TabItem>
                 <TabItem Header="Playlist">
                     <ScrollViewer>
@@ -148,7 +159,7 @@
             <Border Name="CoverArea" Margin="10,-26,0,10" Height="80" VerticalAlignment="Bottom" BorderBrush="{Binding WindowColor}" BorderThickness="4" Background="{Binding WindowColor}" HorizontalAlignment="Left" Width="80">
                 <Image Source="{Binding CoverArt, Mode=OneWay}" RenderOptions.BitmapScalingMode="HighQuality" />
             </Border>
-            <TextBlock Text="{Binding Title}" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Top" Foreground="White" FontSize="24" FontWeight="Bold" Padding="5"/>
+            <TextBlock Text="{Binding Title}" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Top" Foreground="White" FontSize="24" Padding="5"/>
             <Label Content="{Binding AlbumETC}" HorizontalAlignment="Left" Margin="100,36,0,0" VerticalAlignment="Top" Foreground="White"/>
             <Border Margin="100,-20,10,72" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1" IsEnabled="False">
                 <Slider Name="ProgressSlider" Style="{DynamicResource FlatSlider}" VerticalAlignment="Top" Height="12" Background="{x:Null}" Foreground="{Binding WindowColor}" Width="Auto" BorderBrush="White" Margin="0,0,-13,0" IsEnabled="{Binding ProgressBarIsEnabled}" Maximum="{Binding ProgressBarMaxValue}" Value="{Binding ProgressBarCurrentValue}"/>

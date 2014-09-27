@@ -1,45 +1,47 @@
 ﻿using Mánagarmr.Models.SubsonicAPI.InfoPack;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Mánagarmr.Models.SubsonicAPI
 {
     public class GetAlbumList
     {
-        private static string APIuri { get { return "rest/getAlbumList.view"; } }
+        private List<string> _artist;
+        private List<string> _id;
+        private List<string> _isDir;
+        private List<string> _title;
+        private List<string> _track;
+        private string _xmlBody;
 
-        private string xmlBody;
-        public List<string> title;
-        public List<string> id;
-        public List<string> track;
-        public List<string> artist;
-        public List<string> isDir;
-
+        private static string APIuri
+        {
+            get { return "rest/getAlbumList.view"; }
+        }
 
         public Dictionary<int, LibraryListInfoPack> GetRandomAlbumList()
         {
-            var url = APIhelper.url + APIuri + "?v=" + APIhelper.apiVersion + "&c=" + APIhelper.appName + "&type=random&size=16";
+            string url = APIhelper.Url + APIuri + "?v=" + APIhelper.ApiVersion + "&c=" + APIhelper.AppName +
+                         "&type=random&size=16";
 
             try
             {
                 GetXMLbody(url);
             }
-            catch { }
+            catch
+            {
+            }
 
-            ParseXML(xmlBody);
+            ParseXML(_xmlBody);
 
             var llipd = new Dictionary<int, LibraryListInfoPack>();
 
-            if (xmlBody != null && id != null)
+            if (_xmlBody != null && _id != null)
             {
-                for (int i = 0; i < id.Count; i++)
+                for (int i = 0; i < _id.Count; i++)
                 {
-                    llipd.Add(i, new LibraryListInfoPack(id[i], title[i], track[i], artist[i], isDir[i]));
+                    llipd.Add(i, new LibraryListInfoPack(_id[i], _title[i], _track[i], _artist[i], _isDir[i]));
                 }
             }
             return llipd;
@@ -47,23 +49,26 @@ namespace Mánagarmr.Models.SubsonicAPI
 
         public Dictionary<int, LibraryListInfoPack> GetNewestAlbumList()
         {
-            var url = APIhelper.url + APIuri + "?v=" + APIhelper.apiVersion + "&c=" + APIhelper.appName + "&type=newest&size=16";
+            string url = APIhelper.Url + APIuri + "?v=" + APIhelper.ApiVersion + "&c=" + APIhelper.AppName +
+                         "&type=newest&size=16";
 
             try
             {
                 GetXMLbody(url);
             }
-            catch { }
+            catch
+            {
+            }
 
-            ParseXML(xmlBody);
+            ParseXML(_xmlBody);
 
             var llipd = new Dictionary<int, LibraryListInfoPack>();
 
-            if (xmlBody != null && id != null)
+            if (_xmlBody != null && _id != null)
             {
-                for (int i = 0; i < id.Count; i++)
+                for (int i = 0; i < _id.Count; i++)
                 {
-                    llipd.Add(i, new LibraryListInfoPack(id[i], title[i], track[i], artist[i], isDir[i]));
+                    llipd.Add(i, new LibraryListInfoPack(_id[i], _title[i], _track[i], _artist[i], _isDir[i]));
                 }
             }
             return llipd;
@@ -72,10 +77,11 @@ namespace Mánagarmr.Models.SubsonicAPI
         private void GetXMLbody(string url)
         {
             var wc = new WebClient();
-            wc.Headers[HttpRequestHeader.Authorization] = APIhelper.BuildBasicAuthString(Settings.UserName, Settings.Password);
+            wc.Headers[HttpRequestHeader.Authorization] = APIhelper.BuildBasicAuthString(Settings.UserName,
+                Settings.Password);
 
-            xmlBody = null;
-            byte[] data = null;
+            _xmlBody = null;
+            byte[] data;
             try
             {
                 data = wc.DownloadData(url);
@@ -87,12 +93,14 @@ namespace Mánagarmr.Models.SubsonicAPI
 
             if (data != null)
             {
-                var enc = Encoding.GetEncoding("UTF-8");
+                Encoding enc = Encoding.GetEncoding("UTF-8");
                 try
                 {
-                    xmlBody = enc.GetString(data);
+                    _xmlBody = enc.GetString(data);
                 }
-                catch { }
+                catch
+                {
+                }
             }
         }
 
@@ -116,11 +124,11 @@ namespace Mánagarmr.Models.SubsonicAPI
                 return;
             }
 
-            APIhelper.TryParseXML(xmlDoc, "album", "title", out title);
-            APIhelper.TryParseXML(xmlDoc, "album", "id", out id);
-            APIhelper.TryParseXML(xmlDoc, "album", "track", out track);
-            APIhelper.TryParseXML(xmlDoc, "album", "artist", out artist);
-            APIhelper.TryParseXML(xmlDoc, "album", "isDir", out isDir);
+            APIhelper.TryParseXML(xmlDoc, "album", "title", out _title);
+            APIhelper.TryParseXML(xmlDoc, "album", "id", out _id);
+            APIhelper.TryParseXML(xmlDoc, "album", "track", out _track);
+            APIhelper.TryParseXML(xmlDoc, "album", "artist", out _artist);
+            APIhelper.TryParseXML(xmlDoc, "album", "isDir", out _isDir);
         }
     }
 }

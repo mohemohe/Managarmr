@@ -1,70 +1,82 @@
 ﻿using Mánagarmr.Models.SubsonicAPI.InfoPack;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Mánagarmr.Models.SubsonicAPI
 {
-    class Search2
+    internal class Search2
     {
-        private static string APIuri { get { return "rest/search2.view"; } }
+        private List<string> _albumArtist;
+        private List<string> _albumId;
+        private List<string> _albumIsDir;
+        private List<string> _albumTitle;
+        private List<string> _albumTrack;
+        private List<string> _songArtist;
+        private List<string> _songId;
+        private List<string> _songIsDir;
+        private List<string> _songTitle;
+        private List<string> _songTrack;
+        private string _xmlBody;
 
-        private string xmlBody;
-        public List<string> albumTitle;
-        public List<string> albumId;
-        public List<string> albumTrack;
-        public List<string> albumArtist;
-        public List<string> albumIsDir;
-        public List<string> songTitle;
-        public List<string> songId;
-        public List<string> songTrack;
-        public List<string> songArtist;
-        public List<string> songIsDir;
-
+        private static string APIuri
+        {
+            get { return "rest/search2.view"; }
+        }
 
         public Dictionary<int, LibraryListInfoPack> Search(string query)
         {
-            var url = APIhelper.url + APIuri + "?v=" + APIhelper.apiVersion + "&c=" + APIhelper.appName + "&artistCount=" + Int32.MaxValue.ToString() + "&albumCount=" + Int32.MaxValue.ToString() + "&songCount=" + Int32.MaxValue.ToString() + "&query=" + query;
+            string url = APIhelper.Url + APIuri + "?v=" + APIhelper.ApiVersion + "&c=" + APIhelper.AppName +
+                         "&artistCount=" + Int32.MaxValue + "&albumCount=" + Int32.MaxValue + "&songCount=" +
+                         Int32.MaxValue + "&query=" + query;
 
             try
             {
                 GetXMLbody(url);
             }
-            catch { }
+            catch
+            {
+            }
 
-            ParseXML(xmlBody);
+            ParseXML(_xmlBody);
 
             var llipd = new Dictionary<int, LibraryListInfoPack>();
             int i = 0;
 
-            if (xmlBody != null && albumId != null)
+            if (_xmlBody != null && _albumId != null)
             {
                 do
                 {
                     try
                     {
-                        llipd.Add(i, new LibraryListInfoPack(albumId[i], albumTitle[i], albumTrack[i], albumArtist[i], albumIsDir[i]));
+                        llipd.Add(i,
+                            new LibraryListInfoPack(_albumId[i], _albumTitle[i], _albumTrack[i], _albumArtist[i],
+                                _albumIsDir[i]));
                         i++;
                     }
-                    catch { }
-                } while (i < albumId.Count);
+                    catch
+                    {
+                    }
+                } while (i < _albumId.Count);
             }
 
-            if (xmlBody != null && songId != null)
+            if (_xmlBody != null && _songId != null)
             {
                 do
                 {
                     try
                     {
-                        llipd.Add(i, new LibraryListInfoPack(songId[i], songTitle[i], songTrack[i], songArtist[i], songIsDir[i]));
+                        llipd.Add(i,
+                            new LibraryListInfoPack(_songId[i], _songTitle[i], _songTrack[i], _songArtist[i],
+                                _songIsDir[i]));
                         i++;
                     }
-                    catch { }
-                } while (i < songId.Count);
+                    catch
+                    {
+                    }
+                } while (i < _songId.Count);
             }
 
             return llipd;
@@ -73,10 +85,11 @@ namespace Mánagarmr.Models.SubsonicAPI
         private void GetXMLbody(string url)
         {
             var wc = new WebClient();
-            wc.Headers[HttpRequestHeader.Authorization] = APIhelper.BuildBasicAuthString(Settings.UserName, Settings.Password);
+            wc.Headers[HttpRequestHeader.Authorization] = APIhelper.BuildBasicAuthString(Settings.UserName,
+                Settings.Password);
 
-            xmlBody = null;
-            byte[] data = null;
+            _xmlBody = null;
+            byte[] data;
             try
             {
                 data = wc.DownloadData(url);
@@ -88,12 +101,14 @@ namespace Mánagarmr.Models.SubsonicAPI
 
             if (data != null)
             {
-                var enc = Encoding.GetEncoding("UTF-8");
+                Encoding enc = Encoding.GetEncoding("UTF-8");
                 try
                 {
-                    xmlBody = enc.GetString(data);
+                    _xmlBody = enc.GetString(data);
                 }
-                catch { }
+                catch
+                {
+                }
             }
         }
 
@@ -117,17 +132,17 @@ namespace Mánagarmr.Models.SubsonicAPI
                 return;
             }
 
-            APIhelper.TryParseXML(xmlDoc, "album", "title", out albumTitle);
-            APIhelper.TryParseXML(xmlDoc, "album", "id", out albumId);
-            APIhelper.TryParseXML(xmlDoc, "album", "track", out albumTrack);
-            APIhelper.TryParseXML(xmlDoc, "album", "artist", out albumArtist);
-            APIhelper.TryParseXML(xmlDoc, "album", "isDir", out albumIsDir);
+            APIhelper.TryParseXML(xmlDoc, "album", "title", out _albumTitle);
+            APIhelper.TryParseXML(xmlDoc, "album", "id", out _albumId);
+            APIhelper.TryParseXML(xmlDoc, "album", "track", out _albumTrack);
+            APIhelper.TryParseXML(xmlDoc, "album", "artist", out _albumArtist);
+            APIhelper.TryParseXML(xmlDoc, "album", "isDir", out _albumIsDir);
 
-            APIhelper.TryParseXML(xmlDoc, "song", "title", out songTitle);
-            APIhelper.TryParseXML(xmlDoc, "song", "id", out songId);
-            APIhelper.TryParseXML(xmlDoc, "song", "track", out songTrack);
-            APIhelper.TryParseXML(xmlDoc, "song", "artist", out songArtist);
-            APIhelper.TryParseXML(xmlDoc, "song", "isDir", out songIsDir);
+            APIhelper.TryParseXML(xmlDoc, "song", "title", out _songTitle);
+            APIhelper.TryParseXML(xmlDoc, "song", "id", out _songId);
+            APIhelper.TryParseXML(xmlDoc, "song", "track", out _songTrack);
+            APIhelper.TryParseXML(xmlDoc, "song", "artist", out _songArtist);
+            APIhelper.TryParseXML(xmlDoc, "song", "isDir", out _songIsDir);
         }
     }
 }

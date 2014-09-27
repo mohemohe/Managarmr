@@ -5,17 +5,18 @@ namespace Mánagarmr.Models
 {
     public class ReadFullyStream : Stream
     {
-        private readonly Stream sourceStream;
-        private long pos; // psuedo-position
-        private readonly byte[] readAheadBuffer;
-        private int readAheadLength;
-        private int readAheadOffset;
+        private readonly byte[] _readAheadBuffer;
+        private readonly Stream _sourceStream;
+        private long _pos; // psuedo-position
+        private int _readAheadLength;
+        private int _readAheadOffset;
 
         public ReadFullyStream(Stream sourceStream)
         {
-            this.sourceStream = sourceStream;
-            readAheadBuffer = new byte[4096];
+            _sourceStream = sourceStream;
+            _readAheadBuffer = new byte[4096];
         }
+
         public override bool CanRead
         {
             get { return true; }
@@ -31,55 +32,48 @@ namespace Mánagarmr.Models
             get { return false; }
         }
 
-        public override void Flush()
-        {
-            throw new InvalidOperationException();
-        }
-
         public override long Length
         {
-            get { return pos; }
+            get { return _pos; }
         }
 
         public override long Position
         {
-            get
-            {
-                return pos;
-            }
-            set
-            {
-                throw new InvalidOperationException();
-            }
+            get { return _pos; }
+            set { throw new InvalidOperationException(); }
         }
 
+        public override void Flush()
+        {
+            throw new InvalidOperationException();
+        }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
             int bytesRead = 0;
             while (bytesRead < count)
             {
-                int readAheadAvailableBytes = readAheadLength - readAheadOffset;
+                int readAheadAvailableBytes = _readAheadLength - _readAheadOffset;
                 int bytesRequired = count - bytesRead;
                 if (readAheadAvailableBytes > 0)
                 {
                     int toCopy = Math.Min(readAheadAvailableBytes, bytesRequired);
-                    Array.Copy(readAheadBuffer, readAheadOffset, buffer, offset + bytesRead, toCopy);
+                    Array.Copy(_readAheadBuffer, _readAheadOffset, buffer, offset + bytesRead, toCopy);
                     bytesRead += toCopy;
-                    readAheadOffset += toCopy;
+                    _readAheadOffset += toCopy;
                 }
                 else
                 {
-                    readAheadOffset = 0;
-                    readAheadLength = sourceStream.Read(readAheadBuffer, 0, readAheadBuffer.Length);
+                    _readAheadOffset = 0;
+                    _readAheadLength = _sourceStream.Read(_readAheadBuffer, 0, _readAheadBuffer.Length);
                     //Debug.WriteLine(String.Format("Read {0} bytes (requested {1})", readAheadLength, readAheadBuffer.Length));
-                    if (readAheadLength == 0)
+                    if (_readAheadLength == 0)
                     {
                         break;
                     }
                 }
             }
-            pos += bytesRead;
+            _pos += bytesRead;
             return bytesRead;
         }
 

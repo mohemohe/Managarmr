@@ -1,44 +1,56 @@
 ﻿using Rhinemaidens;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mánagarmr.Models
 {
-    class Twitter
+    internal class Twitter
     {
-        Lorelei lorelei = new Lorelei();
-        private string consumerKey { get { return "WY93gCVpkgAMdVAVuu5yDYB0g"; } }
-        private string consumerSecret { get { return "Q1GYjZd9F78NdbpCStl9u0lbMcqJGmJjqXnZS9NQqddMyqwS5t"; } }
-
-        private string lastfmSearchUrl { get { return "http://www.last.fm/search?q="; } }
-        private string youtubeSearchUrl { get { return "https://www.youtube.com/results?search_query="; } }
+        private readonly Lorelei _lorelei = new Lorelei();
 
         public Twitter()
         {
-            lorelei.Initialize(consumerKey, consumerSecret);
+            _lorelei.Initialize(consumerKey, consumerSecret);
         }
+
         public Twitter(string accessToken, string accessTokenSecret)
         {
-            lorelei.Initialize(consumerKey, consumerSecret, accessToken, accessTokenSecret);
+            _lorelei.Initialize(consumerKey, consumerSecret, accessToken, accessTokenSecret);
+        }
+
+        private string consumerKey
+        {
+            get { return "WY93gCVpkgAMdVAVuu5yDYB0g"; }
+        }
+
+        private string consumerSecret
+        {
+            get { return "Q1GYjZd9F78NdbpCStl9u0lbMcqJGmJjqXnZS9NQqddMyqwS5t"; }
+        }
+
+        private string lastfmSearchUrl
+        {
+            get { return "http://www.last.fm/search?q="; }
+        }
+
+        private string youtubeSearchUrl
+        {
+            get { return "https://www.youtube.com/results?search_query="; }
         }
 
         public void Initialize(string accessToken, string accessTokenSecret)
         {
-            lorelei.Initialize(consumerKey, consumerSecret, accessToken, accessTokenSecret);
+            _lorelei.Initialize(consumerKey, consumerSecret, accessToken, accessTokenSecret);
         }
 
         public void Tweet(string title, string artist, string album)
         {
-            var tweetBody = GenerateTweetBody(title, artist, album);
-            lorelei.PostTweet(tweetBody);
+            string tweetBody = GenerateTweetBody(title, artist, album);
+            _lorelei.PostTweet(tweetBody);
         }
 
         private string GenerateTweetBody(string title, string artist, string album)
         {
-            var tweetBody = Settings.TweetTextFormat;
+            string tweetBody = Settings.TweetTextFormat;
 
             if (tweetBody.Contains("%title%"))
             {
@@ -79,14 +91,14 @@ namespace Mánagarmr.Models
 
         public string GetOAuthUrl()
         {
-            string url = null;
-            lorelei.GetOAuthUrl(out url);
+            string url;
+            _lorelei.GetOAuthUrl(out url);
             return url;
         }
 
         public void GetAccessToken(string pin, out string accessToken, out string accessTokenSecret)
         {
-            lorelei.GetAccessToken(pin, out accessToken, out accessTokenSecret);
+            _lorelei.GetAccessToken(pin, out accessToken, out accessTokenSecret);
         }
     }
 }

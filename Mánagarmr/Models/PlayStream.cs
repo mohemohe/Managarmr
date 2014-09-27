@@ -1,62 +1,62 @@
 ﻿using Livet;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using Timer = System.Timers.Timer;
 
 namespace Mánagarmr.Models
 {
-    public partial class PlayStream : NotificationObject
+    public class PlayStream : NotificationObject
     {
-        enum StreamingPlaybackState
-        {
-            Stopped,
-            Playing,
-            Buffering,
-            Paused
-        }
+        private readonly Timer _timer;
+        private BufferedWaveProvider _bufferedWaveProvider;
+        private volatile bool _fullyDownloaded;
+        private volatile StreamingPlaybackState _playbackState;
+        private float _volume = 1;
+        private VolumeWaveProvider16 _volumeProvider;
+        private IWavePlayer _waveOut;
+        private HttpWebRequest _webRequest;
 
         public PlayStream()
         {
-            timer = new System.Timers.Timer();
-            timer.Interval = 250;
-            timer.Elapsed += (sender, e) => timer_Tick(sender, e);
+            _timer = new Timer {Interval = 250};
+            _timer.Elapsed += timer_Tick;
+        }
+
+        public string Url { get; private set; }
+
+        private bool IsBufferNearlyFull
+        {
+            get
+            {
+                return _bufferedWaveProvider != null &&
+                       _bufferedWaveProvider.BufferLength - _bufferedWaveProvider.BufferedBytes
+                       < _bufferedWaveProvider.WaveFormat.AverageBytesPerSecond/4;
+            }
         }
 
         public void SetUrl(string url)
         {
-            this.url = url;
+            Url = url;
         }
 
         public void ChangeVolume(float volume)
         {
-            this.volume = volume;
-            if (volumeProvider != null)
+            _volume = volume;
+            if (_volumeProvider != null)
             {
-                volumeProvider.Volume = volume;
+                _volumeProvider.Volume = volume;
             }
-            Debug.WriteLine("Volume: " + volume * 100);
+            Debug.WriteLine("Volume: " + volume*100);
         }
-
-        public string url { get; private set; }
-        private BufferedWaveProvider bufferedWaveProvider;
-        private IWavePlayer waveOut;
-        private volatile StreamingPlaybackState playbackState;
-        private volatile bool fullyDownloaded;
-        private HttpWebRequest webRequest;
-        private VolumeWaveProvider16 volumeProvider;
-        private System.Timers.Timer timer;
-        private float volume = 1;
 
         private void StreamMp3(object state)
         {
-            if (Settings.IgnoreSSLcertificateError == true)
+            if (Settings.IgnoreSSLcertificateError)
             {
                 if (ServicePointManager.ServerCertificateValidationCallback == null)
                 {
@@ -68,24 +68,24 @@ namespace Mánagarmr.Models
                 }
             }
 
-            fullyDownloaded = false;
-            var url = (string)state;
-            webRequest = (HttpWebRequest)WebRequest.Create(url);
+            _fullyDownloaded = false;
+            var url = (string) state;
+            _webRequest = (HttpWebRequest) WebRequest.Create(url);
             HttpWebResponse resp;
             try
             {
-                resp = (HttpWebResponse)webRequest.GetResponse();
+                resp = (HttpWebResponse) _webRequest.GetResponse();
             }
             catch (WebException)
             {
                 return;
             }
-            var buffer = new byte[16384 * Settings.NetworkBuffer]; // needs to be big enough to hold a decompressed frame
+            var buffer = new byte[16384*Settings.NetworkBuffer]; // needs to be big enough to hold a decompressed frame
 
             IMp3FrameDecompressor decompressor = null;
             try
             {
-                using (var responseStream = resp.GetResponseStream())
+                using (Stream responseStream = resp.GetResponseStream())
                 {
                     var readFullyStream = new ReadFullyStream(responseStream);
                     do
@@ -95,7 +95,7 @@ namespace Mánagarmr.Models
                             Debug.WriteLine("Buffer getting full, taking a break");
                             Thread.Sleep(500);
                         }
-                        else if (!fullyDownloaded)
+                        else if (!_fullyDownloaded)
                         {
                             Mp3Frame frame;
                             try
@@ -105,7 +105,7 @@ namespace Mánagarmr.Models
                             catch (EndOfStreamException)
                             {
                                 Debug.WriteLine("fullyDownloaded!");
-                                fullyDownloaded = true;
+                                _fullyDownloaded = true;
                                 // reached the end of the MP3 file / stream
                                 break;
                             }
@@ -121,29 +121,29 @@ namespace Mánagarmr.Models
                                 // however, the buffered provider doesn't know what sample rate it is working at
                                 // until we have a frame
                                 decompressor = CreateFrameDecompressor(frame);
-                                bufferedWaveProvider = new BufferedWaveProvider(decompressor.OutputFormat);
-                                bufferedWaveProvider.BufferDuration = TimeSpan.FromSeconds(Settings.NetworkBuffer); // allow us to get well ahead of ourselves
+                                _bufferedWaveProvider = new BufferedWaveProvider(decompressor.OutputFormat);
+                                _bufferedWaveProvider.BufferDuration = TimeSpan.FromSeconds(Settings.NetworkBuffer);
+                                // allow us to get well ahead of ourselves
                             }
                             try
                             {
                                 int decompressed = decompressor.DecompressFrame(frame, buffer, 0);
                                 //Debug.WriteLine(String.Format("Decompressed a frame {0}", decompressed));
-                                bufferedWaveProvider.AddSamples(buffer, 0, decompressed);
+                                _bufferedWaveProvider.AddSamples(buffer, 0, decompressed);
                             }
                             catch (ArgumentNullException)
                             {
                                 Debug.WriteLine("fullyDownloaded!");
-                                fullyDownloaded = true;
+                                _fullyDownloaded = true;
                                 // reached the end of the MP3 file / stream
                                 break;
                             }
                         }
-
-                    } while (playbackState != StreamingPlaybackState.Stopped);
+                    } while (_playbackState != StreamingPlaybackState.Stopped);
                     Debug.WriteLine("Exiting");
                     // was doing this in a finally block, but for some reason
                     // we are hanging on response stream .Dispose so never get there
-                    decompressor.Dispose();
+                    if (decompressor != null) decompressor.Dispose();
                 }
             }
             finally
@@ -163,48 +163,38 @@ namespace Mánagarmr.Models
             return new AcmMp3FrameDecompressor(waveFormat);
         }
 
-        private bool IsBufferNearlyFull
-        {
-            get
-            {
-                return bufferedWaveProvider != null &&
-                       bufferedWaveProvider.BufferLength - bufferedWaveProvider.BufferedBytes
-                       < bufferedWaveProvider.WaveFormat.AverageBytesPerSecond / 4;
-            }
-        }
-
         public void PlayButton()
         {
-            if (playbackState == StreamingPlaybackState.Stopped)
+            if (_playbackState == StreamingPlaybackState.Stopped)
             {
-                playbackState = StreamingPlaybackState.Buffering;
-                bufferedWaveProvider = null;
-                ThreadPool.QueueUserWorkItem(StreamMp3, url);
-                timer.Enabled = true;
+                _playbackState = StreamingPlaybackState.Buffering;
+                _bufferedWaveProvider = null;
+                ThreadPool.QueueUserWorkItem(StreamMp3, Url);
+                _timer.Enabled = true;
             }
-            else if (playbackState == StreamingPlaybackState.Paused)
+            else if (_playbackState == StreamingPlaybackState.Paused)
             {
-                playbackState = StreamingPlaybackState.Buffering;
+                _playbackState = StreamingPlaybackState.Buffering;
             }
         }
 
         public void StopPlayback()
         {
-            if (playbackState != StreamingPlaybackState.Stopped)
+            if (_playbackState != StreamingPlaybackState.Stopped)
             {
-                if (!fullyDownloaded)
+                if (!_fullyDownloaded)
                 {
-                    webRequest.Abort();
+                    _webRequest.Abort();
                 }
 
-                playbackState = StreamingPlaybackState.Stopped;
-                if (waveOut != null)
+                _playbackState = StreamingPlaybackState.Stopped;
+                if (_waveOut != null)
                 {
-                    waveOut.Stop();
-                    waveOut.Dispose();
-                    waveOut = null;
+                    _waveOut.Stop();
+                    _waveOut.Dispose();
+                    _waveOut = null;
                 }
-                timer.Enabled = false;
+                _timer.Enabled = false;
                 // n.b. streaming thread may not yet have exited
                 Thread.Sleep(500);
 
@@ -214,20 +204,20 @@ namespace Mánagarmr.Models
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            timer.Enabled = false;
-            if (playbackState != StreamingPlaybackState.Stopped)
+            _timer.Enabled = false;
+            if (_playbackState != StreamingPlaybackState.Stopped)
             {
-                if (waveOut == null && bufferedWaveProvider != null)
+                if (_waveOut == null && _bufferedWaveProvider != null)
                 {
                     if (IsBufferNearlyFull)
                     {
                         Debug.WriteLine("Creating WaveOut Device");
-                        waveOut = CreateWaveOut();
-                        volumeProvider = new VolumeWaveProvider16(bufferedWaveProvider);
-                        volumeProvider.Volume = volume;
+                        _waveOut = CreateWaveOut();
+                        _volumeProvider = new VolumeWaveProvider16(_bufferedWaveProvider);
+                        _volumeProvider.Volume = _volume;
                         try
                         {
-                            waveOut.Init(volumeProvider);
+                            _waveOut.Init(_volumeProvider);
                         }
                         catch (NotSupportedException)
                         {
@@ -237,45 +227,44 @@ namespace Mánagarmr.Models
                         //progressBarBuffer.Maximum = (int)bufferedWaveProvider.BufferDuration.TotalMilliseconds;
                     }
                 }
-                else if (waveOut != null && bufferedWaveProvider != null)
+                else if (_waveOut != null && _bufferedWaveProvider != null)
                 {
-                    var bufferedSeconds = bufferedWaveProvider.BufferedDuration.TotalSeconds;
+                    double bufferedSeconds = _bufferedWaveProvider.BufferedDuration.TotalSeconds;
                     // make it stutter less if we buffer up a decent amount before playing
-                    if (bufferedSeconds < 0.5 && playbackState == StreamingPlaybackState.Playing && !fullyDownloaded)
+                    if (bufferedSeconds < 0.5 && _playbackState == StreamingPlaybackState.Playing && !_fullyDownloaded)
                     {
                         Pause();
                         RaisePropertyChanged("Paused");
                     }
-                    else if (bufferedSeconds > 4 && playbackState == StreamingPlaybackState.Buffering)
+                    else if (bufferedSeconds > 4 && _playbackState == StreamingPlaybackState.Buffering)
                     {
                         Play();
                         RaisePropertyChanged("Playing");
                     }
-                    else if (fullyDownloaded && bufferedSeconds == 0)
+                    else if (_fullyDownloaded && bufferedSeconds == 0)
                     {
                         Debug.WriteLine("Reached end of stream");
                         StopPlayback();
                     }
                 }
-
             }
-            timer.Enabled = true;
+            _timer.Enabled = true;
         }
 
         private void Play()
         {
-            waveOut.Play();
-            Debug.WriteLine(String.Format("Started playing, waveOut.PlaybackState={0}", waveOut.PlaybackState));
-            playbackState = StreamingPlaybackState.Playing;
+            _waveOut.Play();
+            Debug.WriteLine("Started playing, waveOut.PlaybackState={0}", _waveOut.PlaybackState);
+            _playbackState = StreamingPlaybackState.Playing;
 
             RaisePropertyChanged("Playing");
         }
 
         private void Pause()
         {
-            playbackState = StreamingPlaybackState.Buffering;
-            waveOut.Pause();
-            Debug.WriteLine(String.Format("Paused to buffer, waveOut.PlaybackState={0}", waveOut.PlaybackState));
+            _playbackState = StreamingPlaybackState.Buffering;
+            _waveOut.Pause();
+            Debug.WriteLine("Paused to buffer, waveOut.PlaybackState={0}", _waveOut.PlaybackState);
         }
 
         private IWavePlayer CreateWaveOut()
@@ -284,38 +273,38 @@ namespace Mánagarmr.Models
             {
                 case 1:
                     Debug.WriteLine("Select DirectSound");
-                    return new NAudio.Wave.DirectSoundOut(Settings.AudioBuffer);
+                    return new DirectSoundOut(Settings.AudioBuffer);
+
                 case 2:
                     Debug.WriteLine("Select WASAPI : Shared");
-                    return new NAudio.Wave.WasapiOut(NAudio.CoreAudioApi.AudioClientShareMode.Shared, true, Settings.AudioBuffer);
+                    return new WasapiOut(AudioClientShareMode.Shared, true, Settings.AudioBuffer);
+
                 case 3:
                     Debug.WriteLine("Select WASAPI : Exclusive");
-                    return new NAudio.Wave.WasapiOut(NAudio.CoreAudioApi.AudioClientShareMode.Exclusive, true, Settings.AudioBuffer);
+                    return new WasapiOut(AudioClientShareMode.Exclusive, true, Settings.AudioBuffer);
+
                 default:
                     Debug.WriteLine("Select WaveOut");
                     return new WaveOut();
             }
-            
-        }
-
-        private void MP3StreamingPanel_Disposing(object sender, EventArgs e)
-        {
-            StopPlayback();
         }
 
         public void PausePlayback()
         {
-            if (playbackState == StreamingPlaybackState.Playing || playbackState == StreamingPlaybackState.Buffering)
+            if (_playbackState == StreamingPlaybackState.Playing || _playbackState == StreamingPlaybackState.Buffering)
             {
-                waveOut.Pause();
-                Debug.WriteLine(String.Format("User requested Pause, waveOut.PlaybackState={0}", waveOut.PlaybackState));
-                playbackState = StreamingPlaybackState.Paused;
+                _waveOut.Pause();
+                Debug.WriteLine("User requested Pause, waveOut.PlaybackState={0}", _waveOut.PlaybackState);
+                _playbackState = StreamingPlaybackState.Paused;
             }
         }
 
-        private void buttonStop_Click(object sender, EventArgs e)
+        private enum StreamingPlaybackState
         {
-            StopPlayback();
+            Stopped,
+            Playing,
+            Buffering,
+            Paused
         }
     }
 }

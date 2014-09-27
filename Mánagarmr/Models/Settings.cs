@@ -1,89 +1,97 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace Mánagarmr.Models
 {
     /// <summary>
-    ///  XMLに書き出すための動的クラス
+    ///     XMLに書き出すための動的クラス
     /// </summary>
     public class XMLSettings
     {
+        public string AccessToken;
+        public string AccessTokenSecret;
+        public bool? AllowAutoUpdate;
+        public bool? AllowUpdateCheck;
+        public int AudioBuffer;
+        public int AudioDevice;
+        public int AudioMethod;
         public byte[] Hash;
 
-        public string PrimaryServerUrl;
-        public string SecondaryServerUrl;
         public bool IgnoreSSLcertificateError;
-        public string UserName;
-        public string Password;
+        public string Language;
 
         public int NetworkBuffer;
+        public string Password;
+        public string PrimaryServerUrl;
+        public string SecondaryServerUrl;
         public int TargetBitrate;
-
-        public int AudioMethod;
-        public int AudioDevice;
-        public int AudioBuffer;
-        public float Volume;
 
         public string TweetTextFormat;
         public int TweetUrl;
-        public string AccessToken;
-        public string AccessTokenSecret;
-
-        public bool? AllowUpdateCheck;
-        public bool? AllowAutoUpdate;
-
-        public string Language;
+        public string UserName;
+        public float Volume;
     }
 
     /// <summary>
-    ///  設定を読み書きするクラス
+    ///     設定を読み書きするクラス
     /// </summary>
     internal class Settings
     {
         # region Memory
+
         /// <summary>
-        ///  実際の設定値はここに記憶される
+        ///     実際の設定値はここに記憶される
         /// </summary>
         protected class _Settings
         {
             public static byte[] _Hash { get; set; }
 
             public static string _PrimaryServerUrl { get; set; }
+
             public static string _SecondaryServerUrl { get; set; }
+
             public static bool _IgnoreSSLcertificateError { get; set; }
+
             public static string _UserName { get; set; }
+
             public static string _Password { get; set; }
 
             public static int _NetworkBuffer { get; set; }
+
             public static int _TargetBitrate { get; set; }
 
             public static int _AudioMethod { get; set; }
+
             public static int _AudioDevice { get; set; }
+
             public static int _AudioBuffer { get; set; }
+
             public static float _Volume { get; set; }
 
             public static string _TweetTextFormat { get; set; }
+
             public static int _TweetUrl { get; set; }
+
             public static string _AccessToken { get; set; }
+
             public static string _AccessTokenSecret { get; set; }
 
             public static bool? _AllowUpdateCheck { get; set; }
+
             public static bool? _AllowAutoUpdate { get; set; }
 
             public static string _Language { get; set; }
         }
+
         #endregion
 
         #region Accessor
 
         /// <summary>
-        ///  PCごとの簡易ハッシュ値
+        ///     PCごとの簡易ハッシュ値
         /// </summary>
         public static byte[] Hash
         {
@@ -102,30 +110,32 @@ namespace Mánagarmr.Models
             get { return _Settings._SecondaryServerUrl; }
             set { _Settings._SecondaryServerUrl = value; }
         }
+
         public static bool IgnoreSSLcertificateError
         {
             get { return _Settings._IgnoreSSLcertificateError; }
             set { _Settings._IgnoreSSLcertificateError = value; }
         }
+
         public static string UserName
         {
             get
             {
-                var mn = Environment.MachineName;
-                var un = Environment.UserName;
-                var udn = Environment.UserDomainName;
+                string mn = Environment.MachineName;
+                string un = Environment.UserName;
+                string udn = Environment.UserDomainName;
 
-                var seed = Crypt.CreateSeed(mn + un + udn);
+                byte[] seed = Crypt.CreateSeed(mn + un + udn);
 
                 return Crypt.Decrypt(_Settings._UserName, seed);
             }
             set
             {
-                var mn = Environment.MachineName;
-                var un = Environment.UserName;
-                var udn = Environment.UserDomainName;
+                string mn = Environment.MachineName;
+                string un = Environment.UserName;
+                string udn = Environment.UserDomainName;
 
-                var seed = Crypt.CreateSeed(mn + un + udn);
+                byte[] seed = Crypt.CreateSeed(mn + un + udn);
                 _Settings._UserName = Crypt.Encrypt(value, seed);
             }
         }
@@ -134,21 +144,21 @@ namespace Mánagarmr.Models
         {
             get
             {
-                var mn = Environment.MachineName;
-                var un = Environment.UserName;
-                var udn = Environment.UserDomainName;
+                string mn = Environment.MachineName;
+                string un = Environment.UserName;
+                string udn = Environment.UserDomainName;
 
-                var seed = Crypt.CreateSeed(mn + un + udn);
+                byte[] seed = Crypt.CreateSeed(mn + un + udn);
 
                 return Crypt.Decrypt(_Settings._Password, seed);
             }
             set
             {
-                var mn = Environment.MachineName;
-                var un = Environment.UserName;
-                var udn = Environment.UserDomainName;
+                string mn = Environment.MachineName;
+                string un = Environment.UserName;
+                string udn = Environment.UserDomainName;
 
-                var seed = Crypt.CreateSeed(mn + un + udn);
+                byte[] seed = Crypt.CreateSeed(mn + un + udn);
                 _Settings._Password = Crypt.Encrypt(value, seed);
             }
         }
@@ -211,21 +221,21 @@ namespace Mánagarmr.Models
         {
             get
             {
-                var mn = Environment.MachineName;
-                var un = Environment.UserName;
-                var udn = Environment.UserDomainName;
+                string mn = Environment.MachineName;
+                string un = Environment.UserName;
+                string udn = Environment.UserDomainName;
 
-                var seed = Crypt.CreateSeed(mn + un + udn);
+                byte[] seed = Crypt.CreateSeed(mn + un + udn);
 
                 return Crypt.Decrypt(_Settings._AccessTokenSecret, seed);
             }
             set
             {
-                var mn = Environment.MachineName;
-                var un = Environment.UserName;
-                var udn = Environment.UserDomainName;
+                string mn = Environment.MachineName;
+                string un = Environment.UserName;
+                string udn = Environment.UserDomainName;
 
-                var seed = Crypt.CreateSeed(mn + un + udn);
+                byte[] seed = Crypt.CreateSeed(mn + un + udn);
                 _Settings._AccessTokenSecret = Crypt.Encrypt(value, seed);
             }
         }
@@ -234,8 +244,11 @@ namespace Mánagarmr.Models
         {
             get
             {
-                if (_Settings._AllowUpdateCheck == null) { return true; }
-                else { return (bool)_Settings._AllowUpdateCheck; }
+                if (_Settings._AllowUpdateCheck == null)
+                {
+                    return true;
+                }
+                return (bool) _Settings._AllowUpdateCheck;
             }
             set { _Settings._AllowAutoUpdate = value; }
         }
@@ -244,8 +257,11 @@ namespace Mánagarmr.Models
         {
             get
             {
-                if (_Settings._AllowAutoUpdate == null) { return true; }
-                else { return (bool)_Settings._AllowAutoUpdate; }
+                if (_Settings._AllowAutoUpdate == null)
+                {
+                    return true;
+                }
+                return (bool) _Settings._AllowAutoUpdate;
             }
             set { _Settings._AllowAutoUpdate = value; }
         }
@@ -258,62 +274,63 @@ namespace Mánagarmr.Models
 
         #endregion Accessor
 
-        internal static string ConsumerKey { get { return "WY93gCVpkgAMdVAVuu5yDYB0g"; } }
-        internal static string ConsumerSecret { get { return "Q1GYjZd9F78NdbpCStl9u0lbMcqJGmJjqXnZS9NQqddMyqwS5t"; } }
-
-        private static string appPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        private static readonly string appPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         private static string fileName = "Settings.xml";
-        private static string filePath = Path.Combine(appPath, fileName);
+        private static readonly string filePath = Path.Combine(appPath, fileName);
+
+        internal static string ConsumerKey
+        {
+            get { return "WY93gCVpkgAMdVAVuu5yDYB0g"; }
+        }
+
+        internal static string ConsumerSecret
+        {
+            get { return "Q1GYjZd9F78NdbpCStl9u0lbMcqJGmJjqXnZS9NQqddMyqwS5t"; }
+        }
 
         /// <summary>
-        ///  設定を読み込むのに必要なシード値を生成し、設定の読み込みを試行する
+        ///     設定を読み込むのに必要なシード値を生成し、設定の読み込みを試行する
         /// </summary>
         /// <returns>設定を読み込めたかどうか</returns>
         public static bool Initialize()
         {
-            var mn = Environment.MachineName;
-            var un = Environment.UserName;
-            var udn = Environment.UserDomainName;
+            string mn = Environment.MachineName;
+            string un = Environment.UserName;
+            string udn = Environment.UserDomainName;
 
-            var rawHash = Crypt.CreateSeed(mn + un + udn);
-            var hash = Crypt.CreateSeed(rawHash);
+            byte[] rawHash = Crypt.CreateSeed(mn + un + udn);
+            byte[] hash = Crypt.CreateSeed(rawHash);
 
             ReadSettings();
 
-            if (File.Exists(filePath) == true)
+            if (File.Exists(filePath))
             {
-                if (Settings.Hash.SequenceEqual(hash) == false)
+                if (Hash.SequenceEqual(hash) == false)
                 {
-                    Settings.UserName = "";
-                    Settings.Password = "";
-                    Settings.AccessToken = "";
-                    Settings.AccessTokenSecret = "";
+                    UserName = "";
+                    Password = "";
+                    AccessToken = "";
+                    AccessTokenSecret = "";
 
                     return false;
                 }
-                else
-                {
-                    return true;
-                }
+                return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         /// <summary>
-        ///  ファイルから設定を読み込む
+        ///     ファイルから設定を読み込む
         /// </summary>
         private static void ReadSettings()
         {
             var xmls = new XMLSettings();
-            var xs = new XmlSerializer(typeof(XMLSettings));
-            if (File.Exists(filePath) == true)
+            var xs = new XmlSerializer(typeof (XMLSettings));
+            if (File.Exists(filePath))
             {
                 using (var fs = new FileStream(filePath, FileMode.Open))
                 {
-                    xmls = (XMLSettings)xs.Deserialize(fs);
+                    xmls = (XMLSettings) xs.Deserialize(fs);
                     fs.Close();
                 }
             }
@@ -334,7 +351,8 @@ namespace Mánagarmr.Models
             _Settings._AudioBuffer = TryReadValue(xmls.AudioBuffer, 0, 250);
             _Settings._Volume = xmls.Volume;
 
-            _Settings._TweetTextFormat = TryReadValue(xmls.TweetTextFormat, null, "NowPlaying: %title% - %artist% / %album%");
+            _Settings._TweetTextFormat = TryReadValue(xmls.TweetTextFormat, null,
+                "NowPlaying: %title% - %artist% / %album%");
             _Settings._TweetUrl = xmls.TweetUrl;
             _Settings._AccessToken = xmls.AccessToken;
             _Settings._AccessTokenSecret = xmls.AccessTokenSecret;
@@ -351,14 +369,11 @@ namespace Mánagarmr.Models
             {
                 return source;
             }
-            else
-            {
-                return defaultValue;
-            }
+            return defaultValue;
         }
 
         /// <summary>
-        ///  ファイルへ設定を書き込む
+        ///     ファイルへ設定を書き込む
         /// </summary>
         public static void WriteSettings()
         {
@@ -385,12 +400,12 @@ namespace Mánagarmr.Models
             xmls.AccessToken = _Settings._AccessToken;
             xmls.AccessTokenSecret = _Settings._AccessTokenSecret;
 
-            xmls.AllowUpdateCheck = Settings.AllowUpdateCheck;
-            xmls.AllowAutoUpdate = Settings.AllowAutoUpdate;
+            xmls.AllowUpdateCheck = AllowUpdateCheck;
+            xmls.AllowAutoUpdate = AllowAutoUpdate;
 
-            xmls.Language = Settings.Language;
+            xmls.Language = Language;
 
-            var xs = new XmlSerializer(typeof(XMLSettings));
+            var xs = new XmlSerializer(typeof (XMLSettings));
             using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
                 xs.Serialize(fs, xmls);

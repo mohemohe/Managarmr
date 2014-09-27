@@ -98,6 +98,7 @@
     <Compile Include="Models\ReadFullyStream.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\SubsonicAPI\APIhelper.cs" />
+    <Compile Include="Models\SubsonicAPI\GetAlbum.cs" />
     <Compile Include="Models\SubsonicAPI\GetAlbumList.cs" />
     <Compile Include="Models\SubsonicAPI\GetCoverArt.cs" />
     <Compile Include="Models\SubsonicAPI\GetIndexes.cs" />

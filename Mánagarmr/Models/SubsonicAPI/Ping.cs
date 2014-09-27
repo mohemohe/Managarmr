@@ -1,42 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Mánagarmr.Models.SubsonicAPI
 {
-    class Ping
+    internal class Ping
     {
-        public void CheckServer(string url, bool ignoreSSLcertificateError, string userName, string password, out bool result)
+// ReSharper disable once InconsistentNaming
+        public void CheckServer(string url, bool ignoreSSLcertificateError, string userName, string password,
+            out bool result)
         {
-            ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, errors) => ignoreSSLcertificateError;
+            ServicePointManager.ServerCertificateValidationCallback =
+                (sender, cert, chain, errors) => ignoreSSLcertificateError;
 
-            url = url + "rest/ping.view?v=" + APIhelper.apiVersion + "&c=" + APIhelper.appName;
+            url = url + "rest/ping.view?v=" + APIhelper.ApiVersion + "&c=" + APIhelper.AppName;
 
             result = false;
 
-            var wc = new WebClient();
-            wc.Headers[HttpRequestHeader.Authorization] = APIhelper.BuildBasicAuthString(userName, password);
+            WebRequest wr = WebRequest.Create(url);
+            wr.Timeout = 5000;
+            wr.Headers[HttpRequestHeader.Authorization] = APIhelper.BuildBasicAuthString(userName, password);
 
-            byte[] data;
+            string str = null;
+
             try
             {
-                data = wc.DownloadData(url);
+                using (WebResponse rs = wr.GetResponse())
+                using (System.IO.Stream grs = rs.GetResponseStream())
+                {
+                    if (grs != null)
+                    {
+                        var reader = new StreamReader(grs);
+                        str = reader.ReadToEnd();
+                    }
+                }
             }
             catch
             {
-                result = false;
                 return;
             }
 
-            var enc = Encoding.GetEncoding("UTF-8");
             var doc = new XmlDocument();
             try
             {
-                doc.LoadXml(enc.GetString(data));
+                if (str != null) doc.LoadXml(str);
             }
             catch
             {
@@ -46,12 +55,10 @@ namespace Mánagarmr.Models.SubsonicAPI
             List<string> statusList;
             APIhelper.TryParseXML(doc, "subsonic-response", "status", out statusList);
 
-            foreach (var status in statusList)
+// ReSharper disable once UnusedVariable
+            foreach (string status in statusList.Where(status => status == "ok"))
             {
-                if (status == "ok")
-                {
-                    result = true;
-                }
+                result = true;
             }
         }
     }

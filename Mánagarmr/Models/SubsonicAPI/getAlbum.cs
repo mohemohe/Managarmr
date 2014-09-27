@@ -6,19 +6,24 @@ using System.Xml;
 
 namespace Mánagarmr.Models.SubsonicAPI
 {
-    internal class GetSong
+    internal class GetAlbum
     {
+        private readonly GetCoverArt _gca = new GetCoverArt();
+        private List<string> _artist;
+        private List<string> _coverArt;
+        private List<string> _id;
+        private List<string> _title;
         private string _xmlBody;
 
-        private string APIuri
+        private static string APIuri
         {
-            get { return "rest/getSong.view"; }
+            get { return "rest/getAlbum.view"; }
         }
 
-        public StreamInfoPack GetSongInfo(string songId)
+        public Dictionary<int, LibraryListInfoPack> GetAlbumInfo(string albumId)
         {
             string url = APIhelper.Url + APIuri + "?v=" + APIhelper.ApiVersion + "&c=" + APIhelper.AppName + "&id=" +
-                         songId;
+                         albumId;
 
             try
             {
@@ -28,16 +33,23 @@ namespace Mánagarmr.Models.SubsonicAPI
             {
             }
 
-            if (_xmlBody == null)
-            {
-                var sip = new StreamInfoPack();
-                sip.Status = "error";
-                return sip;
-            }
+            ParseXML(_xmlBody);
 
-            return ParseXML(_xmlBody);
+            var llipd = new Dictionary<int, LibraryListInfoPack>();
+
+            if (_xmlBody != null && _id != null)
+            {
+                for (int i = 0; i < _id.Count; i++)
+                {
+                    llipd.Add(i,
+                        new LibraryListInfoPack(_id[i], _title[i], null, _artist[i], null, null,
+                            _gca.GetCoverArtImageUrl(_coverArt[i])));
+                }
+            }
+            return llipd;
         }
 
+        // ReSharper disable once InconsistentNaming
         private void GetXMLbody(string url)
         {
             var wc = new WebClient();
@@ -68,9 +80,8 @@ namespace Mánagarmr.Models.SubsonicAPI
             }
         }
 
-        private StreamInfoPack ParseXML(string stringDoc)
+        private void ParseXML(string stringDoc)
         {
-            var sip = new StreamInfoPack();
             var xmlDoc = new XmlDocument();
             try
             {
@@ -78,8 +89,7 @@ namespace Mánagarmr.Models.SubsonicAPI
             }
             catch
             {
-                sip.Status = "error";
-                return sip;
+                return;
             }
 
             List<string> list;
@@ -87,26 +97,13 @@ namespace Mánagarmr.Models.SubsonicAPI
 
             if (list[0] != "ok")
             {
-                sip.Status = "error";
-                return sip;
+                return;
             }
-            sip.Status = list[0];
-            APIhelper.TryParseXML(xmlDoc, "song", "id", out list);
-            sip.Id = list[0];
-            APIhelper.TryParseXML(xmlDoc, "song", "parent", out list);
-            sip.Parent = list[0];
-            APIhelper.TryParseXML(xmlDoc, "song", "title", out list);
-            sip.Title = list[0];
-            APIhelper.TryParseXML(xmlDoc, "song", "album", out list);
-            sip.Album = list[0];
-            APIhelper.TryParseXML(xmlDoc, "song", "artist", out list);
-            sip.Artist = list[0];
-            APIhelper.TryParseXML(xmlDoc, "song", "coverArt", out list);
-            sip.CoverArt = list[0];
-            APIhelper.TryParseXML(xmlDoc, "song", "duration", out list);
-            sip.Duration = list[0];
 
-            return sip;
+            APIhelper.TryParseXML(xmlDoc, "album", "name", out _title);
+            APIhelper.TryParseXML(xmlDoc, "album", "id", out _id);
+            APIhelper.TryParseXML(xmlDoc, "album", "artist", out _artist);
+            APIhelper.TryParseXML(xmlDoc, "album", "coverArt", out _coverArt);
         }
     }
 }

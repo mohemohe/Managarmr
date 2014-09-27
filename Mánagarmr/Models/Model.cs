@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Livet;
-using Mánagarmr.Models.SubsonicAPI;
+﻿using Livet;
 using Livet.EventListeners;
+using Mánagarmr.Models.SubsonicAPI;
+using System;
 using System.ComponentModel;
-using Mánagarmr.Models.SubsonicAPI.InfoPack;
-using System.Windows.Media.Imaging;
 using System.Threading.Tasks;
-
 
 namespace Mánagarmr.Models
 {
@@ -20,15 +13,15 @@ namespace Mánagarmr.Models
          * NotificationObjectはプロパティ変更通知の仕組みを実装したオブジェクトです。
          */
 
-        Stream s;
-        PropertyChangedEventListener listener;
+        private readonly PropertyChangedEventListener listener;
+        private readonly Stream s;
 
         public Model()
         {
             s = new Stream();
 
             listener = new PropertyChangedEventListener(s);
-            listener.RegisterHandler((sender, e) => UpdateHandlerProxy(sender, e));
+            listener.RegisterHandler(UpdateHandlerProxy);
         }
 
         public void Dispose()
@@ -44,7 +37,7 @@ namespace Mánagarmr.Models
         }
 
         public void Play(string id, float volume)
-        {            
+        {
             s.Play(id, volume);
         }
 
@@ -65,10 +58,10 @@ namespace Mánagarmr.Models
 
         public async void GetSongInfo(string id)
         {
-            await Task.Run(() => 
+            await Task.Run(() =>
             {
                 var gs = new GetSong();
-                APIhelper.sip = gs.GetSongInfo(id);
+                APIhelper.Sip = gs.GetSongInfo(id);
                 RaisePropertyChanged("GetSongInfo");
             });
         }
@@ -78,7 +71,7 @@ namespace Mánagarmr.Models
             await Task.Run(() =>
             {
                 var gca = new GetCoverArt();
-                APIhelper.ms = gca.GetCoverArtImage(id);
+                APIhelper.Ms = gca.GetCoverArtImage(id);
                 RaisePropertyChanged("GetCoverArt");
             });
         }
@@ -88,7 +81,7 @@ namespace Mánagarmr.Models
             await Task.Run(() =>
             {
                 var gi = new GetIndexes();
-                APIhelper.flipd = gi.GetIndex();
+                APIhelper.Flipd = gi.GetIndex();
                 RaisePropertyChanged("GetIndex");
             });
         }
@@ -98,7 +91,7 @@ namespace Mánagarmr.Models
             await Task.Run(() =>
             {
                 var gmd = new GetMusicDirectory();
-                APIhelper.llipd = gmd.GetMusicDir(id);
+                APIhelper.Llipd = gmd.GetMusicDir(id);
                 RaisePropertyChanged("GetLibraryList");
             });
         }
@@ -108,7 +101,7 @@ namespace Mánagarmr.Models
             await Task.Run(() =>
             {
                 var gal = new GetAlbumList();
-                APIhelper.llipd = gal.GetRandomAlbumList();
+                APIhelper.Llipd = gal.GetRandomAlbumList();
                 RaisePropertyChanged("GetLibraryList");
             });
         }
@@ -118,8 +111,18 @@ namespace Mánagarmr.Models
             await Task.Run(() =>
             {
                 var gal = new GetAlbumList();
-                APIhelper.llipd = gal.GetNewestAlbumList();
+                APIhelper.Llipd = gal.GetNewestAlbumList();
                 RaisePropertyChanged("GetLibraryList");
+            });
+        }
+
+        public async void GetLibraryListHeader(string id)
+        {
+            await Task.Run(() =>
+            {
+                var ga = new GetAlbum();
+                APIhelper.Header = ga.GetAlbumInfo(id);
+                RaisePropertyChanged("GetLibraryListHeader");
             });
         }
 
@@ -128,7 +131,7 @@ namespace Mánagarmr.Models
             await Task.Run(() =>
             {
                 var s2 = new Search2();
-                APIhelper.llipd = s2.Search(query);
+                APIhelper.Llipd = s2.Search(query);
                 RaisePropertyChanged("GetLibraryList");
             });
         }
@@ -137,7 +140,8 @@ namespace Mánagarmr.Models
         {
             await Task.Run(() =>
             {
-                if (String.IsNullOrEmpty(Settings.AccessToken) == false && String.IsNullOrEmpty(Settings.AccessTokenSecret) == false)
+                if (String.IsNullOrEmpty(Settings.AccessToken) == false &&
+                    String.IsNullOrEmpty(Settings.AccessTokenSecret) == false)
                 {
                     var twitter = new Twitter();
                     twitter.Initialize(Settings.AccessToken, Settings.AccessTokenSecret);

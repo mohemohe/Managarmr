@@ -1,42 +1,43 @@
 ﻿using Mánagarmr.Models.SubsonicAPI.InfoPack;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Mánagarmr.Models.SubsonicAPI
 {
     public class GetIndexes
     {
-        private static string APIuri { get { return "rest/getIndexes.view"; } }
+        public List<string> Id;
+        public List<string> Name;
+        private string _xmlBody;
 
-        private string xmlBody;
-        public List<string> name;
-        public List<string> id;
-
+        private static string APIuri
+        {
+            get { return "rest/getIndexes.view"; }
+        }
 
         public Dictionary<int, FolderListInfoPack> GetIndex()
         {
-            var url = APIhelper.url + APIuri + "?v=" + APIhelper.apiVersion + "&c=" + APIhelper.appName;
+            string url = APIhelper.Url + APIuri + "?v=" + APIhelper.ApiVersion + "&c=" + APIhelper.AppName;
 
             try
             {
                 GetXMLbody(url);
             }
-            catch { }
+            catch
+            {
+            }
 
-            ParseXML(xmlBody);
+            ParseXML(_xmlBody);
 
             var flipd = new Dictionary<int, FolderListInfoPack>();
 
-            if (xmlBody != null)
+            if (_xmlBody != null)
             {
-                for (int i = 0; i < id.Count; i++)
+                for (int i = 0; i < Id.Count; i++)
                 {
-                    flipd.Add(i, new FolderListInfoPack(id[i], name[i]));
+                    flipd.Add(i, new FolderListInfoPack(Id[i], Name[i]));
                 }
             }
             return flipd;
@@ -45,10 +46,11 @@ namespace Mánagarmr.Models.SubsonicAPI
         private void GetXMLbody(string url)
         {
             var wc = new WebClient();
-            wc.Headers[HttpRequestHeader.Authorization] = APIhelper.BuildBasicAuthString(Settings.UserName, Settings.Password);
+            wc.Headers[HttpRequestHeader.Authorization] = APIhelper.BuildBasicAuthString(Settings.UserName,
+                Settings.Password);
 
-            xmlBody = null;
-            byte[] data = null;
+            _xmlBody = null;
+            byte[] data;
             try
             {
                 data = wc.DownloadData(url);
@@ -60,12 +62,14 @@ namespace Mánagarmr.Models.SubsonicAPI
 
             if (data != null)
             {
-                var enc = Encoding.GetEncoding("UTF-8");
+                Encoding enc = Encoding.GetEncoding("UTF-8");
                 try
                 {
-                    xmlBody = enc.GetString(data);
+                    _xmlBody = enc.GetString(data);
                 }
-                catch { }
+                catch
+                {
+                }
             }
         }
 
@@ -89,8 +93,8 @@ namespace Mánagarmr.Models.SubsonicAPI
                 return;
             }
 
-            APIhelper.TryParseXML(xmlDoc, "artist", "name", out name);
-            APIhelper.TryParseXML(xmlDoc, "artist", "id", out id);
+            APIhelper.TryParseXML(xmlDoc, "artist", "name", out Name);
+            APIhelper.TryParseXML(xmlDoc, "artist", "id", out Id);
         }
     }
 }

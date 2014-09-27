@@ -1,80 +1,82 @@
 ﻿using Livet;
 using Livet.EventListeners;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Mánagarmr.Models.SubsonicAPI
 {
-    class Stream : NotificationObject
+    internal class Stream : NotificationObject
     {
-        PlayStream ps;
-        PropertyChangedEventListener listener;
-        private string APIuri { get { return "rest/stream.view"; } }
-        private string currentUrl { get; set; }
+        private readonly PropertyChangedEventListener _listener;
+        private PlayStream _ps;
 
         public Stream()
         {
-            ps = new PlayStream();
+            _ps = new PlayStream();
 
-            listener = new PropertyChangedEventListener(ps);
-            listener.RegisterHandler((sender, e) => UpdateHandlerProxy(sender, e));
+            _listener = new PropertyChangedEventListener(_ps);
+            _listener.RegisterHandler(UpdateHandlerProxy);
         }
+
+
+        private static string APIuri
+        {
+            get { return "rest/stream.view"; }
+        }
+
+        private string CurrentUrl { get; set; }
 
         public void Dispose()
         {
-            ps = null;
-            listener.Dispose();
+            _ps = null;
+            _listener.Dispose();
         }
 
         private void UpdateHandlerProxy(object sender, PropertyChangedEventArgs e)
         {
-            var worker = sender as Model;
             RaisePropertyChanged(e.PropertyName);
         }
 
-        private string GenerateHexEncodedPassword(string basePassword)
+        private static string GenerateHexEncodedPassword(string basePassword)
         {
-            var data = Encoding.UTF8.GetBytes(Settings.Password);
-            var hexText = BitConverter.ToString(data);
+            byte[] data = Encoding.UTF8.GetBytes(basePassword);
+            string hexText = BitConverter.ToString(data);
             return hexText.Replace("-", "");
         }
 
         public void Play(string songId, float volume)
         {
-            var url = APIhelper.url + APIuri + "?v=" + APIhelper.apiVersion + "&c=" + APIhelper.appName +
-                      "&u=" + Settings.UserName + "&p=enc:" + GenerateHexEncodedPassword(Settings.Password) + "&format=mp3" + "&maxBitRate=" + Settings.TargetBitrate + "&id=" + songId;
+            string url = APIhelper.Url + APIuri + "?v=" + APIhelper.ApiVersion + "&c=" + APIhelper.AppName +
+                         "&u=" + Settings.UserName + "&p=enc:" + GenerateHexEncodedPassword(Settings.Password) +
+                         "&format=mp3" + "&maxBitRate=" + Settings.TargetBitrate + "&id=" + songId;
 
-            if (url != currentUrl)
+            if (url != CurrentUrl)
             {
-                ps.SetUrl(url);
-                ps.ChangeVolume(volume);
-                ps.PlayButton();
+                _ps.SetUrl(url);
+                _ps.ChangeVolume(volume);
+                _ps.PlayButton();
             }
             else
             {
-                ps.ChangeVolume(volume);
-                ps.PlayButton();
+                _ps.ChangeVolume(volume);
+                _ps.PlayButton();
             }
         }
 
         public void Pause()
         {
-            ps.PausePlayback();
+            _ps.PausePlayback();
         }
 
         public void Stop()
         {
-            ps.StopPlayback();
+            _ps.StopPlayback();
         }
 
         public void ChangeVolume(float volume)
         {
-            ps.ChangeVolume(volume);
+            _ps.ChangeVolume(volume);
         }
-
     }
 }
