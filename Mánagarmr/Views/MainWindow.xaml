@@ -120,7 +120,7 @@
                         </Grid>
                         <ScrollViewer Margin="0,69,0,0">
                             <Grid Background="#FFFFFFFF">
-                                
+                                <ListBox ItemsSource="{Binding LibraryList}" SelectedIndex="{Binding LibraryListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <ListBoxItem IsHitTestVisible="False">
@@ -132,7 +132,7 @@
                                             </ListBoxItem>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
-                                    
+
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="PreviewMouseDoubleClick">
                                             <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="MoveLibraryList"/>
