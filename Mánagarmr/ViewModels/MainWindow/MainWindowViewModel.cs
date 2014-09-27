@@ -187,6 +187,8 @@ namespace Mánagarmr.ViewModels.MainWindow
             else
             {
                 PlayId = id;
+                if (_currentState == State.Playing) Stop();
+                Play();
             }
         }
 
