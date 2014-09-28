@@ -6,4 +6,4 @@ Current status is alpha release.
 
 Now developing...
 
-![http://i.imgur.com/tju8K9b.png](http://i.imgur.com/tju8K9b.png)
+![http://i.imgur.com/gIw5lM0.png](http://i.imgur.com/gIw5lM0.png)
