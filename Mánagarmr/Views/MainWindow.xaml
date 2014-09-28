@@ -60,7 +60,7 @@
                             <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_twitter_bird}" />
                         </Rectangle.OpacityMask>
                     </Rectangle>
-                    <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="tweet" />
+                    <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="tweet" FontSize="12"/>
                 </StackPanel>
             </Button>
             <Button Command="{Binding ConfigWindowOpenCommand, Mode=OneWay}">
@@ -70,7 +70,7 @@
                             <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_settings}" />
                         </Rectangle.OpacityMask>
                     </Rectangle>
-                    <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="settings" />
+                    <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="settings" FontSize="12"/>
                 </StackPanel>
             </Button>
         </Controls:WindowCommands>
