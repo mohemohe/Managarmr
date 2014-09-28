@@ -93,6 +93,10 @@ namespace Mánagarmr.ViewModels.MainWindow
             Volume = Settings.Volume;
             VolumeString = Convert.ToInt32(Volume * 100) + " %";
 
+            LibraryListHeaderImage = null;
+            LibraryListHeaderTitle = null;
+            LibraryListHeaderArtist = null;
+
             await Task.Run(() =>
             {
                 APIhelper.BuildBaseUrl();
@@ -406,9 +410,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             get { return _LibraryListHeaderImage; }
             set
             {
-                if (_LibraryListHeaderImage == value)
-                    return;
-                _LibraryListHeaderImage = value;
+                _LibraryListHeaderImage = String.IsNullOrEmpty(value) ? @"pack://application:,,,/Resources/appbar.cd.fix.png" : value;
                 RaisePropertyChanged();
             }
         }
@@ -424,9 +426,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             get { return _LibraryListHeaderTitle; }
             set
             {
-                if (_LibraryListHeaderTitle == value)
-                    return;
-                _LibraryListHeaderTitle = value;
+                _LibraryListHeaderTitle = String.IsNullOrEmpty(value) ? "N/A" : value;
                 RaisePropertyChanged();
             }
         }
@@ -442,9 +442,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             get { return _LibraryListHeaderArtist; }
             set
             {
-                if (_LibraryListHeaderArtist == value)
-                    return;
-                _LibraryListHeaderArtist = value;
+                _LibraryListHeaderArtist = String.IsNullOrEmpty(value) ? "N/A" : value;
                 RaisePropertyChanged();
             }
         }

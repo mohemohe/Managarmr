@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:Mánagarmr.ViewModels"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:mainWindow="clr-namespace:Mánagarmr.ViewModels.MainWindow"
-        Title="Mánagarmr" Height="620" Width="960" MinHeight="620" MinWidth="960" IconBitmapScalingMode="HighQuality" GlowBrush="{Binding WindowColor}" WindowTransitionsEnabled="False" SaveWindowPosition="True" Icon="/Mánagarmr;component/Resources/icon.ico" FontFamily="Meiryo">
+        Title="Mánagarmr" Height="620" Width="960" MinHeight="620" MinWidth="960" IconBitmapScalingMode="HighQuality" GlowBrush="{Binding WindowColor}" SaveWindowPosition="True" Icon="/Mánagarmr;component/Resources/icon.ico" FontFamily="Meiryo" TextOptions.TextFormattingMode="Ideal" TextOptions.TextHintingMode="Fixed" TextOptions.TextRenderingMode="Aliased" UseLayoutRounding="True" FontSize="14">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -60,9 +60,7 @@
                             <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_twitter_bird}" />
                         </Rectangle.OpacityMask>
                     </Rectangle>
-                    <TextBlock Margin="4 0 0 0"
-                   VerticalAlignment="Center"
-                   Text="tweet" />
+                    <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="tweet" />
                 </StackPanel>
             </Button>
             <Button Command="{Binding ConfigWindowOpenCommand, Mode=OneWay}">
@@ -72,9 +70,7 @@
                             <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_settings}" />
                         </Rectangle.OpacityMask>
                     </Rectangle>
-                    <TextBlock Margin="4 0 0 0"
-                   VerticalAlignment="Center"
-                   Text="settings" />
+                    <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="settings" />
                 </StackPanel>
             </Button>
         </Controls:WindowCommands>
@@ -112,10 +108,10 @@
                 <TabItem Header="Library">
                     <Grid>
                         <Grid Height="64" VerticalAlignment="Top">
-                            <Image Source="{Binding LibraryListHeaderImage, IsAsync=true}" RenderOptions.BitmapScalingMode="HighQuality" Height="64" HorizontalAlignment="Left" Width="64"/>
+                            <Image Source="{Binding LibraryListHeaderImage, IsAsync=true}" RenderOptions.BitmapScalingMode="HighQuality" Height="64" HorizontalAlignment="Left" Width="64" Stretch="UniformToFill"/>
                             <WrapPanel Orientation="Vertical" Height="64" VerticalAlignment="Top" Margin="69,0,0,0">
-                                <TextBlock Text="{Binding LibraryListHeaderTitle}" FontSize="24" Margin="0,5,0,0"/>
-                                <TextBlock Text="{Binding LibraryListHeaderArtist}" Foreground="Gray" FontSize="14"/>
+                                <TextBlock Text="{Binding LibraryListHeaderTitle}" FontSize="24" Margin="5,5,0,0"/>
+                                <TextBlock Text="{Binding LibraryListHeaderArtist}" Foreground="Gray" FontSize="14" Margin="5,0,0,0"/>
                             </WrapPanel>
                         </Grid>
                         <Grid Background="#FFFFFFFF" Margin="0,69,0,0">
@@ -123,11 +119,11 @@
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <ListBoxItem IsHitTestVisible="False">
-                                            <WrapPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Track}"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Track}" FontFamily="Consolas" Padding="0,1,0,0" FontSize="15"/>
                                                 <TextBlock Text="{Binding Title}"/>
                                                 <TextBlock Text="{Binding Artist}" Foreground="Gray"/>
-                                            </WrapPanel>
+                                            </StackPanel>
                                         </ListBoxItem>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
@@ -157,8 +153,8 @@
             <Border Name="CoverArea" Margin="10,-26,0,10" Height="80" VerticalAlignment="Bottom" BorderBrush="{Binding WindowColor}" BorderThickness="4" Background="{Binding WindowColor}" HorizontalAlignment="Left" Width="80">
                 <Image Source="{Binding CoverArt, Mode=OneWay}" RenderOptions.BitmapScalingMode="HighQuality" />
             </Border>
-            <TextBlock Text="{Binding Title}" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Top" Foreground="White" FontSize="24" Padding="5"/>
-            <Label Content="{Binding AlbumETC}" HorizontalAlignment="Left" Margin="100,36,0,0" VerticalAlignment="Top" Foreground="White"/>
+            <TextBlock Text="{Binding Title}" HorizontalAlignment="Left" Margin="100,6,0,0" VerticalAlignment="Top" Foreground="White" FontSize="24" />
+            <TextBlock Text="{Binding AlbumETC}" HorizontalAlignment="Left" Margin="100,0,0,6" VerticalAlignment="Bottom" Foreground="White" FontSize="12" />
             <Border Margin="100,-20,10,72" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1" IsEnabled="False">
                 <Slider Name="ProgressSlider" Style="{DynamicResource FlatSlider}" VerticalAlignment="Top" Height="12" Background="{x:Null}" Foreground="{Binding WindowColor}" Width="Auto" BorderBrush="White" Margin="0,0,-13,0" IsEnabled="{Binding ProgressBarIsEnabled}" Maximum="{Binding ProgressBarMaxValue}" Value="{Binding ProgressBarCurrentValue}"/>
             </Border>
@@ -192,7 +188,7 @@
                 </Rectangle>
             </Button>
             <Slider Name="VolumeSlider" Style="{DynamicResource FlatSlider}" Value="{Binding Volume, Mode=TwoWay}" Margin="0,0,10,18" Width="128" Foreground="White" Maximum="1" SmallChange="0.01" TickFrequency="0.1" LargeChange="0.1" Height="12" VerticalAlignment="Bottom" HorizontalAlignment="Right" BorderBrush="Black"/>
-            <Label Content="{Binding VolumeString}" Margin="0,0,10,30" Padding="0" Foreground="White" HorizontalAlignment="Right" Height="15" VerticalAlignment="Bottom"/>
+            <Label Content="{Binding VolumeString}" Margin="0,0,10,30" Padding="0" Foreground="White" HorizontalAlignment="Right" Height="15" VerticalAlignment="Bottom" FontSize="12"/>
         </Grid>
     </Grid>
 </Controls:MetroWindow>
