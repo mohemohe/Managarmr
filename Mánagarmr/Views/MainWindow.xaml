@@ -83,7 +83,7 @@
     <Grid>
         <Grid Margin="0,0,0,100">
             <StackPanel Width="280" HorizontalAlignment="Left" Margin="0,0,0,0">
-                <ListBox Name="UpperListBox" Margin="10" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="UpperListBox_PreviewMouseDown">
+                <ListBox Name="UpperListBox" ItemContainerStyle="{DynamicResource DummyStyle}" Margin="10" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="UpperListBox_PreviewMouseDown">
                     <ListBoxItem Content="Random">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseDoubleClick">
@@ -100,7 +100,7 @@
                     </ListBoxItem>
                 </ListBox>
                 <Separator Margin="10,2"/>
-                <ListBox Name="BottomListBox" ItemsSource="{Binding MusicFolderList}" SelectedIndex="{Binding MusicFolderListIndex}" SelectedValue="{Binding MusicFolderListValue}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="BottomListBox_PreviewMouseDown">
+                <ListBox ItemContainerStyle="{DynamicResource DummyStyle}" Name="BottomListBox" ItemsSource="{Binding MusicFolderList}" SelectedIndex="{Binding MusicFolderListIndex}" SelectedValue="{Binding MusicFolderListValue}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="BottomListBox_PreviewMouseDown">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="PreviewMouseDoubleClick">
                             <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="ChangeLibraryList"/>
@@ -118,29 +118,27 @@
                                 <TextBlock Text="{Binding LibraryListHeaderArtist}" Foreground="Gray" FontSize="14"/>
                             </WrapPanel>
                         </Grid>
-                        <ScrollViewer Margin="0,69,0,0">
-                            <Grid Background="#FFFFFFFF">
-                                <ListBox ItemsSource="{Binding LibraryList}" SelectedIndex="{Binding LibraryListIndex}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <ListBoxItem IsHitTestVisible="False">
-                                                <WrapPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Track}"/>
-                                                    <TextBlock Text="{Binding Title}"/>
-                                                    <TextBlock Text="{Binding Artist}" Foreground="Gray"/>
-                                                </WrapPanel>
-                                            </ListBoxItem>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
+                        <Grid Background="#FFFFFFFF" Margin="0,69,0,0">
+                            <ListBox ItemsSource="{Binding LibraryList}" ItemContainerStyle="{DynamicResource DummyStyle}" SelectedIndex="{Binding LibraryListIndex}"  Margin="10,10,10,10" FontSize="14" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <ListBoxItem IsHitTestVisible="False">
+                                            <WrapPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Track}"/>
+                                                <TextBlock Text="{Binding Title}"/>
+                                                <TextBlock Text="{Binding Artist}" Foreground="Gray"/>
+                                            </WrapPanel>
+                                        </ListBoxItem>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
 
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                                            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="MoveLibraryList"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </ListBox>
-                            </Grid>
-                        </ScrollViewer>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                                        <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="MoveLibraryList"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </ListBox>
+                        </Grid>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Playlist">
