@@ -115,7 +115,7 @@
                             </WrapPanel>
                         </Grid>
                         <Grid Background="#FFFFFFFF" Margin="0,69,0,0">
-                            <ListBox ItemsSource="{Binding LibraryList}" ItemContainerStyle="{DynamicResource DummyStyle}" SelectedIndex="{Binding LibraryListIndex}"  Margin="10,10,10,10" FontSize="14" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox ItemsSource="{Binding LibraryList}" ItemContainerStyle="{DynamicResource DummyStyle}" SelectedIndex="{Binding LibraryListIndex}"  Margin="0,10,0,0" FontSize="14" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <ListBoxItem IsHitTestVisible="False">
