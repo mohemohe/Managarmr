@@ -303,7 +303,7 @@ namespace Mánagarmr.Models
 
             ReadSettings();
 
-            if (File.Exists(filePath))
+            if (File.Exists(filePath) && Hash != null)
             {
                 if (Hash.SequenceEqual(hash) == false)
                 {
@@ -377,33 +377,28 @@ namespace Mánagarmr.Models
         /// </summary>
         public static void WriteSettings()
         {
-            var xmls = new XMLSettings();
-
-            xmls.Hash = _Settings._Hash;
-
-            xmls.PrimaryServerUrl = _Settings._PrimaryServerUrl;
-            xmls.SecondaryServerUrl = _Settings._SecondaryServerUrl;
-            xmls.IgnoreSSLcertificateError = _Settings._IgnoreSSLcertificateError;
-            xmls.UserName = _Settings._UserName;
-            xmls.Password = _Settings._Password;
-
-            xmls.NetworkBuffer = _Settings._NetworkBuffer;
-            xmls.TargetBitrate = _Settings._TargetBitrate;
-
-            xmls.AudioMethod = _Settings._AudioMethod;
-            xmls.AudioDevice = _Settings._AudioDevice;
-            xmls.AudioBuffer = _Settings._AudioBuffer;
-            xmls.Volume = _Settings._Volume;
-
-            xmls.TweetTextFormat = _Settings._TweetTextFormat;
-            xmls.TweetUrl = _Settings._TweetUrl;
-            xmls.AccessToken = _Settings._AccessToken;
-            xmls.AccessTokenSecret = _Settings._AccessTokenSecret;
-
-            xmls.AllowUpdateCheck = AllowUpdateCheck;
-            xmls.AllowAutoUpdate = AllowAutoUpdate;
-
-            xmls.Language = Language;
+            var xmls = new XMLSettings
+            {
+                Hash = _Settings._Hash,
+                PrimaryServerUrl = _Settings._PrimaryServerUrl,
+                SecondaryServerUrl = _Settings._SecondaryServerUrl,
+                IgnoreSSLcertificateError = _Settings._IgnoreSSLcertificateError,
+                UserName = _Settings._UserName,
+                Password = _Settings._Password,
+                NetworkBuffer = _Settings._NetworkBuffer,
+                TargetBitrate = _Settings._TargetBitrate,
+                AudioMethod = _Settings._AudioMethod,
+                AudioDevice = _Settings._AudioDevice,
+                AudioBuffer = _Settings._AudioBuffer,
+                Volume = _Settings._Volume,
+                TweetTextFormat = _Settings._TweetTextFormat,
+                TweetUrl = _Settings._TweetUrl,
+                AccessToken = _Settings._AccessToken,
+                AccessTokenSecret = _Settings._AccessTokenSecret,
+                AllowUpdateCheck = AllowUpdateCheck,
+                AllowAutoUpdate = AllowAutoUpdate,
+                Language = Language
+            };
 
             var xs = new XmlSerializer(typeof (XMLSettings));
             using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
