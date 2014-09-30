@@ -16,7 +16,7 @@ namespace Mánagarmr.Models
         public bool? AllowAutoUpdate;
         public bool? AllowUpdateCheck;
         public int AudioBuffer;
-        public int AudioDevice;
+        public string AudioDevice;
         public int AudioMethod;
         public byte[] Hash;
 
@@ -65,7 +65,7 @@ namespace Mánagarmr.Models
 
             public static int _AudioMethod { get; set; }
 
-            public static int _AudioDevice { get; set; }
+            public static string _AudioDevice { get; set; }
 
             public static int _AudioBuffer { get; set; }
 
@@ -181,7 +181,7 @@ namespace Mánagarmr.Models
             set { _Settings._AudioMethod = value; }
         }
 
-        public static int AudioDevice
+        public static string AudioDevice
         {
             get { return _Settings._AudioDevice; }
             set { _Settings._AudioDevice = value; }
@@ -347,7 +347,7 @@ namespace Mánagarmr.Models
             _Settings._TargetBitrate = TryReadValue(xmls.TargetBitrate, 0, 128);
 
             _Settings._AudioMethod = xmls.AudioMethod;
-            _Settings._AudioDevice = xmls.AudioDevice;
+            _Settings._AudioDevice = TryReadValue(xmls.AudioDevice, null, "Default");
             _Settings._AudioBuffer = TryReadValue(xmls.AudioBuffer, 0, 250);
             _Settings._Volume = xmls.Volume;
 

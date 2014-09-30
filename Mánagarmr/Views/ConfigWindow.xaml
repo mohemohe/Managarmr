@@ -137,11 +137,7 @@
                         </GroupBox>
                         <GroupBox Header="デバイス" Margin="0,72,10,0" VerticalAlignment="Top">
                             <Grid>
-                                <ComboBox VerticalAlignment="Top" SelectedIndex="{Binding AudioDeviceId}">
-                                    <ComboBoxItem>
-                                        Default
-                                    </ComboBoxItem>
-                                </ComboBox>
+                                <ComboBox VerticalAlignment="Top" ItemsSource="{Binding AudioDeviceList}" SelectedIndex="{Binding AudioDeviceListIndex}"/>
                             </Grid>
                         </GroupBox>
                         <GroupBox Header="オーディオ バッファ" Margin="0,144,10,0" VerticalAlignment="Top">

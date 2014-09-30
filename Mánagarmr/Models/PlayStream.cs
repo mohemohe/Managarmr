@@ -1,4 +1,5 @@
-﻿using Livet;
+﻿using System.Security.Cryptography;
+using Livet;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using System;
@@ -28,6 +29,7 @@ namespace Mánagarmr.Models
         }
 
         public string Url { get; private set; }
+        public int DeviceID { get; private set; }
 
         private bool IsBufferNearlyFull
         {
@@ -42,6 +44,11 @@ namespace Mánagarmr.Models
         public void SetUrl(string url)
         {
             Url = url;
+        }
+
+        public void SetDevice(int id)
+        {
+            DeviceID = id;
         }
 
         public void ChangeVolume(float volume)
@@ -273,6 +280,9 @@ namespace Mánagarmr.Models
             {
                 case 1:
                     Debug.WriteLine("Select DirectSound");
+                    var wo = DirectSoundOut.Devices;
+                    var a = wo.GetEnumerator();
+                    var b = a.Current;
                     return new DirectSoundOut(Settings.AudioBuffer);
 
                 case 2:
@@ -285,7 +295,7 @@ namespace Mánagarmr.Models
 
                 default:
                     Debug.WriteLine("Select WaveOut");
-                    return new WaveOut();
+                    return new WaveOut {DeviceNumber = DeviceID};
             }
         }
 

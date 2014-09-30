@@ -1,9 +1,11 @@
-﻿using Livet;
+﻿using System.Diagnostics;
+using Livet;
 using Livet.EventListeners;
 using Mánagarmr.Models.SubsonicAPI;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using NAudio.Wave;
 
 namespace Mánagarmr.Models
 {
@@ -37,9 +39,9 @@ namespace Mánagarmr.Models
             RaisePropertyChanged(e.PropertyName);
         }
 
-        public void Play(string id, float volume)
+        public void Play(string songid, int deviceId, float volume)
         {
-            _s.Play(id, volume);
+            _s.Play(songid, deviceId, volume);
         }
 
         public void Pause()
@@ -149,6 +151,20 @@ namespace Mánagarmr.Models
                     twitter.Tweet(title, artist, album);
                 }
             });
+        }
+
+        public int GetDeviceId(string deviceName)
+        {
+            var dc = WaveOut.DeviceCount;
+            for (int i = 0; i < dc; i++)
+            {
+                var gc = WaveOut.GetCapabilities(i);
+                if (gc.ProductName == deviceName)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
     }
 }

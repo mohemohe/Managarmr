@@ -16,6 +16,7 @@ using System.Reflection;
 using Mánagarmr.Models.SubsonicAPI;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using NAudio.Wave;
 
 namespace Mánagarmr.ViewModels
 {
@@ -288,18 +289,54 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
-        #region AudioDeviceId変更通知プロパティ
-        private int _AudioDeviceId = 0;
+        #region AudioDeviceList変更通知プロパティ
+        private List<string> _AudioDeviceList;
 
-        public int AudioDeviceId
+        public List<string> AudioDeviceList
         {
             get
-            { return _AudioDeviceId; }
+            { return _AudioDeviceList; }
             set
             { 
-                if (_AudioDeviceId == value)
+                if (_AudioDeviceList == value)
                     return;
-                _AudioDeviceId = value;
+                _AudioDeviceList = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
+        #region AudioDeviceListIndex変更通知プロパティ
+        private int _AudioDeviceListIndex;
+
+        public int AudioDeviceListIndex
+        {
+            get
+            { return _AudioDeviceListIndex; }
+            set
+            { 
+                if (_AudioDeviceListIndex == value)
+                    return;
+                _AudioDeviceListIndex = value;
+                RaisePropertyChanged();
+
+                AudioDeviceName = AudioDeviceList[value];
+            }
+        }
+        #endregion
+
+        #region AudioDeviceName変更通知プロパティ
+        private string _AudioDeviceName;
+
+        public string AudioDeviceName
+        {
+            get
+            { return _AudioDeviceName; }
+            set
+            { 
+                if (_AudioDeviceName == value)
+                    return;
+                _AudioDeviceName = value;
                 RaisePropertyChanged();
             }
         }
@@ -550,6 +587,7 @@ namespace Mánagarmr.ViewModels
         #endregion
 
         Twitter twitter = new Twitter();
+        WaveOut wo = new WaveOut();
 
         public void Initialize()
         {
@@ -561,6 +599,7 @@ namespace Mánagarmr.ViewModels
             //};
 
             TargetBitrateList = new List<int>() { 32, 48, 64, 80, 96, 128, 160, 192, 224, 256, 320 };
+            AudioDeviceList = new List<string> {"Default"};
 
             ReadSettings();
 
@@ -572,6 +611,21 @@ namespace Mánagarmr.ViewModels
             else
             {
                 TwitterAuthProgress = TwitterAuthProgressMessage[0];
+            }
+
+            for (int i = 0; i < WaveOut.DeviceCount; i++)
+            {
+                var gc = WaveOut.GetCapabilities(i);
+                AudioDeviceList.Add(gc.ProductName);
+                if (gc.ProductName == Settings.AudioDevice)
+                {
+                    // 0はDefault
+                    AudioDeviceListIndex = i + 1;
+                }
+                else
+                {
+                    AudioDeviceListIndex = 0;
+                }
             }
 
             TargetBitrateSelectedIndex = TargetBitrateList.IndexOf(TargetBitrate);
@@ -601,7 +655,7 @@ namespace Mánagarmr.ViewModels
             TweetUrl = Settings.TweetUrl;
 
             AudioMethodId = Settings.AudioMethod;
-            AudioDeviceId = Settings.AudioDevice;
+            AudioDeviceName = Settings.AudioDevice;
             AudioBufferSliderValue = Settings.AudioBuffer;
 
             //Locale = Settings.Language;
@@ -627,7 +681,7 @@ namespace Mánagarmr.ViewModels
             Settings.TweetUrl = TweetUrl;
 
             Settings.AudioMethod = AudioMethodId;
-            Settings.AudioDevice = AudioDeviceId;
+            Settings.AudioDevice = AudioDeviceName;
             Settings.AudioBuffer = AudioBufferSliderValue;
 
             //Settings.Language = Locale;
