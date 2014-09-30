@@ -45,7 +45,7 @@ namespace Mánagarmr.Models.SubsonicAPI
             return hexText.Replace("-", "");
         }
 
-        public void Play(string songId, int deviceId, float volume)
+        public void Play(string songId, float volume)
         {
             string url = APIhelper.Url + APIuri + "?v=" + APIhelper.ApiVersion + "&c=" + APIhelper.AppName +
                          "&u=" + Settings.UserName + "&p=enc:" + GenerateHexEncodedPassword(Settings.Password) +
@@ -54,6 +54,7 @@ namespace Mánagarmr.Models.SubsonicAPI
             if (url != CurrentUrl)
             {
                 _ps.SetUrl(url);
+                _ps.SetDevice(0);
                 _ps.ChangeVolume(volume);
                 _ps.PlayButton();
             }

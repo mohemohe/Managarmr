@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.CodeDom;
+using System.Security.Cryptography;
 using Livet;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
@@ -278,24 +279,44 @@ namespace Mánagarmr.Models
         {
             switch (Settings.AudioMethod)
             {
+                case 0:
+                    // WaveOut
+                    Debug.WriteLine("Select WaveOut");
+
+                    int deviceId = -1;
+                    var dc = WaveOut.DeviceCount;
+                    for (int i = 0; i < dc; i++)
+                    {
+                        var gc = WaveOut.GetCapabilities(i);
+                        if (gc.ProductName == Settings.AudioDevice)
+                        {
+                            deviceId = i;
+                        }
+                    }
+                    return new WaveOut {DeviceNumber = deviceId, DesiredLatency = Settings.AudioBuffer};
+
                 case 1:
+                    // DirectSound
                     Debug.WriteLine("Select DirectSound");
-                    var wo = DirectSoundOut.Devices;
-                    var a = wo.GetEnumerator();
-                    var b = a.Current;
                     return new DirectSoundOut(Settings.AudioBuffer);
 
                 case 2:
+                    // WASAPI Shared
                     Debug.WriteLine("Select WASAPI : Shared");
                     return new WasapiOut(AudioClientShareMode.Shared, true, Settings.AudioBuffer);
 
                 case 3:
+                    // WASAPI Exclusive
                     Debug.WriteLine("Select WASAPI : Exclusive");
                     return new WasapiOut(AudioClientShareMode.Exclusive, true, Settings.AudioBuffer);
+                
+                case 4:
+                    // ASIO
+                    return null;
 
                 default:
-                    Debug.WriteLine("Select WaveOut");
-                    return new WaveOut {DeviceNumber = DeviceID};
+                    // ありえない
+                    return null;
             }
         }
 

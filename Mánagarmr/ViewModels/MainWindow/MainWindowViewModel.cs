@@ -885,7 +885,7 @@ namespace Mánagarmr.ViewModels.MainWindow
                 return;
             }
 
-            _model.Play(PlayId, 0, AudioStep(Volume)); //TODO:
+            _model.Play(PlayId, AudioStep(Volume));
             SetPauseIcon();
 
             if (_currentState != State.Paused)

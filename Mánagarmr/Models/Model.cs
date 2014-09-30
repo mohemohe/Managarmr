@@ -39,9 +39,9 @@ namespace Mánagarmr.Models
             RaisePropertyChanged(e.PropertyName);
         }
 
-        public void Play(string songid, int deviceId, float volume)
+        public void Play(string songid, float volume)
         {
-            _s.Play(songid, deviceId, volume);
+            _s.Play(songid, volume);
         }
 
         public void Pause()

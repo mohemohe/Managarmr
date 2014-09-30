@@ -284,7 +284,11 @@ namespace Mánagarmr.ViewModels
                 if (_AudioMethodId == value)
                     return;
                 _AudioMethodId = value;
+
                 RaisePropertyChanged();
+
+                AudioDeviceListIndex = 0;
+                SetAudioDeviceList();
             }
         }
         #endregion
@@ -602,6 +606,15 @@ namespace Mánagarmr.ViewModels
             AudioDeviceList = new List<string> {"Default"};
 
             ReadSettings();
+            SetAudioDeviceList();
+
+            for (int i = 0; i < AudioDeviceList.Count; i++)
+            {
+                if (AudioDeviceName == AudioDeviceList[i])
+                {
+                    AudioDeviceListIndex = i;
+                }
+            }
 
             if (String.IsNullOrEmpty(TwitterAccessToken) == false && String.IsNullOrEmpty(TwitterAccessTokenSecret) == false)
             {
@@ -613,25 +626,45 @@ namespace Mánagarmr.ViewModels
                 TwitterAuthProgress = TwitterAuthProgressMessage[0];
             }
 
-            for (int i = 0; i < WaveOut.DeviceCount; i++)
-            {
-                var gc = WaveOut.GetCapabilities(i);
-                AudioDeviceList.Add(gc.ProductName);
-                if (gc.ProductName == Settings.AudioDevice)
-                {
-                    // 0はDefault
-                    AudioDeviceListIndex = i + 1;
-                }
-                else
-                {
-                    AudioDeviceListIndex = 0;
-                }
-            }
-
             TargetBitrateSelectedIndex = TargetBitrateList.IndexOf(TargetBitrate);
 
             NetworkBufferSliderValueString = NetworkBufferSliderValue + "sec";
             AudioBufferSliderValueString = AudioBufferSliderValue + "ms";
+        }
+
+        private void SetAudioDeviceList()
+        {
+            var list = new List<string> {"Default"};
+
+            switch (AudioMethodId)
+            {
+                case 0:
+                    // WaveOut
+                    var dc = WaveOut.DeviceCount;
+                    for (int i = 0; i < dc; i++)
+                    {
+                        var gc = WaveOut.GetCapabilities(i);
+                        list.Add(gc.ProductName);
+                    }
+                    break;
+
+                case 1:
+                    // DirectSound
+                    //AudioDeviceList.AddRange(DirectSoundOut.Devices);
+
+                    break;
+
+                case 2:
+                case 3:
+                    // WASAPI
+                    break;
+
+                case 4:
+                    // ASIO
+                    break;
+            }
+
+            AudioDeviceList = new List<string>(list);
         }
 
         private void ReadSettings()
