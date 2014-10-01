@@ -324,7 +324,14 @@ namespace Mánagarmr.ViewModels
                 _AudioDeviceListIndex = value;
                 RaisePropertyChanged();
 
-                AudioDeviceName = AudioDeviceList[value];
+                if (value != -1 && AudioDeviceList.Count != 0)
+                {
+                    AudioDeviceName = AudioDeviceList[value];
+                }
+                else
+                {
+                    AudioDeviceName = null;
+                }
             }
         }
         #endregion
@@ -634,8 +641,9 @@ namespace Mánagarmr.ViewModels
 
         private void SetAudioDeviceList()
         {
-            var list = new List<string> {"Default"};
+            AudioDeviceListIndex = 0;
 
+            var list = new List<string> {"Default"};
             switch (AudioMethodId)
             {
                 case 0:
@@ -661,6 +669,15 @@ namespace Mánagarmr.ViewModels
 
                 case 4:
                     // ASIO
+                    if (AsioOut.GetDriverNames().Length != 0)
+                    {
+                        list.AddRange(AsioOut.GetDriverNames());
+                    }
+                    else
+                    {
+                        AudioDeviceListIndex = -1;
+                        list.Clear();
+                    }
                     break;
             }
 

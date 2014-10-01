@@ -1,4 +1,5 @@
 ﻿using System.CodeDom;
+using System.Linq;
 using System.Security.Cryptography;
 using Livet;
 using NAudio.CoreAudioApi;
@@ -312,7 +313,12 @@ namespace Mánagarmr.Models
                 
                 case 4:
                     // ASIO
-                    return null;
+                    Debug.WriteLine("ASIO");
+                    if (AsioOut.GetDriverNames().Any(driverName => driverName == Settings.AudioDevice))
+                    {
+                        return new AsioOut(Settings.AudioDevice);
+                    }
+                    return new AsioOut();
 
                 default:
                     // ありえない
