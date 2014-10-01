@@ -132,9 +132,6 @@
                                     <ComboBoxItem>
                                         WASAPI : Exclusive (experimental)
                                     </ComboBoxItem>
-                                    <ComboBoxItem>
-                                        ASIO
-                                    </ComboBoxItem>
                                 </ComboBox>
                             </Grid>
                         </GroupBox>

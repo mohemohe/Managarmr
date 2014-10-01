@@ -337,34 +337,11 @@ namespace Mánagarmr.Models
                         }
                     }
                     return new WasapiOut(AudioClientShareMode.Exclusive, true, Settings.AudioBuffer);
-                
-                case 4:
-                    // ASIO
-                    Debug.WriteLine("ASIO");
-                    if (AsioOut.GetDriverNames().Any(driverName => driverName == Settings.AudioDevice))
-                    {
-                        return new AsioOut(Settings.AudioDevice);
-                    }
-                    return new AsioOut();
 
                 default:
                     // ありえない
                     return null;
             }
-        }
-
-        public void GetWASAPIdevices()
-        {
-            var mmde = new MMDeviceEnumerator();
-            var endPoints = mmde.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
-            foreach (var endPoint in endPoints)
-            {
-                if (endPoint.FriendlyName == Settings.AudioDevice)
-                {
-                    var a = new WasapiOut(endPoint, AudioClientShareMode.Exclusive, true, Settings.AudioBuffer);
-                }
-            }
-
         }
 
         public void PausePlayback()

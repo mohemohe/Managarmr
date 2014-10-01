@@ -681,18 +681,6 @@ namespace Mánagarmr.ViewModels
                     var endPoints = mmde.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
                     list.AddRange(endPoints.Select(endPoint => endPoint.FriendlyName));
                     break;
-
-                case 4:
-                    // ASIO
-                    if (AsioOut.GetDriverNames().Length != 0)
-                    {
-                        list.AddRange(AsioOut.GetDriverNames());
-                    }
-                    else
-                    {
-                        list.Clear();
-                    }
-                    break;
             }
 
             AudioDeviceList = new List<string>(list);
