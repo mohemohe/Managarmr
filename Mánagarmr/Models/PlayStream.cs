@@ -278,6 +278,9 @@ namespace Mánagarmr.Models
 
         private IWavePlayer CreateWaveOut()
         {
+            var mmde = new MMDeviceEnumerator();
+            var endPoints = mmde.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+
             switch (Settings.AudioMethod)
             {
                 case 0:
@@ -299,6 +302,7 @@ namespace Mánagarmr.Models
                 case 1:
                     // DirectSound
                     Debug.WriteLine("Select DirectSound");
+
                     foreach (var device in DirectSoundOut.Devices)
                     {
                         if (device.Description == Settings.AudioDevice)
@@ -311,11 +315,27 @@ namespace Mánagarmr.Models
                 case 2:
                     // WASAPI Shared
                     Debug.WriteLine("Select WASAPI : Shared");
+                    
+                    foreach (var endPoint in endPoints)
+                    {
+                        if (endPoint.FriendlyName == Settings.AudioDevice)
+                        {
+                            return new WasapiOut(endPoint, AudioClientShareMode.Shared, true, Settings.AudioBuffer);
+                        }
+                    }
                     return new WasapiOut(AudioClientShareMode.Shared, true, Settings.AudioBuffer);
 
                 case 3:
                     // WASAPI Exclusive
                     Debug.WriteLine("Select WASAPI : Exclusive");
+
+                    foreach (var endPoint in endPoints)
+                    {
+                        if (endPoint.FriendlyName == Settings.AudioDevice)
+                        {
+                            return new WasapiOut(endPoint, AudioClientShareMode.Exclusive, true, Settings.AudioBuffer);
+                        }
+                    }
                     return new WasapiOut(AudioClientShareMode.Exclusive, true, Settings.AudioBuffer);
                 
                 case 4:
@@ -331,6 +351,20 @@ namespace Mánagarmr.Models
                     // ありえない
                     return null;
             }
+        }
+
+        public void GetWASAPIdevices()
+        {
+            var mmde = new MMDeviceEnumerator();
+            var endPoints = mmde.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+            foreach (var endPoint in endPoints)
+            {
+                if (endPoint.FriendlyName == Settings.AudioDevice)
+                {
+                    var a = new WasapiOut(endPoint, AudioClientShareMode.Exclusive, true, Settings.AudioBuffer);
+                }
+            }
+
         }
 
         public void PausePlayback()

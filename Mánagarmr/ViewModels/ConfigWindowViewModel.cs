@@ -16,6 +16,7 @@ using System.Reflection;
 using Mánagarmr.Models.SubsonicAPI;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
 
 namespace Mánagarmr.ViewModels
@@ -676,6 +677,9 @@ namespace Mánagarmr.ViewModels
                 case 2:
                 case 3:
                     // WASAPI
+                    var mmde = new MMDeviceEnumerator();
+                    var endPoints = mmde.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+                    list.AddRange(endPoints.Select(endPoint => endPoint.FriendlyName));
                     break;
 
                 case 4:
