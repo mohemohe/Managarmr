@@ -306,6 +306,15 @@ namespace Mánagarmr.ViewModels
                     return;
                 _AudioDeviceList = value;
                 RaisePropertyChanged();
+
+                if (value.Count != 0)
+                {
+                    AudioDeviceListIndex = 0;
+                }
+                else
+                {
+                    AudioDeviceListIndex = -1;
+                }
             }
         }
         #endregion
@@ -324,13 +333,16 @@ namespace Mánagarmr.ViewModels
                 _AudioDeviceListIndex = value;
                 RaisePropertyChanged();
 
-                if (value != -1 && AudioDeviceList.Count != 0)
+                if (AudioDeviceList.Count != 0)
                 {
-                    AudioDeviceName = AudioDeviceList[value];
-                }
-                else
-                {
-                    AudioDeviceName = null;
+                    if (value != -1)
+                    {
+                        AudioDeviceName = AudioDeviceList[value];
+                    }
+                    else
+                    {
+                        AudioDeviceName = null;
+                    }
                 }
             }
         }
@@ -641,8 +653,6 @@ namespace Mánagarmr.ViewModels
 
         private void SetAudioDeviceList()
         {
-            AudioDeviceListIndex = 0;
-
             var list = new List<string> {"Default"};
             switch (AudioMethodId)
             {
@@ -658,8 +668,9 @@ namespace Mánagarmr.ViewModels
 
                 case 1:
                     // DirectSound
-                    //AudioDeviceList.AddRange(DirectSoundOut.Devices);
+                    list.Clear();
 
+                    list.AddRange(DirectSoundOut.Devices.Select(directSoundDeviceInfo => directSoundDeviceInfo.Description));
                     break;
 
                 case 2:
@@ -675,7 +686,6 @@ namespace Mánagarmr.ViewModels
                     }
                     else
                     {
-                        AudioDeviceListIndex = -1;
                         list.Clear();
                     }
                     break;

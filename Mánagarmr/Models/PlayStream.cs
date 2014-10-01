@@ -299,6 +299,13 @@ namespace Mánagarmr.Models
                 case 1:
                     // DirectSound
                     Debug.WriteLine("Select DirectSound");
+                    foreach (var device in DirectSoundOut.Devices)
+                    {
+                        if (device.Description == Settings.AudioDevice)
+                        {
+                            return new DirectSoundOut(device.Guid, Settings.AudioBuffer);
+                        }
+                    }
                     return new DirectSoundOut(Settings.AudioBuffer);
 
                 case 2:
