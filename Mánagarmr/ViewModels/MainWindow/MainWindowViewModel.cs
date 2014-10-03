@@ -203,7 +203,7 @@ namespace Mánagarmr.ViewModels.MainWindow
                     }
                 };
                 PlayListIndex = 0;
-                PlayId = LibraryList[PlayListIndex].ID;
+                PlayId = PlayList[PlayListIndex].ID;
                 if (_currentState != State.Stopped) Stop();
                 Play();
             }
