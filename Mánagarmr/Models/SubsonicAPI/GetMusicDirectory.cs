@@ -51,7 +51,8 @@ namespace Mánagarmr.Models.SubsonicAPI
                             Title = _title[i],
                             Track = _track[i],
                             Artist = _artist[i],
-                            Album = _albumId[i],
+                            //Album = _albumId[i],
+                            AlbumId = _albumId[i],
                             IsDir = Convert.ToBoolean(_isDir[i])
                         });
                     }
