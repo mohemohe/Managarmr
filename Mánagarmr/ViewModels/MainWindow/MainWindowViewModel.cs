@@ -211,7 +211,7 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public void MovePlayList()
         {
-            PlayId = LibraryList[PlayListIndex].ID;
+            PlayId = PlayList[PlayListIndex].ID;
             if (_currentState != State.Stopped) Stop();
             Play();
         }
