@@ -41,9 +41,12 @@ namespace Mánagarmr.Models.SubsonicAPI
             {
                 for (int i = 0; i < _id.Count; i++)
                 {
-                    llipd.Add(i,
-                        new LibraryListInfoPack(_id[i], _title[i], null, _artist[i], null, null,
-                            _gca.GetCoverArtImageUrl(_coverArt[i])));
+                    llipd.Add(i, new LibraryListInfoPack{
+                            ID = _id[i], 
+                            Title = _title[i],
+                            Artist = _artist[i],
+                            CoverArtUrl = _gca.GetCoverArtImageUrl(_coverArt[i])
+                        });
                 }
             }
             return llipd;

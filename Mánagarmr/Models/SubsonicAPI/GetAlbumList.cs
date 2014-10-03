@@ -1,4 +1,5 @@
-﻿using Mánagarmr.Models.SubsonicAPI.InfoPack;
+﻿using System;
+using Mánagarmr.Models.SubsonicAPI.InfoPack;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -41,7 +42,14 @@ namespace Mánagarmr.Models.SubsonicAPI
             {
                 for (int i = 0; i < _id.Count; i++)
                 {
-                    llipd.Add(i, new LibraryListInfoPack(_id[i], _title[i], _track[i], _artist[i], _isDir[i]));
+                    llipd.Add(i, new LibraryListInfoPack
+                    {
+                        ID = _id[i], 
+                        Title = _title[i], 
+                        Track = _track[i], 
+                        Artist = _artist[i], 
+                        IsDir = Convert.ToBoolean(_isDir[i])
+                    });
                 }
             }
             return llipd;
@@ -68,7 +76,14 @@ namespace Mánagarmr.Models.SubsonicAPI
             {
                 for (int i = 0; i < _id.Count; i++)
                 {
-                    llipd.Add(i, new LibraryListInfoPack(_id[i], _title[i], _track[i], _artist[i], _isDir[i]));
+                    llipd.Add(i, new LibraryListInfoPack
+                    {
+                        ID = _id[i], 
+                        Title = _title[i],
+                        Track = _track[i], 
+                        Artist = _artist[i],
+                        IsDir = Convert.ToBoolean(_isDir[i])
+                    });
                 }
             }
             return llipd;

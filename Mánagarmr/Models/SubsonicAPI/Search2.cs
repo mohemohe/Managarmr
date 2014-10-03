@@ -51,9 +51,13 @@ namespace Mánagarmr.Models.SubsonicAPI
                 {
                     try
                     {
-                        llipd.Add(i,
-                            new LibraryListInfoPack(_albumId[i], _albumTitle[i], _albumTrack[i], _albumArtist[i],
-                                _albumIsDir[i]));
+                        llipd.Add(i, new LibraryListInfoPack{
+                            ID = _albumId[i],
+                            Title = _albumTitle[i],
+                            Track = _albumTrack[i],
+                            Artist = _albumArtist[i],
+                            IsDir = Convert.ToBoolean(_albumIsDir[i])
+                        });
                         i++;
                     }
                     catch
@@ -68,9 +72,14 @@ namespace Mánagarmr.Models.SubsonicAPI
                 {
                     try
                     {
-                        llipd.Add(i,
-                            new LibraryListInfoPack(_songId[i], _songTitle[i], _songTrack[i], _songArtist[i],
-                                _songIsDir[i]));
+                        llipd.Add(i, new LibraryListInfoPack
+                        {
+                            ID = _songId[i],
+                            Title = _songTitle[i],
+                            Track = _songTrack[i],
+                            Artist = _songArtist[i],
+                            IsDir = Convert.ToBoolean(_songIsDir[i])
+                        });
                         i++;
                     }
                     catch

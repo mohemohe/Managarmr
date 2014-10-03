@@ -113,6 +113,13 @@
                                 <TextBlock Text="{Binding LibraryListHeaderTitle}" FontSize="24" Margin="5,5,0,0"/>
                                 <TextBlock Text="{Binding LibraryListHeaderArtist}" Foreground="Gray" FontSize="14" Margin="5,0,0,0"/>
                             </WrapPanel>
+                            <Button Name="AddPlayListButton" Command="{Binding AddPlayListCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="32" HorizontalAlignment="Right" Background="{x:Null}" BorderBrush="Black" Foreground="{x:Null}" BorderThickness="2" Height="32" VerticalAlignment="Bottom">
+                                <Rectangle Width="16" Height="16" Fill="Black">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Visual="{StaticResource appbar_add}" Stretch="Uniform" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Button>
                         </Grid>
                         <Grid Background="#FFFFFFFF" Margin="0,69,0,0">
                             <ListBox ItemsSource="{Binding LibraryList}" ItemContainerStyle="{DynamicResource DummyStyle}" SelectedIndex="{Binding LibraryListIndex}"  Margin="0,10,0,0" FontSize="14" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -138,11 +145,27 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="Playlist">
-                    <ScrollViewer>
-                        <Grid Background="#FFFFFFFF">
-                            <Label Content="Not yet :(" FontSize="72" Foreground="Gainsboro" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>
-                    </ScrollViewer>
+                    <Grid Background="#FFFFFFFF" Margin="0,0,0,0">
+                        <ListBox ItemsSource="{Binding PlayList}" ItemContainerStyle="{DynamicResource DummyStyle}" SelectedIndex="{Binding PlayListIndex}"  Margin="0,10,0,0" FontSize="14" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <ListBoxItem IsHitTestVisible="False">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Track}" FontFamily="Consolas" Padding="0,1,0,0" FontSize="15"/>
+                                            <TextBlock Text="{Binding Title}"/>
+                                            <TextBlock Text="{Binding Artist}" Foreground="Gray"/>
+                                        </StackPanel>
+                                    </ListBoxItem>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                                    <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="MovePlayList"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ListBox>
+                    </Grid>
                 </TabItem>
             </TabControl>
             <Grid HorizontalAlignment="Right" Width="320" Height="48" VerticalAlignment="Top">

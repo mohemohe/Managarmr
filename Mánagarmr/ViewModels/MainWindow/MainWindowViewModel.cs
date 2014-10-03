@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -84,14 +85,14 @@ namespace Mánagarmr.ViewModels.MainWindow
             listener.RegisterHandler(UpdateHandler);
             CompositeDisposable.Add(listener);
 
-            _timer = new Timer { Interval = 100 };
+            _timer = new Timer {Interval = 100};
             _timer.Elapsed += (sender, e) => Timer_Tick();
             _timer.Start();
 
             _currentState = State.Stopped;
 
             Volume = Settings.Volume;
-            VolumeString = Convert.ToInt32(Volume * 100) + " %";
+            VolumeString = Convert.ToInt32(Volume*100) + " %";
 
             LibraryListHeaderImage = null;
             LibraryListHeaderTitle = null;
@@ -190,10 +191,29 @@ namespace Mánagarmr.ViewModels.MainWindow
             }
             else
             {
-                PlayId = id;
-                if (_currentState == State.Playing) Stop();
+                PlayList = new List<LibraryList>();
+                PlayList = new List<LibraryList>
+                {
+                    new LibraryList
+                    {
+                        ID = LibraryList[LibraryListIndex].ID,
+                        Track = String.Format("{0, 5}", (PlayList.Count + 1) + ". "),
+                        Artist = LibraryList[LibraryListIndex].Artist,
+                        Title = LibraryList[LibraryListIndex].Title
+                    }
+                };
+                PlayListIndex = 0;
+                PlayId = LibraryList[PlayListIndex].ID;
+                if (_currentState != State.Stopped) Stop();
                 Play();
             }
+        }
+
+        public void MovePlayList()
+        {
+            PlayId = LibraryList[PlayListIndex].ID;
+            if (_currentState != State.Stopped) Stop();
+            Play();
         }
 
         public void GetRandomAlbumList()
@@ -394,7 +414,7 @@ namespace Mánagarmr.ViewModels.MainWindow
 
             if (index >= 0 && index < flip.Count)
             {
-                return flip[index].Id;
+                return flip[index].ID;
             }
             return null;
         }
@@ -410,7 +430,9 @@ namespace Mánagarmr.ViewModels.MainWindow
             get { return _LibraryListHeaderImage; }
             set
             {
-                _LibraryListHeaderImage = String.IsNullOrEmpty(value) ? @"pack://application:,,,/Resources/appbar.cd.fix.png" : value;
+                _LibraryListHeaderImage = String.IsNullOrEmpty(value)
+                    ? @"pack://application:,,,/Resources/appbar.cd.fix.png"
+                    : value;
                 RaisePropertyChanged();
             }
         }
@@ -451,7 +473,7 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         #region LibraryList変更通知プロパティ
 
-        private List<LibraryList> _LibraryList;
+        private List<LibraryList> _LibraryList = new List<LibraryList>();
 
         public List<LibraryList> LibraryList
         {
@@ -467,36 +489,39 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         #endregion LibraryList変更通知プロパティ
 
+        #region PlayListIndex変更通知プロパティ
+
+        private int _PlayListIndex;
+
+        public int PlayListIndex
+        {
+            get { return _PlayListIndex; }
+            set
+            {
+                if (_PlayListIndex == value)
+                    return;
+                _PlayListIndex = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        #endregion PlayListIndex変更通知プロパティ
+
         #region PlayList変更通知プロパティ
 
-        private Dictionary<int, LibraryListInfoPack> _PlayList;
+        private List<LibraryList> _PlayList = new List<LibraryList>();
 
-        public Dictionary<int, LibraryListInfoPack> PlayList
+        public List<LibraryList> PlayList
         {
             get { return _PlayList; }
             set
             {
+                _PlayListIndex = -1;
                 if (_PlayList == value)
                     return;
                 _PlayList = value;
                 RaisePropertyChanged();
             }
-        }
-
-        private void AddPlayList(string id, string title)
-        {
-            var llip = new LibraryListInfoPack(id, title);
-            PlayList.Add(PlayList.Count + 1, llip);
-        }
-
-        private string GetPlayListId(int id)
-        {
-            return PlayList[id].Id;
-        }
-
-        private string GetPlayListTitle(int id)
-        {
-            return PlayList[id].Title;
         }
 
         #endregion PlayList変更通知プロパティ
@@ -627,7 +652,7 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         #region ProgressBarMaxValue変更通知プロパティ
 
-        private ulong _ProgressBarMaxValue = 12 * 60 * 1000;
+        private ulong _ProgressBarMaxValue = 12*60*1000;
 
         public ulong ProgressBarMaxValue
         {
@@ -645,6 +670,7 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         #region ProgressBarCurrentValue変更通知プロパティ
 
+        private bool ProgressBarCurrentValueLock;
         private double _ProgressBarCurrentValue;
 
         public double ProgressBarCurrentValue
@@ -661,10 +687,24 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         private void ChangeProgressBarCurrentValue(double value)
         {
-            ProgressBarCurrentValue = value;
-            if (value > ProgressBarMaxValue)
+            if (!ProgressBarCurrentValueLock)
             {
-                Stop();
+                ProgressBarCurrentValueLock = true;
+
+                ProgressBarCurrentValue = value;
+                if (value > ProgressBarMaxValue)
+                {
+                    _sw.Stop();
+                    Stop();
+                    if (PlayListIndex + 1 < PlayList.Count)
+                    {
+                        PlayListIndex++;
+                        PlayId = PlayList[PlayListIndex].ID;
+                        Play();
+                    }
+                }
+
+                ProgressBarCurrentValueLock = false;
             }
         }
 
@@ -683,14 +723,14 @@ namespace Mánagarmr.ViewModels.MainWindow
                     return;
                 _Volume = value;
                 _model.ChangeVolume(AudioStep(value));
-                VolumeString = Convert.ToInt32(value * 100) + " %";
+                VolumeString = Convert.ToInt32(value*100) + " %";
                 RaisePropertyChanged();
             }
         }
 
         private static float AudioStep(float baseVolume)
         {
-            return (float)(1 - Math.Cos(baseVolume * Math.PI / 2));
+            return (float) (1 - Math.Cos(baseVolume*Math.PI/2));
         }
 
         #endregion Volume変更通知プロパティ
@@ -760,9 +800,50 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         #endregion TweetCommand
 
+        #region AddPlayListCommand
+
+        private ViewModelCommand _AddPlayListCommand;
+
+        public ViewModelCommand AddPlayListCommand
+        {
+            get
+            {
+                if (_AddPlayListCommand == null)
+                {
+                    _AddPlayListCommand = new ViewModelCommand(AddPlayList);
+                }
+                return _AddPlayListCommand;
+            }
+        }
+
+        public void AddPlayList()
+        {
+            if (LibraryList != null)
+            {
+                var tmpList = new List<LibraryList>(PlayList);
+                int tmpIndex = PlayListIndex;
+
+                foreach (LibraryList list in LibraryList.Where(list => list.IsDir == false))
+                {
+                    tmpList.Add(new LibraryList
+                    {
+                        ID = list.ID,
+                        Artist = list.Artist,
+                        Title = list.Title,
+                        Track = String.Format("{0, 5}", (tmpList.Count + 1) + ". ")
+                    });
+                }
+                PlayListIndex = -1;
+                PlayList = new List<LibraryList>(tmpList);
+                PlayListIndex = tmpIndex;
+            }
+        }
+
+        #endregion AddPlayListCommand
+
         #region PlayPauseIcon変更通知プロパティ
 
-        private Canvas _PlayPauseIcon = (Canvas)Application.Current.Resources["appbar_control_play"];
+        private Canvas _PlayPauseIcon = (Canvas) Application.Current.Resources["appbar_control_play"];
 
         public Canvas PlayPauseIcon
         {
@@ -910,14 +991,14 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public void SetPlayIcon()
         {
-            PlayPauseIcon = (Canvas)Application.Current.Resources["appbar_control_play"];
+            PlayPauseIcon = (Canvas) Application.Current.Resources["appbar_control_play"];
             PlayPauseIconMargin = "4,0,0,0";
             PlayPauseIconSize = 24;
         }
 
         public void SetPauseIcon()
         {
-            PlayPauseIcon = (Canvas)Application.Current.Resources["appbar_control_pause"];
+            PlayPauseIcon = (Canvas) Application.Current.Resources["appbar_control_pause"];
             PlayPauseIconMargin = "0,0,0,0";
             PlayPauseIconSize = 20;
         }
@@ -932,7 +1013,7 @@ namespace Mánagarmr.ViewModels.MainWindow
 
             if (sip != null)
             {
-                ProgressBarMaxValue = Convert.ToUInt64(sip.Duration) * 1000;
+                ProgressBarMaxValue = Convert.ToUInt64(sip.Duration)*1000;
 
                 if (sip.Title.Length > 30)
                 {
@@ -998,14 +1079,17 @@ namespace Mánagarmr.ViewModels.MainWindow
                 {
                     LibraryList.Add(new LibraryList
                     {
+                        ID = libraryList.ID,
+                        Album = libraryList.AlbumId,
                         Track = String.Format("{0, 5}", libraryList.Track + ". "),
                         Title = libraryList.Title,
-                        Artist = " - " + libraryList.Artist
+                        Artist = " - " + libraryList.Artist,
+                        IsDir = libraryList.IsDir
                     });
                 }
                 else
                 {
-                    LibraryList.Add(new LibraryList { Title = libraryList.Title });
+                    LibraryList.Add(new LibraryList {Title = libraryList.Title, IsDir = libraryList.IsDir});
                 }
             }
 
@@ -1084,7 +1168,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             _model.Stop();
             _sw.Reset();
             _currentState = State.Stopped;
-            PlayPauseIcon = (Canvas)Application.Current.Resources["appbar_control_play"];
+            PlayPauseIcon = (Canvas) Application.Current.Resources["appbar_control_play"];
             PlayPauseIconMargin = "4,0,0,0";
             PlayPauseIconSize = 24;
         }
@@ -1109,6 +1193,13 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public void Rewind()
         {
+            if (PlayListIndex - 1 >= 0)
+            {
+                PlayListIndex--;
+                PlayId = PlayList[PlayListIndex].ID;
+                if (_currentState != State.Stopped) Stop();
+                Play();
+            }
         }
 
         #endregion RewindCommand
@@ -1131,6 +1222,13 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public void FastForward()
         {
+            if (PlayListIndex + 1 < PlayList.Count)
+            {
+                PlayListIndex++;
+                PlayId = PlayList[PlayListIndex].ID;
+                if (_currentState != State.Stopped) Stop();
+                Play();
+            }
         }
 
         #endregion FastForwardCommand
