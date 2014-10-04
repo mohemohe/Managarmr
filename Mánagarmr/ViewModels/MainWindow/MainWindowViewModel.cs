@@ -283,6 +283,12 @@ namespace Mánagarmr.ViewModels.MainWindow
                     LibraryListHeaderImage = null;
                     Search();
                 }
+                else
+                {
+                    LibraryListHeaderTitle = null;
+                    LibraryListHeaderArtist = null;
+                    LibraryListHeaderImage = null;
+                }
             }
         }
 
