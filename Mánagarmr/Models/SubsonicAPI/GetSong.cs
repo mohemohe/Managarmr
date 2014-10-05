@@ -70,6 +70,7 @@ namespace Mánagarmr.Models.SubsonicAPI
 
         private StreamInfoPack ParseXML(string stringDoc)
         {
+            var gc = new GetCoverArt();
             var sip = new StreamInfoPack();
             var xmlDoc = new XmlDocument();
             try
@@ -102,7 +103,7 @@ namespace Mánagarmr.Models.SubsonicAPI
             APIhelper.TryParseXML(xmlDoc, "song", "artist", out list);
             sip.Artist = list[0];
             APIhelper.TryParseXML(xmlDoc, "song", "coverArt", out list);
-            sip.CoverArt = list[0];
+            sip.CoverArt = gc.GetCoverArtImageUrl(list[0]);
             APIhelper.TryParseXML(xmlDoc, "song", "duration", out list);
             sip.Duration = list[0];
 

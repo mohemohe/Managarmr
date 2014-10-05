@@ -142,10 +142,6 @@ namespace Mánagarmr.ViewModels.MainWindow
                     SetSongInfo();
                     break;
 
-                case "GetCoverArt":
-                    SetCoverArt();
-                    break;
-
                 case "GetIndex":
                     SetMusicFolder();
                     break;
@@ -624,9 +620,9 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         #region CoverArt変更通知プロパティ
 
-        private BitmapSource _CoverArt;
+        private string _CoverArt;
 
-        public BitmapSource CoverArt
+        public string CoverArt
         {
             get { return _CoverArt; }
             set
@@ -965,7 +961,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             }
         }
 
-        public async void Play()
+        public void Play()
         {
             if (PlayId == null)
             {
@@ -978,11 +974,6 @@ namespace Mánagarmr.ViewModels.MainWindow
             if (_currentState != State.Paused)
             {
                 _model.GetSongInfo(PlayId);
-                await Task.Run(() =>
-                {
-                    Thread.Sleep(500);
-                    _model.GetCoverArt(PlayId);
-                });
             }
             _currentState = State.Playing;
         }
@@ -1051,14 +1042,8 @@ namespace Mánagarmr.ViewModels.MainWindow
                 Artist = artist;
                 AlbumTitle = album;
                 AlbumETC = artist + " / " + album;
+                CoverArt = sip.CoverArt;
             }
-        }
-
-        public void SetCoverArt()
-        {
-            BitmapSource coverArt = ConvertBitmap(APIhelper.Ms);
-            coverArt.Freeze();
-            CoverArt = coverArt;
         }
 
         public void SetMusicFolder()
@@ -1130,25 +1115,6 @@ namespace Mánagarmr.ViewModels.MainWindow
             }
 
             LibraryListIndex = -1;
-        }
-
-        private BitmapSource ConvertBitmap(MemoryStream ms)
-        {
-            var bitmap = new Bitmap(ms);
-            BitmapSource bs = null;
-
-            try
-            {
-                IntPtr hBitmap = bitmap.GetHbitmap();
-
-                bs = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty,
-                    BitmapSizeOptions.FromEmptyOptions());
-            }
-            catch
-            {
-            }
-
-            return bs;
         }
 
         #endregion PlayPauseCommand

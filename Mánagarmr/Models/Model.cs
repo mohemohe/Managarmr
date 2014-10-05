@@ -69,16 +69,6 @@ namespace Mánagarmr.Models
             });
         }
 
-        public async void GetCoverArt(string id)
-        {
-            await Task.Run(() =>
-            {
-                var gca = new GetCoverArt();
-                APIhelper.Ms = gca.GetCoverArtImage(id);
-                RaisePropertyChanged("GetCoverArt");
-            });
-        }
-
         public async void GetIndex()
         {
             await Task.Run(() =>
@@ -151,20 +141,6 @@ namespace Mánagarmr.Models
                     twitter.Tweet(title, artist, album);
                 }
             });
-        }
-
-        public int GetDeviceId(string deviceName)
-        {
-            var dc = WaveOut.DeviceCount;
-            for (int i = 0; i < dc; i++)
-            {
-                var gc = WaveOut.GetCapabilities(i);
-                if (gc.ProductName == deviceName)
-                {
-                    return i;
-                }
-            }
-            return -1;
         }
     }
 }
