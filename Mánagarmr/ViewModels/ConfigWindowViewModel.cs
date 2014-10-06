@@ -765,20 +765,29 @@ namespace Mánagarmr.ViewModels
 
             // Primary server
             var url = PrimaryServerAddress;
-            if (url.EndsWith("/") == false)
+            if (String.IsNullOrEmpty(url) == false)
             {
-                url = url + "/";
-            }
+                if (url.EndsWith("/") == false)
+                {
+                    url = url + "/";
+                }
 
-            var result = false;
-            await Task.Run(() => p.CheckServer(url, IgnoreSSLcertificateError, SubsonicID, SubsonicPassword, out result));
-            if (result == true)
-            {
-                PrimaryServerStatus = "OK!";
+                var result = false;
+
+                await Task.Run(() => p.CheckServer(url, IgnoreSSLcertificateError, SubsonicID, SubsonicPassword, out result));
+
+                if (result == true)
+                {
+                    PrimaryServerStatus = "OK!";
+                }
+                else
+                {
+                    PrimaryServerStatus = "Cant reach server :(";
+                }
             }
             else
             {
-                PrimaryServerStatus = "Cant reach server :(";
+                PrimaryServerStatus = "N/A";
             }
             SecondaryServerStatus = "checking...";
             SubsonicConnectionTest = "Primary server: " + PrimaryServerStatus + "\n" +
@@ -786,20 +795,29 @@ namespace Mánagarmr.ViewModels
 
             // Secondary server
             url = SecondaryServerAddress;
-            if (url.EndsWith("/") == false)
+            if (String.IsNullOrEmpty(url) == false)
             {
-                url = url + "/";
-            }
+                if (url.EndsWith("/") == false)
+                {
+                    url = url + "/";
+                }
 
-            result = false;
-            await Task.Run(() => p.CheckServer(url, IgnoreSSLcertificateError, SubsonicID, SubsonicPassword, out result));
-            if (result == true)
-            {
-                SecondaryServerStatus = "OK!";
+                var result = false;
+
+                await Task.Run(() => p.CheckServer(url, IgnoreSSLcertificateError, SubsonicID, SubsonicPassword, out result));
+
+                if (result == true)
+                {
+                    SecondaryServerStatus = "OK!";
+                }
+                else
+                {
+                    SecondaryServerStatus = "Cant reach server :(";
+                }
             }
             else
             {
-                SecondaryServerStatus = "Cant reach server :(";
+                SecondaryServerStatus = "N/A";
             }
 
             SubsonicConnectionTest = "Primary server: " + PrimaryServerStatus + "\n" +
