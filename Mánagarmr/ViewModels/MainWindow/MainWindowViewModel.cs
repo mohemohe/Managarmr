@@ -838,24 +838,33 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public void AddPlayList()
         {
-            if (LibraryList != null)
+            if (PlayList == null)
             {
-                var tmpList = new List<LibraryList>(PlayList);
-                int tmpIndex = PlayListIndex;
+                PlayList = new List<LibraryList>();
+            }
 
-                foreach (LibraryList list in LibraryList.Where(list => list.IsDir == false))
+            bool zeroFlag = PlayList.Count == 0;
+
+            var tmpList = new List<LibraryList>(PlayList);
+            int tmpIndex = PlayListIndex;
+
+            foreach (LibraryList list in LibraryList.Where(list => list.IsDir == false))
+            {
+                tmpList.Add(new LibraryList
                 {
-                    tmpList.Add(new LibraryList
-                    {
-                        ID = list.ID,
-                        Artist = list.Artist,
-                        Title = list.Title,
-                        Track = String.Format("{0, 5}", (tmpList.Count + 1) + ". ")
-                    });
-                }
-                PlayListIndex = -1;
-                PlayList = new List<LibraryList>(tmpList);
-                PlayListIndex = tmpIndex;
+                    ID = list.ID,
+                    Artist = list.Artist,
+                    Title = list.Title,
+                    Track = String.Format("{0, 5}", (tmpList.Count + 1) + ". ")
+                });
+            }
+            PlayListIndex = -1;
+            PlayList = new List<LibraryList>(tmpList);
+            PlayListIndex = tmpIndex;
+
+            if (zeroFlag)
+            {
+                PlayId = PlayList[0].ID;
             }
         }
 
