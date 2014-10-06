@@ -121,6 +121,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             switch (e.PropertyName)
             {
                 case "Playing":
+                    ProgressBarIsIndeterminate = false;
                     _sw.Start();
                     _currentState = State.Playing;
                     SetPauseIcon();
@@ -162,12 +163,10 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         private void Timer_Tick()
         {
-            ProgresBarIsEnabled = true;
             if (_sw != null)
             {
                 ChangeProgressBarCurrentValue(_sw.ElapsedMilliseconds);
             }
-            ProgresBarIsEnabled = false;
         }
 
         public void ChangeLibraryList()
@@ -634,24 +633,6 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         #endregion CoverArt変更通知プロパティ
 
-        #region ProgresBarIsEnabled変更通知プロパティ
-
-        private bool _ProgresBarIsEnabled;
-
-        public bool ProgresBarIsEnabled
-        {
-            get { return _ProgresBarIsEnabled; }
-            set
-            {
-                if (_ProgresBarIsEnabled == value)
-                    return;
-                _ProgresBarIsEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        #endregion ProgresBarIsEnabled変更通知プロパティ
-
         #region ProgressBarMaxValue変更通知プロパティ
 
         private ulong _ProgressBarMaxValue = 12*60*1000;
@@ -711,6 +692,23 @@ namespace Mánagarmr.ViewModels.MainWindow
         }
 
         #endregion ProgressBarCurrentValue変更通知プロパティ
+
+        #region ProgressBarIsIndeterminate変更通知プロパティ
+        private bool _ProgressBarIsIndeterminate;
+
+        public bool ProgressBarIsIndeterminate
+        {
+            get
+            { return _ProgressBarIsIndeterminate; }
+            set
+            { 
+                if (_ProgressBarIsIndeterminate == value)
+                    return;
+                _ProgressBarIsIndeterminate = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
 
         #region Volume変更通知プロパティ
 
@@ -967,6 +965,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             {
                 return;
             }
+            ProgressBarIsIndeterminate = true;
 
             _model.Play(PlayId, AudioStep(Volume));
             SetPauseIcon();

@@ -179,7 +179,7 @@
             <TextBlock Text="{Binding Title}" HorizontalAlignment="Left" Margin="100,6,0,0" VerticalAlignment="Top" Foreground="White" FontSize="24" />
             <TextBlock Text="{Binding AlbumETC}" HorizontalAlignment="Left" Margin="100,0,0,6" VerticalAlignment="Bottom" Foreground="White" FontSize="12" />
             <Border Margin="100,-20,10,72" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1" IsEnabled="False">
-                <Slider Name="ProgressSlider" Style="{DynamicResource FlatSlider}" VerticalAlignment="Top" Height="12" Background="{x:Null}" Foreground="{Binding WindowColor}" Width="Auto" BorderBrush="White" Margin="0,0,-13,0" IsEnabled="{Binding ProgressBarIsEnabled}" Maximum="{Binding ProgressBarMaxValue}" Value="{Binding ProgressBarCurrentValue}"/>
+                <Controls:MetroProgressBar Background="{x:Null}" Foreground="{Binding WindowColor}" Maximum="{Binding ProgressBarMaxValue}" Value="{Binding ProgressBarCurrentValue}" IsIndeterminate="{Binding ProgressBarIsIndeterminate}" Margin="0" VerticalAlignment="Stretch"/>
             </Border>
             <Border Margin="100,-20,10,72" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1" IsEnabled="False"/>
             <Button Name="PlayPauseButton" Command="{Binding PlayPauseCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,296,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
