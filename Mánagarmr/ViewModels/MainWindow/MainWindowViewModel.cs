@@ -965,15 +965,16 @@ namespace Mánagarmr.ViewModels.MainWindow
             {
                 return;
             }
-            ProgressBarIsIndeterminate = true;
+
+            if (_currentState != State.Paused)
+            {
+                ProgressBarIsIndeterminate = true;
+                _model.GetSongInfo(PlayId);
+            }
 
             _model.Play(PlayId, AudioStep(Volume));
             SetPauseIcon();
 
-            if (_currentState != State.Paused)
-            {
-                _model.GetSongInfo(PlayId);
-            }
             _currentState = State.Playing;
         }
 
