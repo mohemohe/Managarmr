@@ -104,7 +104,7 @@
                     </i:Interaction.Triggers>
                 </ListBox>
             </StackPanel>
-            <TabControl Margin="295,10,10,0">
+            <TabControl Margin="295,10,10,0" SelectedIndex="{Binding SelectedIndex}">
                 <TabItem Header="Library">
                     <Grid>
                         <Grid Height="64" VerticalAlignment="Top">

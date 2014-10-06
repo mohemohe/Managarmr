@@ -173,6 +173,7 @@ namespace Mánagarmr.ViewModels.MainWindow
         {
             LibraryListHeaderTitle = MusicFolderListValue;
             _model.GetLibraryList(GetMusicFolderListId(MusicFolderListIndex));
+            SelectedIndex = 0;
         }
 
         public void MoveLibraryList()
@@ -218,6 +219,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             LibraryListHeaderTitle = "Random";
 
             _model.GetRundomAlbumList();
+            SelectedIndex = 0;
         }
 
         public void GetNewestAlbumList()
@@ -227,6 +229,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             LibraryListHeaderTitle = "Recently added";
 
             _model.GetNewestAlbumList();
+            SelectedIndex = 0;
         }
 
         #region WindowColor変更通知プロパティ
@@ -367,6 +370,23 @@ namespace Mánagarmr.ViewModels.MainWindow
         }
 
         #endregion MusicFolderListIndex変更通知プロパティ
+
+        #region SelectedIndex変更通知プロパティ
+        private int _SelectedIndex;
+
+        public int SelectedIndex
+        {
+            get
+            { return _SelectedIndex; }
+            set
+            {
+                if (_SelectedIndex == value)
+                    return;
+                _SelectedIndex = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
 
         #region LibraryListId変更通知プロパティ
 
