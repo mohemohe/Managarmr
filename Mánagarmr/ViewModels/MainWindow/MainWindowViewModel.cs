@@ -1194,12 +1194,25 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public void Rewind()
         {
-            if (PlayListIndex - 1 >= 0)
+            if (PlayListIndex == 0)
             {
-                PlayListIndex--;
-                PlayId = PlayList[PlayListIndex].ID;
-                if (_currentState != State.Stopped) Stop();
+                Stop();
                 Play();
+            }
+            else if (PlayListIndex - 1 >= 0)
+            {
+                if (_sw.ElapsedMilliseconds > 10 * 1000)
+                {
+                    Stop();
+                    Play();
+                }
+                else
+                {
+                    PlayListIndex--;
+                    PlayId = PlayList[PlayListIndex].ID;
+                    if (_currentState != State.Stopped) Stop();
+                    Play();
+                }
             }
         }
 
