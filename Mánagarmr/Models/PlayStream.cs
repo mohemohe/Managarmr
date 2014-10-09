@@ -153,6 +153,7 @@ namespace Mánagarmr.Models
                     // was doing this in a finally block, but for some reason
                     // we are hanging on response stream .Dispose so never get there
                     if (decompressor != null) decompressor.Dispose();
+                    readFullyStream.Dispose();
                 }
             }
             finally
@@ -197,6 +198,13 @@ namespace Mánagarmr.Models
                 }
 
                 _playbackState = StreamingPlaybackState.Stopped;
+
+                if (_bufferedWaveProvider != null)
+                {
+                    _bufferedWaveProvider.ClearBuffer();
+                    _bufferedWaveProvider = null;
+                }
+                
                 if (_waveOut != null)
                 {
                     _waveOut.Stop();
