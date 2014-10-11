@@ -1,5 +1,7 @@
-﻿using Rhinemaidens;
+﻿using System.Windows;
+using Rhinemaidens;
 using System;
+using Mánagarmr.Helpers;
 
 namespace Mánagarmr.Models
 {
@@ -45,7 +47,30 @@ namespace Mánagarmr.Models
         public void Tweet(string title, string artist, string album)
         {
             string tweetBody = GenerateTweetBody(title, artist, album);
-            _lorelei.PostTweet(tweetBody);
+            try
+            {
+                _lorelei.PostTweet(tweetBody);
+            }
+            catch (UnauthorizedException)
+            {
+                var mbp = new MessageBoxPack("Twitterの認証に失敗しました\n設定から再度認証してください", "ツイート失敗", MessageBoxImage.Error);
+                MessageBoxHelper.AddMessageBoxQueue(mbp);
+            }
+            catch (DuplicateTweetBodyException)
+            {
+                var mbp = new MessageBoxPack("同じ曲を連続してツイートできません", "ツイート失敗", MessageBoxImage.Error);
+                MessageBoxHelper.AddMessageBoxQueue(mbp);
+            }
+            catch (TwitterServerNotWorkingWellException)
+            {
+                var mbp = new MessageBoxPack("Twitterサーバーからの応答がおかしいです", "ツイート失敗", MessageBoxImage.Error);
+                MessageBoxHelper.AddMessageBoxQueue(mbp);
+            }
+            catch
+            {
+                var mbp = new MessageBoxPack("不明なエラーが発生しました", "ツイート失敗", MessageBoxImage.Error);
+                MessageBoxHelper.AddMessageBoxQueue(mbp);
+            }
         }
 
         private string GenerateTweetBody(string title, string artist, string album)
