@@ -182,33 +182,47 @@
                 <Controls:MetroProgressBar Background="{x:Null}" Foreground="{Binding WindowColor}" Maximum="{Binding ProgressBarMaxValue}" Value="{Binding ProgressBarCurrentValue}" IsIndeterminate="{Binding ProgressBarIsIndeterminate}" Margin="0" VerticalAlignment="Stretch"/>
             </Border>
             <Border Margin="100,-20,10,72" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1" IsEnabled="False"/>
-            <Button Name="PlayPauseButton" Command="{Binding PlayPauseCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,296,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
+            <Button Name="PlayPauseButton" Command="{Binding PlayPauseCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,335,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
                 <Rectangle Width="{Binding PlayPauseIconSize}" Height="{Binding PlayPauseIconSize}" Fill="White" Margin="{Binding PlayPauseIconMargin}">
                     <Rectangle.OpacityMask>
                         <VisualBrush Visual="{Binding PlayPauseIcon}" Stretch="Uniform" />
                     </Rectangle.OpacityMask>
                 </Rectangle>
             </Button>
-            <Button Name="StopButton" Command="{Binding StopCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,249,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
+            <Button Name="StopButton" Command="{Binding StopCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,287,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
                 <Rectangle Width="20" Height="20" Fill="White">
                     <Rectangle.OpacityMask>
                         <VisualBrush Visual="{StaticResource appbar_control_stop}" Stretch="Uniform" />
                     </Rectangle.OpacityMask>
                 </Rectangle>
             </Button>
-            <Button Name="RewindButton" Command="{Binding RewindCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,202,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
+            <Button Name="RewindButton" Command="{Binding RewindCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,239,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
                 <Rectangle Width="24" Height="24" Fill="White">
                     <Rectangle.OpacityMask>
                         <VisualBrush Visual="{StaticResource appbar_control_rewind}" Stretch="Uniform" />
                     </Rectangle.OpacityMask>
                 </Rectangle>
             </Button>
-            <Button Name="FastForwardButton" Command="{Binding FastForwardCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,155,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
+            <Button Name="FastForwardButton" Command="{Binding FastForwardCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,191,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
                 <Rectangle Width="24" Height="24" Fill="White">
                     <Rectangle.OpacityMask>
                         <VisualBrush Visual="{StaticResource appbar_control_fastforward}" Stretch="Uniform" />
                     </Rectangle.OpacityMask>
                 </Rectangle>
+            </Button>
+            <Button Name="RepeatButton" Command="{Binding RepeatModeCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="48" Height="48" HorizontalAlignment="Right" Margin="0,10,143,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="White" Foreground="{x:Null}" BorderThickness="2">
+                <Grid>
+                    <Rectangle Visibility="{Binding RepeatIconIsVisible}" Width="40" Height="40" Fill="White">
+                        <Rectangle.OpacityMask>
+                            <ImageBrush ImageSource="../Resources/appbar.repeat.once.png" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <Rectangle Width="24" Height="24" Fill="White">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Visual="{Binding RepeatIcon}" Stretch="Uniform" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Grid>
             </Button>
             <Slider Name="VolumeSlider" Style="{DynamicResource FlatSlider}" Value="{Binding Volume, Mode=TwoWay}" Margin="0,0,10,18" Width="128" Foreground="White" Maximum="1" SmallChange="0.01" TickFrequency="0.1" LargeChange="0.1" Height="12" VerticalAlignment="Bottom" HorizontalAlignment="Right" BorderBrush="Black"/>
             <Label Content="{Binding VolumeString}" Margin="0,0,10,30" Padding="0" Foreground="White" HorizontalAlignment="Right" Height="15" VerticalAlignment="Bottom" FontSize="12"/>

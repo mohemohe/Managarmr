@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.RightsManagement;
 using System.Xml.Serialization;
 
 namespace Mánagarmr.Models
@@ -33,6 +34,7 @@ namespace Mánagarmr.Models
         public int TweetUrl;
         public string UserName;
         public float Volume;
+        public int RepeatState;
     }
 
     /// <summary>
@@ -70,6 +72,8 @@ namespace Mánagarmr.Models
             public static int _AudioBuffer { get; set; }
 
             public static float _Volume { get; set; }
+
+            public static int _RepeatState { get; set; }
 
             public static string _TweetTextFormat { get; set; }
 
@@ -197,6 +201,12 @@ namespace Mánagarmr.Models
         {
             get { return _Settings._Volume; }
             set { _Settings._Volume = value; }
+        }
+
+        public static int RepeatState
+        {
+            get { return _Settings._RepeatState; }
+            set { _Settings._RepeatState = value; }
         }
 
         public static string TweetTextFormat
@@ -350,6 +360,7 @@ namespace Mánagarmr.Models
             _Settings._AudioDevice = TryReadValue(xmls.AudioDevice, null, "Default");
             _Settings._AudioBuffer = TryReadValue(xmls.AudioBuffer, 0, 250);
             _Settings._Volume = xmls.Volume;
+            _Settings._RepeatState = TryReadValue(xmls.RepeatState, null, 0);
 
             _Settings._TweetTextFormat = TryReadValue(xmls.TweetTextFormat, null,
                 "NowPlaying: %title% - %artist% / %album%");
@@ -391,6 +402,7 @@ namespace Mánagarmr.Models
                 AudioDevice = _Settings._AudioDevice,
                 AudioBuffer = _Settings._AudioBuffer,
                 Volume = _Settings._Volume,
+                RepeatState = _Settings._RepeatState,
                 TweetTextFormat = _Settings._TweetTextFormat,
                 TweetUrl = _Settings._TweetUrl,
                 AccessToken = _Settings._AccessToken,

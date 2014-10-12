@@ -1,4 +1,5 @@
-﻿using Livet;
+﻿using System.Windows.Media;
+using Livet;
 using Livet.Commands;
 using Livet.EventListeners;
 using Livet.Messaging;
@@ -67,7 +68,6 @@ namespace Mánagarmr.ViewModels.MainWindow
          * 自動的にUIDispatcher上での通知に変換されます。変更通知に際してUIDispatcherを操作する必要はありません。
          */
 
-        private State _currentState;
         private Model _model;
         private Stopwatch _sw;
         private Timer _timer;
@@ -89,10 +89,12 @@ namespace Mánagarmr.ViewModels.MainWindow
             _timer.Elapsed += (sender, e) => Timer_Tick();
             _timer.Start();
 
-            _currentState = State.Stopped;
+            PlayState = State.Stopped;
 
             Volume = Settings.Volume;
             VolumeString = Convert.ToInt32(Volume*100) + " %";
+
+            CurrentRepeatState = (RepeatState)Settings.RepeatState;
 
             LibraryListHeaderImage = null;
             LibraryListHeaderTitle = null;
@@ -112,6 +114,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             _sw = null;
             _timer = null;
 
+            Settings.RepeatState = (int)CurrentRepeatState;
             Settings.Volume = Volume;
             Settings.WriteSettings();
         }
@@ -123,19 +126,19 @@ namespace Mánagarmr.ViewModels.MainWindow
                 case "Playing":
                     ProgressBarIsIndeterminate = false;
                     _sw.Start();
-                    _currentState = State.Playing;
+                    PlayState = State.Playing;
                     SetPauseIcon();
                     break;
 
                 case "Paused":
                     _sw.Stop();
-                    _currentState = State.Paused;
+                    PlayState = State.Paused;
                     SetPlayIcon();
                     break;
 
                 case "Stopped":
                     _sw.Reset();
-                    _currentState = State.Stopped;
+                    PlayState = State.Stopped;
                     SetPlayIcon();
                     break;
 
@@ -200,7 +203,7 @@ namespace Mánagarmr.ViewModels.MainWindow
                 };
                 PlayListIndex = 0;
                 PlayId = PlayList[PlayListIndex].ID;
-                if (_currentState != State.Stopped) Stop();
+                if (PlayState != State.Stopped) Stop();
                 Play();
             }
         }
@@ -208,7 +211,7 @@ namespace Mánagarmr.ViewModels.MainWindow
         public void MovePlayList()
         {
             PlayId = PlayList[PlayListIndex].ID;
-            if (_currentState != State.Stopped) Stop();
+            if (PlayState != State.Stopped) Stop();
             Play();
         }
 
@@ -701,9 +704,25 @@ namespace Mánagarmr.ViewModels.MainWindow
                     Stop();
                     if (PlayListIndex + 1 < PlayList.Count)
                     {
-                        PlayListIndex++;
-                        PlayId = PlayList[PlayListIndex].ID;
-                        Play();
+                        if (CurrentRepeatState == RepeatState.OnceRepeat)
+                        {
+                            Play();
+                        }
+                        else
+                        {
+                            PlayListIndex++;
+                            PlayId = PlayList[PlayListIndex].ID;
+                            Play();
+                        }
+                    }
+                    else
+                    {
+                        if (CurrentRepeatState == RepeatState.Repeat)
+                        {
+                            PlayListIndex = 0;
+                            PlayId = PlayList[PlayListIndex].ID;
+                            Play();
+                        }
                     }
                 }
 
@@ -924,6 +943,97 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         #endregion PlayPauseIconSize変更通知プロパティ
 
+        #region RepeatIcon変更通知プロパティ
+        private Canvas _RepeatIcon = (Canvas)Application.Current.Resources["appbar_arrow_right"];
+
+        public Canvas RepeatIcon
+        {
+            get
+            { return _RepeatIcon; }
+            set
+            { 
+                if (value == null)
+                {
+                    RepeatIconIsVisible = Visibility.Visible;
+                }
+                else
+                {
+                    RepeatIconIsVisible = Visibility.Hidden;
+                }
+                _RepeatIcon = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
+        #region RepeatIconIsVisible変更通知プロパティ
+        private Visibility _RepeatIconIsVisible = Visibility.Hidden;
+
+        public Visibility RepeatIconIsVisible
+        {
+            get
+            { return _RepeatIconIsVisible; }
+            set
+            { 
+                if (_RepeatIconIsVisible == value)
+                    return;
+                _RepeatIconIsVisible = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
+        #region CurrentRepeatState変更通知プロパティ
+        private RepeatState _CurrentRepeatState = RepeatState.None;
+
+        public RepeatState CurrentRepeatState
+        {
+            get
+            { return _CurrentRepeatState; }
+            set
+            { 
+                if (_CurrentRepeatState == value)
+                    return;
+                _CurrentRepeatState = value;
+                RaisePropertyChanged();
+
+                switch (value)
+                {
+                    case RepeatState.None:
+                        RepeatIcon = (Canvas)Application.Current.Resources["appbar_arrow_right"];
+                        break;
+
+
+                    case RepeatState.Repeat:
+                        RepeatIcon = (Canvas)Application.Current.Resources["appbar_repeat"];
+                        break;
+
+
+                    case RepeatState.OnceRepeat:
+                        RepeatIcon = null;
+                        break;
+                }
+            }
+        }
+        #endregion
+
+        #region PlayState変更通知プロパティ
+        private State _PlayState;
+
+        public State PlayState
+        {
+            get
+            { return _PlayState; }
+            set
+            { 
+                if (_PlayState == value)
+                    return;
+                _PlayState = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
         #region SearchCommand
 
         private ViewModelCommand _SearchCommand;
@@ -978,7 +1088,7 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public void PlayPause()
         {
-            if (_currentState == State.Playing)
+            if (PlayState == State.Playing)
             {
                 Pause();
             }
@@ -995,7 +1105,7 @@ namespace Mánagarmr.ViewModels.MainWindow
                 return;
             }
 
-            if (_currentState != State.Paused)
+            if (PlayState != State.Paused)
             {
                 ProgressBarIsIndeterminate = true;
                 _model.GetSongInfo(PlayId);
@@ -1004,7 +1114,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             _model.Play(PlayId, AudioStep(Volume));
             SetPauseIcon();
 
-            _currentState = State.Playing;
+            PlayState = State.Playing;
         }
 
         public void Pause()
@@ -1012,7 +1122,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             _sw.Stop();
             _model.Pause();
             SetPlayIcon();
-            _currentState = State.Paused;
+            PlayState = State.Paused;
         }
 
         public void SetPlayIcon()
@@ -1168,7 +1278,7 @@ namespace Mánagarmr.ViewModels.MainWindow
         {
             _model.Stop();
             _sw.Reset();
-            _currentState = State.Stopped;
+            PlayState = State.Stopped;
             PlayPauseIcon = (Canvas) Application.Current.Resources["appbar_control_play"];
             PlayPauseIconMargin = "4,0,0,0";
             PlayPauseIconSize = 24;
@@ -1210,7 +1320,7 @@ namespace Mánagarmr.ViewModels.MainWindow
                 {
                     PlayListIndex--;
                     PlayId = PlayList[PlayListIndex].ID;
-                    if (_currentState != State.Stopped) Stop();
+                    if (PlayState != State.Stopped) Stop();
                     Play();
                 }
             }
@@ -1240,18 +1350,66 @@ namespace Mánagarmr.ViewModels.MainWindow
             {
                 PlayListIndex++;
                 PlayId = PlayList[PlayListIndex].ID;
-                if (_currentState != State.Stopped) Stop();
+                if (PlayState != State.Stopped) Stop();
+                Play();
+            }
+            else
+            {
+                PlayListIndex = 0;
+                PlayId = PlayList[PlayListIndex].ID;
+                if (PlayState != State.Stopped) Stop();
                 Play();
             }
         }
 
         #endregion FastForwardCommand
 
-        private enum State
+        #region RepeatModeCommand
+        private ViewModelCommand _RepeatModeCommand;
+
+        public ViewModelCommand RepeatModeCommand
+        {
+            get
+            {
+                if (_RepeatModeCommand == null)
+                {
+                    _RepeatModeCommand = new ViewModelCommand(RepeatMode);
+                }
+                return _RepeatModeCommand;
+            }
+        }
+
+        public void RepeatMode()
+        {
+            switch (CurrentRepeatState)
+            {
+                case RepeatState.None:
+                    CurrentRepeatState = RepeatState.Repeat;
+                    break;
+
+                case RepeatState.Repeat:
+                    CurrentRepeatState = RepeatState.OnceRepeat;
+                    break;
+
+                case RepeatState.OnceRepeat:
+                    CurrentRepeatState = RepeatState.None;
+                    break;
+            }
+        }
+        #endregion
+
+        public enum State
         {
             Playing,
             Paused,
             Stopped
+        }
+
+        public enum RepeatState
+        {
+            None,
+            Repeat,
+            OnceRepeat
         }
     }
 }

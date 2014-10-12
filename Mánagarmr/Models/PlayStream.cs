@@ -147,6 +147,10 @@ namespace Mánagarmr.Models
                                 // reached the end of the MP3 file / stream
                                 break;
                             }
+                            catch
+                            {
+                                //oops
+                            }
                         }
                     } while (_playbackState != StreamingPlaybackState.Stopped);
                     Debug.WriteLine("Exiting");

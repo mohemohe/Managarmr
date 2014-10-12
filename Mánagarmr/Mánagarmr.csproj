@@ -156,6 +156,7 @@
     <Content Include="InfrastructureAssemblies\Livet.XML" />
     <Content Include="InfrastructureAssemblies\Microsoft.Expression.Interactions.dll" />
     <Content Include="InfrastructureAssemblies\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\appbar.repeat.once.png" />
     <Resource Include="Resources\appbar.cd.fix.png" />
     <Resource Include="Resources\icon512.png" />
     <Resource Include="Resources\icon.ico" />
