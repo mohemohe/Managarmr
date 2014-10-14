@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:Mánagarmr.ViewModels"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:mainWindow="clr-namespace:Mánagarmr.ViewModels.MainWindow"
-        Title="Mánagarmr" Height="620" Width="960" MinHeight="620" MinWidth="960" IconBitmapScalingMode="HighQuality" GlowBrush="{Binding WindowColor}" SaveWindowPosition="True" Icon="/Mánagarmr;component/Resources/icon.ico" FontFamily="Meiryo" TextOptions.TextFormattingMode="Ideal" TextOptions.TextHintingMode="Fixed" TextOptions.TextRenderingMode="Aliased" UseLayoutRounding="True" FontSize="14">
+        Title="Mánagarmr" Height="620" Width="960" MinHeight="620" MinWidth="960" IconBitmapScalingMode="HighQuality" GlowBrush="{Binding WindowColor}" SaveWindowPosition="True" Icon="/Mánagarmr;component/Resources/icon.ico" FontFamily="Meiryo" TextOptions.TextFormattingMode="Ideal" TextOptions.TextHintingMode="Fixed" TextOptions.TextRenderingMode="Aliased" UseLayoutRounding="True" FontSize="14" TitleCaps="False">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
