@@ -719,18 +719,17 @@ namespace Mánagarmr.ViewModels.MainWindow
                 {
                     _sw.Stop();
                     Stop();
-                    if (PlayListIndex + 1 < PlayList.Count)
+
+                    if (CurrentRepeatState == RepeatState.OnceRepeat)
                     {
-                        if (CurrentRepeatState == RepeatState.OnceRepeat)
-                        {
-                            Play();
-                        }
-                        else
-                        {
-                            PlayListIndex++;
-                            PlayId = PlayList[PlayListIndex].ID;
-                            Play();
-                        }
+                        Play();
+                    }
+                    else if (PlayListIndex + 1 < PlayList.Count)
+                    {
+
+                        PlayListIndex++;
+                        PlayId = PlayList[PlayListIndex].ID;
+                        Play();
                     }
                     else
                     {
