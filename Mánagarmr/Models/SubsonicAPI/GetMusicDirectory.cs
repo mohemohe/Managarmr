@@ -9,6 +9,8 @@ namespace Mánagarmr.Models.SubsonicAPI
 {
     internal class GetMusicDirectory
     {
+        private List<string> _parentId;
+        private List<string> _dirName; 
         private List<string> _albumId;
         private List<string> _artist;
         private List<string> _id;
@@ -41,24 +43,71 @@ namespace Mánagarmr.Models.SubsonicAPI
 
             if (_xmlBody != null && _id != null)
             {
-                for (int i = 0; i < _id.Count; i++)
+                if (String.IsNullOrEmpty(_parentId[0]))
                 {
-                    if (_title[i] != "Scans" && _title[i] != "Scan")
+                    for (int i = 0; i < _id.Count; i++)
                     {
-                        llipd.Add(i, new LibraryListInfoPack
+                        if (_title[i] != "Scans" && _title[i] != "Scan")
                         {
-                            ID = _id[i],
-                            Title = _title[i],
-                            Track = _track[i],
-                            Artist = _artist[i],
-                            //Album = _albumId[i],
-                            AlbumId = _albumId[i],
-                            IsDir = Convert.ToBoolean(_isDir[i])
-                        });
+                            llipd.Add(i, new LibraryListInfoPack
+                            {
+                                ID = _id[i],
+                                Title = _title[i],
+                                Track = _track[i],
+                                Artist = _artist[i],
+                                //Album = _albumId[i],
+                                AlbumId = _albumId[i],
+                                IsDir = Convert.ToBoolean(_isDir[i])
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    llipd.Add(0, new LibraryListInfoPack
+                    {
+                        ID = _parentId[0],
+                        Title = "...",
+                        AlbumId = _parentId[0],
+                        IsDir = true
+                    });
+
+                    for (int i = 0; i < _id.Count; i++)
+                    {
+                        if (_title[i] != "Scans" && _title[i] != "Scan")
+                        {
+                            llipd.Add(i + 1, new LibraryListInfoPack
+                            {
+                                ID = _id[i],
+                                Title = _title[i],
+                                Track = _track[i],
+                                Artist = _artist[i],
+                                //Album = _albumId[i],
+                                AlbumId = _albumId[i],
+                                IsDir = Convert.ToBoolean(_isDir[i])
+                            });
+                        }
                     }
                 }
             }
             return llipd;
+        }
+
+        public string GetMusicDirName(string libId)
+        {
+            string url = APIhelper.Url + APIuri + "?v=" + APIhelper.ApiVersion + "&c=" + APIhelper.AppName + "&id=" +
+                         libId;
+
+            try
+            {
+                GetXMLbody(url);
+            }
+            catch
+            {
+            }
+
+            ParseXML(_xmlBody);
+            return _dirName[0];
         }
 
 // ReSharper disable once InconsistentNaming
@@ -112,6 +161,8 @@ namespace Mánagarmr.Models.SubsonicAPI
                 return;
             }
 
+            APIhelper.TryParseXML(xmlDoc, "directory", "parent", out _parentId);
+            APIhelper.TryParseXML(xmlDoc, "directory", "name", out _dirName);
             APIhelper.TryParseXML(xmlDoc, "child", "title", out _title);
             APIhelper.TryParseXML(xmlDoc, "child", "id", out _id);
             APIhelper.TryParseXML(xmlDoc, "child", "track", out _track);

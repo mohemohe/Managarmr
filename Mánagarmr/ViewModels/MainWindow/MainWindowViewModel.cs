@@ -154,6 +154,10 @@ namespace Mánagarmr.ViewModels.MainWindow
                     SetLibraryList();
                     break;
 
+                case "GetFolderName":
+                    SetLibraryListHeaderTitle();
+                    break;
+
                 case "GetLibraryListHeader":
                     SetLibraryListHeader();
                     break;
@@ -185,7 +189,15 @@ namespace Mánagarmr.ViewModels.MainWindow
             string headerTitle = _LibraryList[LibraryListIndex].Title;
             if (IsDir(LibraryListIndex))
             {
-                LibraryListHeaderTitle = headerTitle;
+                if (headerTitle == "...")
+                {
+                    _model.GetFolderName(id);
+                }
+                else
+                {
+                    LibraryListHeaderTitle = headerTitle;
+                }
+                
                 _model.GetLibraryList(id);
             }
             else
@@ -233,6 +245,11 @@ namespace Mánagarmr.ViewModels.MainWindow
 
             _model.GetNewestAlbumList();
             SelectedIndex = 0;
+        }
+
+        public void SetLibraryListHeaderTitle()
+        {
+            LibraryListHeaderTitle = APIhelper.FolderName;
         }
 
         #region WindowColor変更通知プロパティ

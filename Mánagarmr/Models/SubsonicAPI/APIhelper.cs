@@ -37,6 +37,8 @@ namespace Mánagarmr.Models.SubsonicAPI
 
         public static Dictionary<int, LibraryListInfoPack> Header { get; set; }
 
+        public static string FolderName { get; set; }
+
         public static string BuildBasicAuthString(string userName, string password)
         {
             string authBase = userName + ":" + password;

@@ -79,6 +79,16 @@ namespace Mánagarmr.Models
             });
         }
 
+        public async void GetFolderName(string id)
+        {
+            await Task.Run(() =>
+            {
+                var gmd = new GetMusicDirectory();
+                APIhelper.FolderName = gmd.GetMusicDirName(id);
+                RaisePropertyChanged("GetFolderName");
+            });
+        }
+
         public async void GetLibraryList(string id)
         {
             await Task.Run(() =>
