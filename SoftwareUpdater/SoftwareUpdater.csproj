@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{36517E50-9AA1-4B39-AA6E-DD3C19408B5B}</ProjectGuid>
+    <ProjectGuid>{E597F943-D94F-4610-A246-000FD4233B84}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mánagarmr</RootNamespace>
-    <AssemblyName>Mánagarmr</AssemblyName>
+    <RootNamespace>SoftwareUpdater</RootNamespace>
+    <AssemblyName>SoftwareUpdater</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -34,27 +34,21 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Livet, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b0b1d3f711ef38cb, processorArchitecture=MSIL">
-      <HintPath>..\packages\LivetCask.1.1.0.0\lib\net45\Livet.dll</HintPath>
+    <Reference Include="Livet">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>InfrastructureAssemblies\Livet.dll</HintPath>
     </Reference>
-    <Reference Include="MahApps.Metro">
-      <HintPath>..\packages\MahApps.Metro.0.14.0.0\lib\net45\MahApps.Metro.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\LivetCask.1.1.0.0\lib\net45\Microsoft.Expression.Interactions.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio">
-      <HintPath>..\packages\NAudio.1.7.1\lib\net35\NAudio.dll</HintPath>
+    <Reference Include="Microsoft.Expression.Interactions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>InfrastructureAssemblies\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\LivetCask.1.1.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Windows.Interactivity">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>InfrastructureAssemblies\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,18 +67,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Resources\Icons.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\Views\MainWindowDictionary.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ConfigWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -93,33 +75,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Helpers\MessageBoxHelper.cs" />
-    <Compile Include="Helpers\UpdateCheckHelper.cs" />
-    <Compile Include="Models\Crypt.cs" />
-    <Compile Include="Models\Model.cs" />
-    <Compile Include="Models\ReadFullyStream.cs" />
     <Compile Include="Models\Settings.cs" />
-    <Compile Include="Models\SubsonicAPI\APIhelper.cs" />
-    <Compile Include="Models\SubsonicAPI\GetAlbum.cs" />
-    <Compile Include="Models\SubsonicAPI\GetAlbumList.cs" />
-    <Compile Include="Models\SubsonicAPI\GetCoverArt.cs" />
-    <Compile Include="Models\SubsonicAPI\GetIndexes.cs" />
-    <Compile Include="Models\SubsonicAPI\GetMusicDirectory.cs" />
-    <Compile Include="Models\SubsonicAPI\GetSong.cs" />
-    <Compile Include="Models\SubsonicAPI\InfoPack\FolderListInfoPack.cs" />
-    <Compile Include="Models\SubsonicAPI\InfoPack\LibraryListInfoPack.cs" />
-    <Compile Include="Models\SubsonicAPI\InfoPack\StreamInfoPack.cs" />
-    <Compile Include="Models\SubsonicAPI\Ping.cs" />
-    <Compile Include="Models\SubsonicAPI\Search2.cs" />
-    <Compile Include="Models\SubsonicAPI\Stream.cs" />
-    <Compile Include="Models\PlayStream.cs" />
-    <Compile Include="Models\Twitter.cs" />
-    <Compile Include="ViewModels\ConfigWindowViewModel.cs" />
-    <Compile Include="ViewModels\MainWindow\LibraryList.cs" />
-    <Compile Include="ViewModels\MainWindow\MainWindowViewModel.cs" />
-    <Compile Include="Views\ConfigWindow.xaml.cs">
-      <DependentUpon>ConfigWindow.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Models\UpdateInfomation.cs" />
+    <Compile Include="Models\Model.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -143,13 +102,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="InfrastructureAssemblies\Design\Livet.Design.dll" />
@@ -157,21 +114,7 @@
     <Content Include="InfrastructureAssemblies\Livet.XML" />
     <Content Include="InfrastructureAssemblies\Microsoft.Expression.Interactions.dll" />
     <Content Include="InfrastructureAssemblies\System.Windows.Interactivity.dll" />
-    <SplashScreen Include="Resources\splash.png" />
-    <Resource Include="Resources\appbar.repeat.once.png" />
-    <Resource Include="Resources\appbar.cd.fix.png" />
-    <Resource Include="Resources\icon512.png" />
-    <Resource Include="Resources\icon.ico" />
-    <Resource Include="Resources\Entypo-license.txt" />
-    <Resource Include="Resources\WindowsIcons-license.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Rhinemaidens.Lorelei\Lorelei\Lorelei.csproj">
-      <Project>{5111bc95-66c8-4970-afe0-8c8c1b26b7b8}</Project>
-      <Name>Lorelei</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

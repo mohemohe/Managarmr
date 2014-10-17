@@ -74,10 +74,6 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public async void Initialize()
         {
-            if (Settings.Initialize() == false)
-            {
-                ConfigWindowOpen();
-            }
             _model = new Model();
             _sw = new Stopwatch();
 

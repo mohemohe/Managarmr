@@ -2,20 +2,13 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 using Livet;
-using Mánagarmr.Helpers;
-using Mánagarmr.Models;
-using Mánagarmr.Models.SubsonicAPI;
-using System.Net;
-using Mánagarmr.Views;
+using SoftwareUpdater.Models;
 
-namespace Mánagarmr
+namespace SoftwareUpdater
 {
     /// <summary>
     /// App.xaml の相互作用ロジック
@@ -24,20 +17,10 @@ namespace Mánagarmr
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            if (Settings.Initialize() == false)
-            {
-                var cw = new ConfigWindow();
-                cw.ShowDialog();
-            }
-
-            var uch = new UpdateCheckHelper();
-            uch.UpdateCheck();
-
             DispatcherHelper.UIDispatcher = Dispatcher;
             //AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
-            var mw = new MainWindow();
-            mw.Show();
+            Settings.args = e.Args;
         }
 
         //集約エラーハンドラ
