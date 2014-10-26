@@ -1163,36 +1163,10 @@ namespace Mánagarmr.ViewModels.MainWindow
             {
                 ProgressBarMaxValue = Convert.ToUInt64(sip.Duration)*1000;
 
-                if (sip.Title.Length > 30)
-                {
-                    Title = sip.Title.Substring(0, 30) + "...";
-                }
-                else
-                {
-                    Title = sip.Title;
-                }
-
-                string artist;
-                string album;
-                if (sip.Artist.Length > 25)
-                {
-                    artist = sip.Artist.Substring(0, 25) + "...";
-                }
-                else
-                {
-                    artist = sip.Artist;
-                }
-                if (sip.Album.Length > 25)
-                {
-                    album = sip.Album.Substring(0, 25) + "...";
-                }
-                else
-                {
-                    album = sip.Album;
-                }
-                Artist = artist;
-                AlbumTitle = album;
-                AlbumETC = artist + " / " + album;
+                Title = sip.Title;
+                Artist = sip.Artist;
+                AlbumTitle = sip.Album;
+                AlbumETC = sip.Artist + " / " + sip.Album;
                 CoverArt = sip.CoverArt;
             }
         }
