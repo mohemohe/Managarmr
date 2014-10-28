@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.ComponentModel;
 
 using Livet;
 using Livet.Commands;
-using Livet.Messaging;
-using Livet.Messaging.IO;
-using Livet.EventListeners;
 using Livet.Messaging.Windows;
 
 using Mánagarmr.Models;
@@ -274,7 +269,7 @@ namespace Mánagarmr.ViewModels
         #endregion
 
         #region AudioMethodId変更通知プロパティ
-        private int _AudioMethodId = 0;
+        private int _AudioMethodId;
 
         public int AudioMethodId
         {
@@ -539,7 +534,7 @@ namespace Mánagarmr.ViewModels
         #endregion
 
         #region TwitterIsAuthed変更通知プロパティ
-        private bool _TwitterIsAuthed = false;
+        private bool _TwitterIsAuthed;
 
         public bool TwitterIsAuthed
         {
@@ -610,25 +605,24 @@ namespace Mánagarmr.ViewModels
         }
         #endregion
 
-        Twitter twitter = new Twitter();
-        WaveOut wo = new WaveOut();
+        private readonly Twitter _twitter = new Twitter();
 
         public void Initialize()
         {
-            Version = "Version " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            Version = "Version " + Assembly.GetExecutingAssembly().GetName().Version;
             //this.Language = new ObservableCollection<LanguageViewModel>() {
             //    new LanguageViewModel() { Language = "日本語 (ja-JP)", Locale = null },
             //    new LanguageViewModel() { Language = "English (en-US)", Locale = "en-US" },
             //    new LanguageViewModel() { Language = "こふ語 (kv-JP)", Locale = "ja" },
             //};
 
-            TargetBitrateList = new List<int>() { 32, 48, 64, 80, 96, 128, 160, 192, 224, 256, 320 };
+            TargetBitrateList = new List<int> { 32, 48, 64, 80, 96, 128, 160, 192, 224, 256, 320 };
             AudioDeviceList = new List<string> {"Default"};
 
             ReadSettings();
             SetAudioDeviceList();
 
-            for (int i = 0; i < AudioDeviceList.Count; i++)
+            for (var i = 0; i < AudioDeviceList.Count; i++)
             {
                 if (AudioDeviceName == AudioDeviceList[i])
                 {
@@ -757,11 +751,11 @@ namespace Mánagarmr.ViewModels
         public async void ConnectionTest()
         {
             var p = new Ping();
-            string PrimaryServerStatus = "checking...";
-            string SecondaryServerStatus = "waiting...";
+            string primaryServerStatus = "checking...";
+            string secondaryServerStatus = "waiting...";
 
-            SubsonicConnectionTest = "Primary server: " + PrimaryServerStatus + "\n" +
-                                     "Secondary server: " + SecondaryServerStatus;
+            SubsonicConnectionTest = "Primary server: " + primaryServerStatus + "\n" +
+                                     "Secondary server: " + secondaryServerStatus;
 
             // Primary server
             var url = PrimaryServerAddress;
@@ -776,22 +770,22 @@ namespace Mánagarmr.ViewModels
 
                 await Task.Run(() => p.CheckServer(url, IgnoreSSLcertificateError, SubsonicID, SubsonicPassword, out result));
 
-                if (result == true)
+                if (result)
                 {
-                    PrimaryServerStatus = "OK!";
+                    primaryServerStatus = "OK!";
                 }
                 else
                 {
-                    PrimaryServerStatus = "Cant reach server :(";
+                    primaryServerStatus = "Cant reach server :(";
                 }
             }
             else
             {
-                PrimaryServerStatus = "N/A";
+                primaryServerStatus = "N/A";
             }
-            SecondaryServerStatus = "checking...";
-            SubsonicConnectionTest = "Primary server: " + PrimaryServerStatus + "\n" +
-                                     "Secondary server: " + SecondaryServerStatus;
+            secondaryServerStatus = "checking...";
+            SubsonicConnectionTest = "Primary server: " + primaryServerStatus + "\n" +
+                                     "Secondary server: " + secondaryServerStatus;
 
             // Secondary server
             url = SecondaryServerAddress;
@@ -806,22 +800,22 @@ namespace Mánagarmr.ViewModels
 
                 await Task.Run(() => p.CheckServer(url, IgnoreSSLcertificateError, SubsonicID, SubsonicPassword, out result));
 
-                if (result == true)
+                if (result)
                 {
-                    SecondaryServerStatus = "OK!";
+                    secondaryServerStatus = "OK!";
                 }
                 else
                 {
-                    SecondaryServerStatus = "Cant reach server :(";
+                    secondaryServerStatus = "Cant reach server :(";
                 }
             }
             else
             {
-                SecondaryServerStatus = "N/A";
+                secondaryServerStatus = "N/A";
             }
 
-            SubsonicConnectionTest = "Primary server: " + PrimaryServerStatus + "\n" +
-                                     "Secondary server: " + SecondaryServerStatus;
+            SubsonicConnectionTest = "Primary server: " + primaryServerStatus + "\n" +
+                                     "Secondary server: " + secondaryServerStatus;
         }
         #endregion
 
@@ -842,7 +836,7 @@ namespace Mánagarmr.ViewModels
 
         public void OpenAuthUrl()
         {
-            var url = twitter.GetOAuthUrl();
+            var url = _twitter.GetOAuthUrl();
             if (String.IsNullOrEmpty(url) == false)
             {
                 Process.Start(url);
@@ -872,7 +866,7 @@ namespace Mánagarmr.ViewModels
             {
                 string twitterAccessToken;
                 string twitterAccessTokenSecret;
-                twitter.GetAccessToken(TwitterAuthPIN, out twitterAccessToken, out twitterAccessTokenSecret);
+                _twitter.GetAccessToken(TwitterAuthPIN, out twitterAccessToken, out twitterAccessTokenSecret);
                 TwitterAccessToken = twitterAccessToken;
                 TwitterAccessTokenSecret = twitterAccessTokenSecret;
 
