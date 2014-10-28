@@ -1,5 +1,4 @@
-﻿using System.Windows.Media;
-using Livet;
+﻿using Livet;
 using Livet.Commands;
 using Livet.EventListeners;
 using Livet.Messaging;
@@ -11,15 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
 using Timer = System.Timers.Timer;
 
 namespace Mánagarmr.ViewModels.MainWindow
@@ -176,7 +171,6 @@ namespace Mánagarmr.ViewModels.MainWindow
         {
             LibraryListHeaderTitle = MusicFolderListValue;
             _model.GetLibraryList(GetMusicFolderListId(MusicFolderListIndex));
-            SelectedIndex = 0;
         }
 
         public void MoveLibraryList()
@@ -230,7 +224,6 @@ namespace Mánagarmr.ViewModels.MainWindow
             LibraryListHeaderTitle = "Random";
 
             _model.GetRundomAlbumList();
-            SelectedIndex = 0;
         }
 
         public void GetNewestAlbumList()
@@ -240,7 +233,6 @@ namespace Mánagarmr.ViewModels.MainWindow
             LibraryListHeaderTitle = "Recently added";
 
             _model.GetNewestAlbumList();
-            SelectedIndex = 0;
         }
 
         public void SetLibraryListHeaderTitle()
@@ -386,23 +378,6 @@ namespace Mánagarmr.ViewModels.MainWindow
         }
 
         #endregion MusicFolderListIndex変更通知プロパティ
-
-        #region SelectedIndex変更通知プロパティ
-        private int _SelectedIndex;
-
-        public int SelectedIndex
-        {
-            get
-            { return _SelectedIndex; }
-            set
-            {
-                if (_SelectedIndex == value)
-                    return;
-                _SelectedIndex = value;
-                RaisePropertyChanged();
-            }
-        }
-        #endregion
 
         #region LibraryListId変更通知プロパティ
 
@@ -869,6 +844,8 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public void AddPlayList()
         {
+            if (LibraryList.Count == 0) return;
+
             if (PlayList == null)
             {
                 PlayList = new List<LibraryList>();
@@ -1043,6 +1020,44 @@ namespace Mánagarmr.ViewModels.MainWindow
                 _PlayState = value;
                 RaisePropertyChanged();
             }
+        }
+        #endregion
+
+        #region PlayListFlyoutsIsOpen変更通知プロパティ
+        private bool _PlayListFlyoutsIsOpen = false;
+
+        public bool PlayListFlyoutsIsOpen
+        {
+            get
+            { return _PlayListFlyoutsIsOpen; }
+            set
+            { 
+                if (_PlayListFlyoutsIsOpen == value)
+                    return;
+                _PlayListFlyoutsIsOpen = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
+
+        #region PlayListFlyoutsOpenCommand
+        private ViewModelCommand _PlayListFlyoutsOpenCommand;
+
+        public ViewModelCommand PlayListFlyoutsOpenCommand
+        {
+            get
+            {
+                if (_PlayListFlyoutsOpenCommand == null)
+                {
+                    _PlayListFlyoutsOpenCommand = new ViewModelCommand(PlayListFlyoutsOpen);
+                }
+                return _PlayListFlyoutsOpenCommand;
+            }
+        }
+
+        public void PlayListFlyoutsOpen()
+        {
+            PlayListFlyoutsIsOpen = !PlayListFlyoutsIsOpen;
         }
         #endregion
 

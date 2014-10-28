@@ -76,9 +76,15 @@
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
 
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl>
+
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
+
     <Grid>
-        <Grid Margin="0,0,0,100">
-            <StackPanel Width="280" HorizontalAlignment="Left" Margin="0,0,0,0">
+        <Grid Margin="0,0,0,100" ClipToBounds="True">
+            <StackPanel Width="280" HorizontalAlignment="Left" Margin="0,42,0,0">
                 <ListBox Name="UpperListBox" ItemContainerStyle="{DynamicResource DummyStyle}" Margin="10" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="UpperListBox_PreviewMouseDown">
                     <ListBoxItem Content="Random">
                         <i:Interaction.Triggers>
@@ -104,73 +110,51 @@
                     </i:Interaction.Triggers>
                 </ListBox>
             </StackPanel>
-            <TabControl Margin="295,10,10,0" SelectedIndex="{Binding SelectedIndex}">
-                <TabItem Header="Library">
-                    <Grid>
-                        <Grid Height="64" VerticalAlignment="Top">
-                            <Image Source="{Binding LibraryListHeaderImage, IsAsync=true}" RenderOptions.BitmapScalingMode="HighQuality" Height="64" HorizontalAlignment="Left" Width="64" Stretch="UniformToFill"/>
-                            <Grid Margin="69,0,0,0">
-                                <TextBlock Text="{Binding LibraryListHeaderTitle}" FontSize="24" TextTrimming="CharacterEllipsis" VerticalAlignment="Top"/>
-                                <TextBlock Text="{Binding LibraryListHeaderArtist}" Foreground="Gray" FontSize="14" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" Margin="0,41,37,0"/>
-                                <Button Name="AddPlayListButton" Command="{Binding AddPlayListCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="32" HorizontalAlignment="Right" Background="{x:Null}" BorderBrush="Black" Foreground="{x:Null}" BorderThickness="2" Height="32" VerticalAlignment="Bottom">
-                                    <Rectangle Width="16" Height="16" Fill="Black">
-                                        <Rectangle.OpacityMask>
-                                            <VisualBrush Visual="{StaticResource appbar_add}" Stretch="Uniform" />
-                                        </Rectangle.OpacityMask>
-                                    </Rectangle>
-                                </Button>
-                            </Grid>
-                        </Grid>
-                        <Grid Background="#FFFFFFFF" Margin="0,69,0,0">
-                            <ListBox ItemsSource="{Binding LibraryList}" ItemContainerStyle="{DynamicResource DummyStyle}" SelectedIndex="{Binding LibraryListIndex}"  Margin="0,10,0,0" FontSize="14" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <ListBoxItem IsHitTestVisible="False">
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Track}" FontFamily="Consolas" Padding="0,1,0,0" FontSize="15"/>
-                                                <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="{Binding Artist}" Foreground="Gray" TextTrimming="CharacterEllipsis" />
-                                            </StackPanel>
-                                        </ListBoxItem>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                                        <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="MoveLibraryList"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </ListBox>
-                        </Grid>
+            <Grid Margin="295,10,10,0">
+                <Grid Height="64" VerticalAlignment="Top" Margin="10,0,0,0">
+                    <Image Source="{Binding LibraryListHeaderImage, IsAsync=true}" RenderOptions.BitmapScalingMode="HighQuality" Height="64" HorizontalAlignment="Left" Width="64" Stretch="UniformToFill"/>
+                    <Grid Margin="72,0,47,0">
+                        <TextBlock Text="{Binding LibraryListHeaderTitle}" FontSize="24" TextTrimming="CharacterEllipsis" VerticalAlignment="Top"/>
+                        <TextBlock Text="{Binding LibraryListHeaderArtist}" Foreground="Gray" FontSize="14" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" Margin="0,36,0,0"/>
                     </Grid>
-                </TabItem>
-                <TabItem Header="Playlist">
-                    <Grid Background="#FFFFFFFF" Margin="0,0,0,0">
-                        <ListBox ItemsSource="{Binding PlayList}" ItemContainerStyle="{DynamicResource DummyStyle}" SelectedIndex="{Binding PlayListIndex}"  Margin="0,10,0,0" FontSize="14" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <ListBoxItem IsHitTestVisible="False">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Track}" FontFamily="Consolas" Padding="0,1,0,0" FontSize="15"/>
-                                            <TextBlock Text="{Binding Title}"/>
-                                            <TextBlock Text="{Binding Artist}" Foreground="Gray"/>
-                                        </StackPanel>
-                                    </ListBoxItem>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
+                    <Button x:Name="AddPlayListButton" Command="{Binding AddPlayListCommand, Mode=OneWay}" Style="{DynamicResource MetroCircleButtonStyle}" Width="32" HorizontalAlignment="Right" Background="{x:Null}" BorderBrush="Black" Foreground="{x:Null}" BorderThickness="2" Height="32" VerticalAlignment="Bottom" Margin="0,0,15,0">
+                        <Rectangle Width="16" Height="16" Fill="Black">
+                            <Rectangle.OpacityMask>
+                                <VisualBrush Visual="{StaticResource appbar_add}" Stretch="Uniform" />
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                    </Button>
+                </Grid>
+                <Grid Background="#FFFFFFFF" Margin="0,69,0,0">
+                    <ListBox ItemsSource="{Binding LibraryList}" ItemContainerStyle="{DynamicResource DummyStyle}" SelectedIndex="{Binding LibraryListIndex}"  Margin="0,10,0,0" FontSize="14" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <ListBoxItem IsHitTestVisible="False">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Track}" FontFamily="Consolas" Padding="0,1,0,0" FontSize="15"/>
+                                        <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding Artist}" Foreground="Gray" TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                </ListBoxItem>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
 
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                                    <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="MovePlayList"/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </ListBox>
-                    </Grid>
-                </TabItem>
-            </TabControl>
-            <Grid HorizontalAlignment="Right" Width="320" Height="48" VerticalAlignment="Top">
-                <TextBox Controls:TextboxHelper.ClearTextButton="True" Controls:TextboxHelper.Watermark="Search" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,0" TextWrapping="Wrap" FontSize="20" Height="34" VerticalAlignment="Top"/>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                                <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="MoveLibraryList"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBox>
+                </Grid>
             </Grid>
+            <Button Command="{Binding PlayListFlyoutsOpenCommand}" Style="{DynamicResource MetroCircleButtonStyle}" Width="64" Background="{x:Null}" BorderBrush="Black" Foreground="{x:Null}" BorderThickness="2" Height="64" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,-15,-12,0" >
+                <Rectangle Width="32" Height="32" Fill="Black">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{StaticResource appbar_list}" Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+            <TextBox Controls:TextboxHelper.ClearTextButton="True" Controls:TextboxHelper.Watermark="Search" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,0,0" TextWrapping="Wrap" FontSize="14" VerticalAlignment="Top" HorizontalAlignment="Left" Width="270"/>
         </Grid>
         <Grid Name="BottomBar" Height="64" VerticalAlignment="Bottom" Background="{Binding WindowColor}">
             <Border Name="CoverArea" Margin="10,-26,0,10" Height="80" VerticalAlignment="Bottom" BorderBrush="{Binding WindowColor}" BorderThickness="4" Background="{Binding WindowColor}" HorizontalAlignment="Left" Width="80">
@@ -227,5 +211,27 @@
             <Slider Name="VolumeSlider" Style="{DynamicResource FlatSlider}" Value="{Binding Volume, Mode=TwoWay}" Margin="0,0,10,18" Width="128" Foreground="White" Maximum="1" SmallChange="0.01" TickFrequency="0.1" LargeChange="0.1" Height="12" VerticalAlignment="Bottom" HorizontalAlignment="Right" BorderBrush="Black"/>
             <Label Content="{Binding VolumeString}" Margin="0,0,10,30" Padding="0" Foreground="White" HorizontalAlignment="Right" Height="15" VerticalAlignment="Bottom" FontSize="12"/>
         </Grid>
+
+        <Controls:Flyout Header="Playlist" Position="Right" Theme="Light" IsOpen="{Binding PlayListFlyoutsIsOpen}" Margin="0,0,0,100" HorizontalAlignment="Right" Width="666">
+            <ListBox ItemsSource="{Binding PlayList}" ItemContainerStyle="{DynamicResource DummyStyle}" SelectedIndex="{Binding PlayListIndex}"  Margin="10,0,10,-100" FontSize="14" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <ListBoxItem IsHitTestVisible="False">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Track}" FontFamily="Consolas" Padding="0,1,0,0" FontSize="15"/>
+                                <TextBlock Text="{Binding Title}"/>
+                                <TextBlock Text="{Binding Artist}" Foreground="Gray"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                        <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="MovePlayList"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListBox>
+        </Controls:Flyout>
     </Grid>
 </Controls:MetroWindow>
