@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 using Livet;
 using Mánagarmr.Helpers;
 using Mánagarmr.Models;
+using Mánagarmr.Models.SubsonicAPI;
 using Mánagarmr.Views;
 
 namespace Mánagarmr
@@ -18,10 +13,13 @@ namespace Mánagarmr
     /// <summary>
     /// App.xaml の相互作用ロジック
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            DispatcherHelper.UIDispatcher = Dispatcher;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             if (Settings.Initialize() == false)
             {
                 var cw = new ConfigWindow();
@@ -31,8 +29,7 @@ namespace Mánagarmr
             var uch = new UpdateCheckHelper();
             uch.UpdateCheck();
 
-            DispatcherHelper.UIDispatcher = Dispatcher;
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+            APIhelper.BuildBaseUrl();
 
             var mw = new MainWindow();
             mw.Show();
@@ -41,12 +38,12 @@ namespace Mánagarmr
         //集約エラーハンドラ
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            string messeage = "未知のエラーが発生しました。アプリケーションを終了します。\n\n";
+            var messeage = "未知のエラーが発生しました。アプリケーションを終了します。\n\n";
             string extMesseage = null;
 
             try
             {
-                Exception ex = (Exception) e.ExceptionObject;
+                var ex = (Exception) e.ExceptionObject;
 
                 messeage = "未知のエラーが発生しました。アプリケーションを終了します。\n\nエラー内容:\n";
 
@@ -75,9 +72,7 @@ namespace Mánagarmr
 
                     extMesseage = "\n\n\n実行フォルダに log.txt を生成しました。";
                 }
-                catch
-                {
-                }
+                catch { }
 
                 MessageBoxHelper.AddMessageBoxQueue(new MessageBoxPack(
                     messeage + ex.Message + extMesseage,

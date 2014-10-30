@@ -91,15 +91,12 @@ namespace Mánagarmr.ViewModels.MainWindow
             LibraryListHeaderTitle = null;
             LibraryListHeaderArtist = null;
 
-            await Task.Run(() =>
-            {
-                APIhelper.BuildBaseUrl();
-                _model.GetIndex();
-            });
+            await Task.Run(() => _model.GetIndex());
         }
 
         public void Disposes()
         {
+            Stop();
             _model.Dispose();
             _model = null;
             _sw = null;
