@@ -80,6 +80,7 @@ namespace Mánagarmr.Models
             _fullyDownloaded = false;
             var url = (string) state;
             _webRequest = (HttpWebRequest) WebRequest.Create(url);
+            _webRequest.KeepAlive = true;
             HttpWebResponse resp;
             try
             {
