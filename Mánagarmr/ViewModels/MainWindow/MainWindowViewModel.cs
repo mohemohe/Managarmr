@@ -1,7 +1,9 @@
-﻿using Livet;
+﻿using System.Net.Sockets;
+using Livet;
 using Livet.Commands;
 using Livet.EventListeners;
 using Livet.Messaging;
+using Mánagarmr.Helpers;
 using Mánagarmr.Models;
 using Mánagarmr.Models.SubsonicAPI;
 using Mánagarmr.Models.SubsonicAPI.InfoPack;
@@ -96,6 +98,8 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public void Disposes()
         {
+            ToastHelper.Dispose();
+
             Stop();
             _model.Dispose();
             _model = null;
@@ -552,6 +556,23 @@ namespace Mánagarmr.ViewModels.MainWindow
         }
 
         #endregion PlayId変更通知プロパティ
+
+        #region SongInfoChangedDateTime変更通知プロパティ
+        private DateTime _SongInfoChangedDateTime;
+
+        public DateTime SongInfoChangedDateTime
+        {
+            get
+            { return _SongInfoChangedDateTime; }
+            set
+            { 
+                if (_SongInfoChangedDateTime == value)
+                    return;
+                _SongInfoChangedDateTime = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
 
         #region Title変更通知プロパティ
 
@@ -1122,8 +1143,10 @@ namespace Mánagarmr.ViewModels.MainWindow
             }
         }
 
-        public void Play()
+        public async void Play()
         {
+            var now = DateTime.Now;
+
             if (PlayId == null)
             {
                 return;
@@ -1132,6 +1155,8 @@ namespace Mánagarmr.ViewModels.MainWindow
             if (PlayState != State.Paused)
             {
                 ProgressBarIsIndeterminate = true;
+
+                SongInfoChangedDateTime = now;
                 _model.GetSongInfo(PlayId);
             }
 
@@ -1139,6 +1164,19 @@ namespace Mánagarmr.ViewModels.MainWindow
             SetPauseIcon();
 
             PlayState = State.Playing;
+
+            while (true)
+            {
+                if (now.Ticks < SongInfoChangedDateTime.Ticks)
+                {
+                    ToastHelper.ShowToast(Title, AlbumTitle, Artist, CoverArt);
+                    break;
+                }
+                else
+                {
+                    await Task.Run(() => Thread.Sleep(10));
+                }
+            }
         }
 
         public void Pause()
@@ -1180,6 +1218,8 @@ namespace Mánagarmr.ViewModels.MainWindow
                 AlbumTitle = sip.Album;
                 AlbumETC = sip.Artist + " / " + sip.Album;
                 CoverArt = sip.CoverArt;
+
+                SongInfoChangedDateTime = DateTime.Now;
             }
         }
 

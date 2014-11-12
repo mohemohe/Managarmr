@@ -35,10 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Livet">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>InfrastructureAssemblies\Livet.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Expression.Interactions">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>InfrastructureAssemblies\Microsoft.Expression.Interactions.dll</HintPath>
@@ -114,6 +110,12 @@
     <Content Include="InfrastructureAssemblies\Livet.XML" />
     <Content Include="InfrastructureAssemblies\Microsoft.Expression.Interactions.dll" />
     <Content Include="InfrastructureAssemblies\System.Windows.Interactivity.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Livet\.NET4.5\Livet%28.NET4.5%29\Livet%28.NET4.5%29.csproj">
+      <Project>{93990e82-b8e1-41e8-b6f5-9a6c87674221}</Project>
+      <Name>Livet%28.NET4.5%29</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

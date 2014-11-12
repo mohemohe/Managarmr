@@ -56,9 +56,6 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Livet, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b0b1d3f711ef38cb, processorArchitecture=MSIL">
-      <HintPath>..\packages\LivetCask.1.1.0.0\lib\net45\Livet.dll</HintPath>
-    </Reference>
     <Reference Include="MahApps.Metro">
       <HintPath>..\packages\MahApps.Metro.0.14.0.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -71,6 +68,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\LivetCask.1.1.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -91,7 +89,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\ToastHelper.cs" />
+    <Compile Include="ViewModels\ToastViewModel.cs" />
+    <Compile Include="Views\Toast.xaml.cs">
+      <DependentUpon>Toast.xaml</DependentUpon>
+    </Compile>
     <Page Include="Resources\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Views\ToastDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -142,6 +149,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\Toast.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -184,6 +195,10 @@
     <Resource Include="Resources\WindowsIcons-license.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Livet\.NET4.5\Livet%28.NET4.5%29\Livet%28.NET4.5%29.csproj">
+      <Project>{93990e82-b8e1-41e8-b6f5-9a6c87674221}</Project>
+      <Name>Livet%28.NET4.5%29</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Rhinemaidens.Lorelei\Lorelei\Lorelei.csproj">
       <Project>{5111bc95-66c8-4970-afe0-8c8c1b26b7b8}</Project>
       <Name>Lorelei</Name>

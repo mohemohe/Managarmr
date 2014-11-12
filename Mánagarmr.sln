@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lorelei", "Rhinemaidens.Lor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareUpdater", "SoftwareUpdater\SoftwareUpdater.csproj", "{E597F943-D94F-4610-A246-000FD4233B84}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Livet(.NET4.5)", "Livet\.NET4.5\Livet(.NET4.5)\Livet(.NET4.5).csproj", "{93990E82-B8E1-41E8-B6F5-9A6C87674221}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,16 @@ Global
 		{E597F943-D94F-4610-A246-000FD4233B84}.Release|Mixed Platforms.Build.0 = Release|x86
 		{E597F943-D94F-4610-A246-000FD4233B84}.Release|x86.ActiveCfg = Release|x86
 		{E597F943-D94F-4610-A246-000FD4233B84}.Release|x86.Build.0 = Release|x86
+		{93990E82-B8E1-41E8-B6F5-9A6C87674221}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93990E82-B8E1-41E8-B6F5-9A6C87674221}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93990E82-B8E1-41E8-B6F5-9A6C87674221}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{93990E82-B8E1-41E8-B6F5-9A6C87674221}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{93990E82-B8E1-41E8-B6F5-9A6C87674221}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{93990E82-B8E1-41E8-B6F5-9A6C87674221}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93990E82-B8E1-41E8-B6F5-9A6C87674221}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93990E82-B8E1-41E8-B6F5-9A6C87674221}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{93990E82-B8E1-41E8-B6F5-9A6C87674221}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{93990E82-B8E1-41E8-B6F5-9A6C87674221}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

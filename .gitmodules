@@ -1,3 +1,6 @@
 [submodule "Rhinemaidens.Lorelei"]
 	path = Rhinemaidens.Lorelei
 	url = https://github.com/mohemohe/Rhinemaidens.Lorelei.git
+[submodule "Livet"]
+	path = Livet
+	url = https://github.com/ugaya40/Livet.git
