@@ -1169,7 +1169,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             {
                 if (now.Ticks < SongInfoChangedDateTime.Ticks)
                 {
-                    ToastHelper.ShowToast(Title, AlbumTitle, Artist, CoverArt);
+                    ToastHelper.ShowToastDispatcher(Title, AlbumTitle, Artist, CoverArt);
                     break;
                 }
                 else

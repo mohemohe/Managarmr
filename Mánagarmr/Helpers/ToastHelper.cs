@@ -31,7 +31,20 @@ namespace Mánagarmr.Helpers
             toast = null;
         }
 
-        public static void ShowToast(string title, string album, string artist, string albumCoverImageUrl)
+        public static void ShowToastDispatcher(string title, string album, string artist, string albumCoverImageUrl)
+        {
+            var dispatcher = System.Windows.Application.Current.Dispatcher;
+            if (dispatcher.CheckAccess())
+            {
+                ShowToast(title, album, artist, albumCoverImageUrl);
+            }
+            else
+            {
+                dispatcher.Invoke(() => ShowToast(title, album, artist, albumCoverImageUrl));
+            }
+        }
+
+        private static void ShowToast(string title, string album, string artist, string albumCoverImageUrl)
         {
             Album = album;
             Title = title;
