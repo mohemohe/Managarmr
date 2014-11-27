@@ -22,7 +22,11 @@ namespace Mánagarmr.Helpers
         {
             if (toast != null)
             {
-                toast.Close();
+                try
+                {
+                    toast.Close();
+                }
+                catch { }
             }
             toast = null;
         }
@@ -34,10 +38,11 @@ namespace Mánagarmr.Helpers
             Artist = artist;
             AlbumCoverImageUrl = albumCoverImageUrl;
 
-            if (toast == null)
+            if (toast != null)
             {
-                toast = new Toast();
+                Dispose();
             }
+            toast = new Toast();
 
             var desktop = Screen.PrimaryScreen.WorkingArea;
             toast.Top = desktop.Height - (toast.Height + 8);

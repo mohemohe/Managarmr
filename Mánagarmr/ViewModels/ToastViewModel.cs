@@ -90,11 +90,9 @@ namespace Mánagarmr.ViewModels
                         if (Opacity == 0.0)
                         {
                             Close();
+                            return;
                         }
-                        else
-                        {
-                            Thread.Sleep(1);
-                        }
+                        Thread.Sleep(1);
                     }
                 }
                 else
@@ -106,19 +104,19 @@ namespace Mánagarmr.ViewModels
 
         private async void FadeIn()
         {
-            for (double i = 0; i < 100; i++)
+            for (double i = 0; i <= 10; i++)
             {
-                Opacity = i/100;
-                await Task.Run(() => Thread.Sleep(3));
+                Opacity = i/10;
+                await Task.Run(() => Thread.Sleep(30));
             }
         }
 
         private async void FadeOut()
         {
-            for (double i = 100; i > 0; i--)
+            for (double i = 10; i >= 0; i--)
             {
-                Opacity = i/100;
-                await Task.Run(() => Thread.Sleep(3));
+                Opacity = i/10;
+                await Task.Run(() => Thread.Sleep(30));
             }
         }
 

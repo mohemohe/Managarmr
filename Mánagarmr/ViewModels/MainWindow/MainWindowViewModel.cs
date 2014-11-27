@@ -1181,10 +1181,19 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public void Pause()
         {
-            _sw.Stop();
-            _model.Pause();
-            SetPlayIcon();
-            PlayState = State.Paused;
+            try
+            {
+                _sw.Stop();
+                _model.Pause();
+                SetPlayIcon();
+                PlayState = State.Paused;
+            }
+            catch
+            {
+                _sw.Start();
+                SetPauseIcon();
+                PlayState = State.Playing;
+            }
         }
 
         public void SetPlayIcon()
