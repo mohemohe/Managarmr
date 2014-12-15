@@ -25,7 +25,7 @@ namespace Mánagarmr
             var uch = new UpdateCheckHelper();
             uch.UpdateCheck();
 
-            if (Settings.Initialize() == false)
+            if (Settings.Initialize())
             {
                 APIhelper.BuildBaseUrl();
             }
