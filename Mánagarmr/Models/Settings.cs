@@ -34,7 +34,7 @@ namespace Mánagarmr.Models
         public string TweetTextFormat;
         public int TweetUrl;
         public string UserName;
-        public float Volume;
+        public float Volume = 0.5F;
         public int RepeatState;
     }
 
