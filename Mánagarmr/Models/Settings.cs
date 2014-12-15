@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Livet;
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -315,17 +316,19 @@ namespace Mánagarmr.Models
 
             if (File.Exists(filePath) && Hash != null)
             {
-                if (Hash.SequenceEqual(hash) == false)
+                if (Hash.SequenceEqual(hash))
                 {
-                    UserName = "";
-                    Password = "";
-                    AccessToken = "";
-                    AccessTokenSecret = "";
-
-                    return false;
+                    return true;
                 }
-                return true;
             }
+
+            UserName = "";
+            Password = "";
+            AccessToken = "";
+            AccessTokenSecret = "";
+
+            Hash = hash;
+
             return false;
         }
 

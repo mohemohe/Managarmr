@@ -7,6 +7,8 @@ using Mánagarmr.Helpers;
 using Mánagarmr.Models;
 using Mánagarmr.Models.SubsonicAPI;
 using Mánagarmr.Views;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Mánagarmr
 {
@@ -20,16 +22,13 @@ namespace Mánagarmr
             DispatcherHelper.UIDispatcher = Dispatcher;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            if (Settings.Initialize() == false)
-            {
-                var cw = new ConfigWindow();
-                cw.ShowDialog();
-            }
-
             var uch = new UpdateCheckHelper();
             uch.UpdateCheck();
 
-            APIhelper.BuildBaseUrl();
+            if (Settings.Initialize() == false)
+            {
+                APIhelper.BuildBaseUrl();
+            }
 
             var mw = new MainWindow();
             mw.Show();

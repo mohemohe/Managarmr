@@ -71,12 +71,21 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public async void Initialize()
         {
+            if (Settings.Initialize() == false)
+            {
+                var cw = new ConfigWindow();
+                cw.Topmost = true;
+                cw.ShowDialog();
+
+                APIhelper.BuildBaseUrl();
+            }
+
             _model = new Model();
             _sw = new Stopwatch();
 
-            var listener = new PropertyChangedEventListener(_model);
-            listener.RegisterHandler(UpdateHandler);
-            CompositeDisposable.Add(listener);
+            var modelListener = new PropertyChangedEventListener(_model);
+            modelListener.RegisterHandler(ModelUpdateHandler);
+            CompositeDisposable.Add(modelListener);
 
             _timer = new Timer {Interval = 100};
             _timer.Elapsed += (sender, e) => Timer_Tick();
@@ -111,7 +120,7 @@ namespace Mánagarmr.ViewModels.MainWindow
             Settings.WriteSettings();
         }
 
-        private void UpdateHandler(object sender, PropertyChangedEventArgs e)
+        private void ModelUpdateHandler(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {

@@ -892,7 +892,7 @@ namespace Mánagarmr.ViewModels
 
         public void OK()
         {
-            SaveSettings();
+            Apply();
             Close();
         }
         #endregion
