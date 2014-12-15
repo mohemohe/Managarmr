@@ -223,13 +223,13 @@
                                     <TextBlock Text="{Binding Title}"/>
                                     <TextBlock Text="{Binding Artist}" Foreground="Gray"/>
                                 </StackPanel>
-                                <Button x:Name="DeleteButton" Command="{Binding}" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Top" Width="18" Height="18"  Style="{DynamicResource ButtonDummyStyle}" Foreground="{x:Null}" Background="{x:Null}" BorderBrush="{x:Null}">
+                                <!--<Button x:Name="DeleteButton" Command="{Binding}" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Top" Width="18" Height="18"  Style="{DynamicResource ButtonDummyStyle}" Foreground="{x:Null}" Background="{x:Null}" BorderBrush="{x:Null}">
                                     <Rectangle Fill="Black" Width="14" Height="14">
                                         <Rectangle.OpacityMask>
                                             <VisualBrush Visual="{StaticResource appbar_close}" Stretch="Uniform" />
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
-                                </Button>
+                                </Button>-->
                             </Grid>
                         </ListBoxItem>
                     </DataTemplate>
