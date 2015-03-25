@@ -84,32 +84,34 @@
 
     <Grid>
         <Grid Margin="0,0,0,100" ClipToBounds="True">
-            <StackPanel Width="280" HorizontalAlignment="Left" Margin="0,42,0,0">
-                <ListBox Name="UpperListBox" ItemContainerStyle="{DynamicResource ListBoxDummyStyle}" Margin="10" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="UpperListBox_PreviewMouseDown">
-                    <ListBoxItem Content="Random">
+            <ScrollViewer Width="280" HorizontalAlignment="Left" Margin="0,42,0,0">
+                <StackPanel>
+                    <ListBox Name="UpperListBox" ItemContainerStyle="{DynamicResource ListBoxDummyStyle}" Margin="10" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="UpperListBox_PreviewMouseDown">
+                        <ListBoxItem Content="Random">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                                    <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="GetRandomAlbumList"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ListBoxItem>
+                        <ListBoxItem Content="Recently added">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                                    <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="GetNewestAlbumList"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ListBoxItem>
+                    </ListBox>
+                    <Separator Margin="10,2"/>
+                    <ListBox ItemContainerStyle="{DynamicResource ListBoxDummyStyle}" Name="BottomListBox" ItemsSource="{Binding MusicFolderList}" SelectedIndex="{Binding MusicFolderListIndex}" SelectedValue="{Binding MusicFolderListValue}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="BottomListBox_PreviewMouseDown">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                                <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="GetRandomAlbumList"/>
+                                <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="ChangeLibraryList"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                    </ListBoxItem>
-                    <ListBoxItem Content="Recently added">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                                <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="GetNewestAlbumList"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ListBoxItem>
-                </ListBox>
-                <Separator Margin="10,2"/>
-                <ListBox ItemContainerStyle="{DynamicResource ListBoxDummyStyle}" Name="BottomListBox" ItemsSource="{Binding MusicFolderList}" SelectedIndex="{Binding MusicFolderListIndex}" SelectedValue="{Binding MusicFolderListValue}" Margin="10,10,10,0" FontSize="14" VerticalAlignment="Top" PreviewMouseDown="BottomListBox_PreviewMouseDown">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="ChangeLibraryList"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </ListBox>
-            </StackPanel>
+                    </ListBox>
+                </StackPanel>
+            </ScrollViewer>
             <Grid Margin="295,10,10,0">
                 <Grid Height="64" VerticalAlignment="Top" Margin="10,0,0,0">
                     <Image Source="{Binding LibraryListHeaderImage, IsAsync=true}" RenderOptions.BitmapScalingMode="HighQuality" Height="64" HorizontalAlignment="Left" Width="64" Stretch="UniformToFill"/>
