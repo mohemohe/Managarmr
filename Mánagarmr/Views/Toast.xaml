@@ -56,7 +56,7 @@
 
     </i:Interaction.Triggers>
 
-    <Grid Background="#FF41B1E1">
+    <Grid Background="#FF334455">
         <Grid HorizontalAlignment="Left" Width="120">
             <Image Source="{Binding AlbumCoverUrl, IsAsync=True}" />
         </Grid>
