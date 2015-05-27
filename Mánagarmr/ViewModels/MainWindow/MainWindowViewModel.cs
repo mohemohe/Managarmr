@@ -252,7 +252,7 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         #region WindowColor変更通知プロパティ
 
-        private string _WindowColor = "#FF41B1E1";
+        private string _WindowColor = "#FF334455";
 
         public string WindowColor
         {
@@ -268,7 +268,7 @@ namespace Mánagarmr.ViewModels.MainWindow
 
         public void ActivatedWindow()
         {
-            WindowColor = "#FF41B1E1";
+            WindowColor = "#FF334455";
         }
 
         public void DeactivatedWindow()
